@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://2jx57nk5tsbj"]
+
+[ext_resource type="Script" uid="uid://ddif0qkv78ffm" path="res://Scripts/Canine.cs" id="1_eoj5r"]
+[ext_resource type="Texture2D" uid="uid://diwfg15fcgup" path="res://Assets/Sprites/jimmydog.webp" id="1_kihqq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eoj5r"]
+atlas = ExtResource("1_kihqq")
+region = Rect2(0, 0, 477, 471)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_e0kin"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eoj5r")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kihqq"]
+radius = 18.027756
+
+[node name="Canine" type="CharacterBody2D"]
+script = ExtResource("1_eoj5r")
+distance = 2400.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.079, 0.079)
+sprite_frames = SubResource("SpriteFrames_e0kin")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_kihqq")

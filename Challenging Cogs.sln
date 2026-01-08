@@ -1,0 +1,19 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Challenging Cogs", "Challenging Cogs.csproj", "{E1E229FD-4F50-4F81-8933-9D589E5BC4F5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1E229FD-4F50-4F81-8933-9D589E5BC4F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1E229FD-4F50-4F81-8933-9D589E5BC4F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1E229FD-4F50-4F81-8933-9D589E5BC4F5}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{E1E229FD-4F50-4F81-8933-9D589E5BC4F5}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{E1E229FD-4F50-4F81-8933-9D589E5BC4F5}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{E1E229FD-4F50-4F81-8933-9D589E5BC4F5}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+EndGlobal
