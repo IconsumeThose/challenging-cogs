@@ -4,15 +4,43 @@ using System;
 public partial class Canine : CharacterBody2D
 {
 	// the distance the canine moves every time
-	[Export] public float distance = 2400;
-	
+	[Export] public int tileSize = 32;
+
+	[Export] public TileMapLayer tileMap;
+
 	// the direction the player moved last frame
 	private Vector2 lastMovementDirection = Vector2.Zero;
+	
+	// distance the canine moves to get to the next tile
+	private float movementDistance = 0;
+
+	// ran during start up
+	public override void _Ready()
+	{
+		movementDistance = tileSize;
+	}
+
+	// convert global position to the tile position at the specified tile map
+	public static Vector2I PositionToAtlasIndex(Vector2 position, TileMapLayer tileMap)
+	{
+		return tileMap.LocalToMap(tileMap.ToLocal(position));
+	}
+
+	// get the tile type at the specified position
+	public static string GetTileCustomType(Vector2I tilePos, TileMapLayer tileMap)
+	{
+		TileData tileData = tileMap.GetCellTileData(tilePos);
+
+		string tileCustomType = (string)tileData?.GetCustomData("CustomType");
+
+		return tileCustomType;
+	}
+
 	public override void _PhysicsProcess(double delta)
 	{
 		// read the inputs of the player
 		Vector2 movementDirection = movementDirection = Input.GetVector("Left", "Right", "Up", "Down");
-		GD.Print(movementDirection);
+
 		// handle diagonal inputs (values get normalized so x will be ~0.7)
 		if (Math.Abs(movementDirection.X) > 0 && Math.Abs(movementDirection.X) < 1)
 		{
@@ -35,10 +63,35 @@ public partial class Canine : CharacterBody2D
 		// i'm sammyrog
 		if (lastMovementDirection == Vector2.Zero && movementDirection != Vector2.Zero)
 		{
-			Velocity = movementDirection * distance;
-			MoveAndSlide();
+			// convert position to tile positions
+			Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, tileMap);
+			
+			// identify what the canine is currently standing on
+			string currentTileType = GetTileCustomType(currentTilePosition, tileMap);
+
+			// where the canine will move
+			Vector2 newPosition = Position + movementDirection * movementDistance;
+			
+			// where the tile is that the canine will move to
+			Vector2I newTilePosition = PositionToAtlasIndex(
+				GetParent<Node2D>().ToGlobal(newPosition),
+				tileMap
+			);
+
+			// the type of tile the canine will move to
+			string newTileType = GetTileCustomType(newTilePosition, tileMap);
+
+			// don't move if the canine will move to a rock
+			if (newTileType == "Rock")
+			{
+				movementDirection = Vector2.Zero;
+			}
+			else
+			{
+				Position = newPosition;
+			}
 		}
-		
+
 		lastMovementDirection = movementDirection;
 	}
 

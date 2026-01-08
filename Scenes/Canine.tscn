@@ -23,10 +23,9 @@ radius = 18.027756
 
 [node name="Canine" type="CharacterBody2D"]
 script = ExtResource("1_eoj5r")
-distance = 2400.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-scale = Vector2(0.079, 0.079)
+scale = Vector2(0.05, 0.05)
 sprite_frames = SubResource("SpriteFrames_e0kin")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
