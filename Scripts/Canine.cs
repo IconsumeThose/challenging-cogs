@@ -32,6 +32,7 @@ public partial class Canine : CharacterBody2D
 		}
 
 		// only move if last frame there was no input so you are forced to tap every time
+		// i'm sammyrog
 		if (lastMovementDirection == Vector2.Zero && movementDirection != Vector2.Zero)
 		{
 			Velocity = movementDirection * distance;
