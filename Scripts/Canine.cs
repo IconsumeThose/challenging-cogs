@@ -6,7 +6,8 @@ public partial class Canine : CharacterBody2D
 	// the distance the canine moves every time
 	[Export] public int tileSize = 32;
 
-	[Export] public TileMapLayer tileMap;
+	[Export] public TileMapLayer obstacleLayer,
+		groundLayer;
 
 	// the direction the player moved last frame
 	private Vector2 lastMovementDirection = Vector2.Zero;
@@ -27,11 +28,15 @@ public partial class Canine : CharacterBody2D
 	}
 
 	// get the tile type at the specified position
-	public static string GetTileCustomType(Vector2I tilePos, TileMapLayer tileMap)
+	public static string GetTileCustomType(Vector2I tilePos, TileMapLayer groundLayer, TileMapLayer obstacleLayer, out string obstacleTileType)
 	{
-		TileData tileData = tileMap.GetCellTileData(tilePos);
+		TileData tileData = groundLayer.GetCellTileData(tilePos);
 
 		string tileCustomType = (string)tileData?.GetCustomData("CustomType");
+
+		tileData = obstacleLayer.GetCellTileData(tilePos);
+
+		obstacleTileType = (string)tileData?.GetCustomData("CustomType");
 
 		return tileCustomType;
 	}
@@ -64,10 +69,11 @@ public partial class Canine : CharacterBody2D
 		if (lastMovementDirection == Vector2.Zero && movementDirection != Vector2.Zero)
 		{
 			// convert position to tile positions
-			Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, tileMap);
+			Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, obstacleLayer);
 			
 			// identify what the canine is currently standing on
-			string currentTileType = GetTileCustomType(currentTilePosition, tileMap);
+			string currentGroundType = GetTileCustomType(currentTilePosition, groundLayer,
+				obstacleLayer, out string currentObstacleType);
 
 			// where the canine will move
 			Vector2 newPosition = Position + movementDirection * movementDistance;
@@ -75,20 +81,28 @@ public partial class Canine : CharacterBody2D
 			// where the tile is that the canine will move to
 			Vector2I newTilePosition = PositionToAtlasIndex(
 				GetParent<Node2D>().ToGlobal(newPosition),
-				tileMap
+				obstacleLayer
 			);
 
 			// the type of tile the canine will move to
-			string newTileType = GetTileCustomType(newTilePosition, tileMap);
+			string newGroundType = GetTileCustomType(newTilePosition, groundLayer,
+				obstacleLayer, out string newObstacleType);
 
 			// don't move if the canine will move to a rock
-			if (newTileType == "Rock")
+			if (newObstacleType == "Rock")
 			{
 				movementDirection = Vector2.Zero;
 			}
 			else
 			{
 				Position = newPosition;
+			}
+
+
+			if (currentGroundType == "Sand")
+			{
+				// make sand fall after walking off that tile
+				groundLayer.SetCell(currentTilePosition, 2);
 			}
 		}
 
