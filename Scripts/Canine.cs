@@ -96,13 +96,12 @@ public partial class Canine : CharacterBody2D
 			else
 			{
 				Position = newPosition;
-			}
 
-
-			if (currentGroundType == "Sand")
-			{
-				// make sand fall after walking off that tile
-				groundLayer.SetCell(currentTilePosition, 2);
+				if (currentGroundType == "Sand")
+				{
+					// make sand fall after walking off that tile
+					groundLayer.SetCell(currentTilePosition, 2);
+				}
 			}
 		}
 
