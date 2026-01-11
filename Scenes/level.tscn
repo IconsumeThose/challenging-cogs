@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=4 uid="uid://b4yhnm5xg6a4l"]
+[gd_scene load_steps=5 format=4 uid="uid://b4yhnm5xg6a4l"]
 
 [ext_resource type="TileSet" uid="uid://c5cjp55mjpcpt" path="res://TileSets/banana.tres" id="1_k5f4k"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Canine.tscn" id="2_k5f4k"]
+[ext_resource type="PackedScene" uid="uid://du08iso07tlon" path="res://Scenes/ui.tscn" id="3_6phgx"]
+[ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="4_81xng"]
 
 [node name="Level" type="Node2D"]
 
@@ -26,4 +28,8 @@ groundLayer = NodePath("../TileMaps/Ground")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(480, 270)
-rotation = 2.8797934
+
+[node name="GameManager" parent="." instance=ExtResource("4_81xng")]
+
+[node name="UI" parent="." node_paths=PackedStringArray("gameManager") instance=ExtResource("3_6phgx")]
+gameManager = NodePath("../GameManager")
