@@ -6,8 +6,14 @@ public partial class Canine : CharacterBody2D
 	// the distance the canine moves every time
 	[Export] public int tileSize = 32;
 
-	[Export] public TileMapLayer obstacleLayer,
+	[Export]
+	public TileMapLayer obstacleLayer,
 		groundLayer;
+
+
+	[Export] public Control winMenu,
+		pauseMenu,
+		loseMenu;
 
 	// the direction the player moved last frame
 	private Vector2 lastMovementDirection = Vector2.Zero;
@@ -43,6 +49,17 @@ public partial class Canine : CharacterBody2D
 
 	public override void _PhysicsProcess(double delta)
 	{
+		if (Input.IsActionJustPressed("Pause") && !winMenu.Visible && !loseMenu.Visible)
+		{
+			pauseMenu.Visible = !pauseMenu.Visible;
+
+			Engine.TimeScale = Math.Abs(Engine.TimeScale - 1);
+		}
+
+		// don't allow controlling character while game is paused
+		if (Engine.TimeScale == 0)
+			return;
+
 		// read the inputs of the player
 		Vector2 movementDirection = movementDirection = Input.GetVector("Left", "Right", "Up", "Down");
 
@@ -100,7 +117,18 @@ public partial class Canine : CharacterBody2D
 				if (currentGroundType == "Sand")
 				{
 					// make sand fall after walking off that tile
-					groundLayer.SetCell(currentTilePosition, 2);
+					groundLayer.SetCell(currentTilePosition, 1, new(2, 0));
+				}
+
+				if (newGroundType == "GoalOn")
+				{
+					Engine.TimeScale = 0;
+					winMenu.Visible = true;
+				}
+				else if (newGroundType == "Void")
+				{
+					Engine.TimeScale = 0;
+					loseMenu.Visible = true;
 				}
 			}
 		}
