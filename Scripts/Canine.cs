@@ -95,6 +95,11 @@ public partial class Canine : CharacterBody2D
 		if (Engine.TimeScale == 0)
 			return;
 
+		if (Input.IsActionJustPressed("Reset"))
+		{
+			GetTree().ChangeSceneToFile("res://Scenes/level.tscn");
+		}
+
 		if (isMoving)
 		{
 			Vector2 direction = (targetPosition - Position).Normalized();
