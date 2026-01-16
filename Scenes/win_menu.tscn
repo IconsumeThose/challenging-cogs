@@ -8,10 +8,14 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -92.0
+offset_top = 142.0
+offset_right = -92.0
+offset_bottom = 142.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_k38nj")
-restartButton = NodePath("VBoxContainer/RestartButton")
+restartButton = NodePath("VBoxContainer/NextLevelButton")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -33,6 +37,10 @@ text = "You Won."
 label_settings = ExtResource("2_3al15")
 horizontal_alignment = 1
 
+[node name="NextLevelButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Next level"
+
 [node name="RestartButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Restart Level"
@@ -41,5 +49,6 @@ text = "Restart Level"
 layout_mode = 2
 text = "Main Menu"
 
+[connection signal="pressed" from="VBoxContainer/NextLevelButton" to="." method="OnNextLevelClicked"]
 [connection signal="pressed" from="VBoxContainer/RestartButton" to="." method="OnRestartClicked"]
 [connection signal="pressed" from="VBoxContainer/MainMenuButton" to="." method="OnMainMenuPressed"]

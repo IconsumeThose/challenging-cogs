@@ -12,6 +12,11 @@ public partial class Menu : Control
 		Engine.TimeScale = 1;
 		GetTree().ChangeSceneToFile("res://Scenes/level.tscn");
 	}
+	public void OnNextLevelClicked()
+	{
+		Engine.TimeScale = 1;
+		GetTree().ChangeSceneToFile("res://Scenes/level2.tscn");
+	}
 	
 	public void OnCloseClicked()
 	{
