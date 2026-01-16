@@ -135,7 +135,17 @@ public partial class Canine : CharacterBody2D
 		{
 			isMoving = true;
 			targetPosition = newPosition;
-			animatedSprite.Animation = "Move";
+
+			// set animation accordingly to the current tile
+			if (currentTileData.groundTile.customType == "Conveyor")
+			{
+				animatedSprite.Animation = "Idle";
+			}
+			else
+			{
+				animatedSprite.Animation = "Move";
+			}
+
 
 			if (currentTileData.groundTile.customType == "Sand")
 			{
@@ -170,7 +180,7 @@ public partial class Canine : CharacterBody2D
 		}
 
 		// don't allow controlling character while game is paused
-		if (Engine.TimeScale == 0 || isDying)
+		if (Engine.TimeScale == 0)
 			return;
 
 		// reset the level when reset button is pressed
@@ -178,6 +188,10 @@ public partial class Canine : CharacterBody2D
 		{
 			GetTree().ChangeSceneToFile("res://Scenes/level.tscn");
 		}
+
+		// don't allow controlling character while dying but allow resetting
+		if (isDying)
+			return;
 
 		// move the canine to target position
 		if (isMoving)

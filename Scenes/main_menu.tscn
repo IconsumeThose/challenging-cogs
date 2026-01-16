@@ -1,9 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dpafps85bq7wh"]
 
 [ext_resource type="Script" uid="uid://dvtne63fb5yb0" path="res://Scripts/Menu.cs" id="1_28flt"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_28flt"]
-font_size = 57
+[ext_resource type="LabelSettings" uid="uid://d3a7cu61kq4gy" path="res://Labels/menu.tres" id="2_48xlc"]
 
 [node name="MainMenu" type="Control" node_paths=PackedStringArray("restartButton", "closeButton")]
 layout_mode = 3
@@ -33,7 +31,7 @@ grow_vertical = 2
 [node name="Title" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 text = "Challenging Cogs"
-label_settings = SubResource("LabelSettings_28flt")
+label_settings = ExtResource("2_48xlc")
 horizontal_alignment = 1
 
 [node name="Credits" type="Label" parent="VBoxContainer"]

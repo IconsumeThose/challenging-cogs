@@ -1,14 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://jy01li3fi7yw"]
+[gd_scene load_steps=3 format=3 uid="uid://jy01li3fi7yw"]
 
 [ext_resource type="Script" uid="uid://dvtne63fb5yb0" path="res://Scripts/Menu.cs" id="1_f523n"]
+[ext_resource type="LabelSettings" uid="uid://d3a7cu61kq4gy" path="res://Labels/menu.tres" id="2_iy3yv"]
 
 [node name="LoseMenu" type="Control" node_paths=PackedStringArray("restartButton", "closeButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 960.0
-offset_bottom = 540.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_f523n")
@@ -32,6 +31,7 @@ grow_vertical = 2
 [node name="Label" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 text = "Fail!"
+label_settings = ExtResource("2_iy3yv")
 horizontal_alignment = 1
 
 [node name="RestartButton" type="Button" parent="VBoxContainer"]
