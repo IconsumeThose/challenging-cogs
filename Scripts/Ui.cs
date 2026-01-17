@@ -1,6 +1,7 @@
 using Godot;
 using System;
 
+// manage the ui overlaid in the gameplay
 public partial class Ui : Control
 {
 	[Export]
@@ -24,5 +25,4 @@ public partial class Ui : Control
 	{
 		paradigmShiftCountLabel.Text = $"Paradigm Shifts Left: {newCount} / {gameManager.maxParadigmShifts}";
 	}
-
 }

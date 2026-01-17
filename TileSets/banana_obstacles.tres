@@ -1,0 +1,22 @@
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://bg2x7dajuff8p"]
+
+[ext_resource type="Texture2D" uid="uid://ewg0a22brnvg" path="res://Assets/Sprites/bananasheet.png" id="1_fr4cv"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_81xng"]
+texture = ExtResource("1_fr4cv")
+texture_region_size = Vector2i(32, 32)
+1:0/0 = 0
+1:0/0/custom_data_0 = "Rock"
+3:1/0 = 0
+3:1/0/custom_data_0 = "InforcedCogCrystal"
+4:1/0 = 0
+4:1/0/custom_data_0 = "ReinforcedCogCrystal"
+5:1/0 = 0
+5:1/0/custom_data_0 = "Cog"
+
+[resource]
+tile_size = Vector2i(32, 32)
+navigation_layer_0/layers = 1
+custom_data_layer_0/name = "CustomType"
+custom_data_layer_0/type = 4
+sources/1 = SubResource("TileSetAtlasSource_81xng")

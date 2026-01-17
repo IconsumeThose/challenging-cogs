@@ -1,14 +1,12 @@
-[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://c5cjp55mjpcpt"]
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://baliot562tha7"]
 
-[ext_resource type="Texture2D" uid="uid://ewg0a22brnvg" path="res://Assets/Sprites/bananasheet.png" id="1_50kay"]
+[ext_resource type="Texture2D" uid="uid://ewg0a22brnvg" path="res://Assets/Sprites/bananasheet.png" id="1_jwimr"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_81xng"]
-texture = ExtResource("1_50kay")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_aea71"]
+texture = ExtResource("1_jwimr")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 0:0/0/custom_data_0 = "Sand"
-1:0/0 = 0
-1:0/0/custom_data_0 = "Rock"
 2:0/0 = 0
 2:0/0/custom_data_0 = "Void"
 0:1/0 = 0
@@ -17,16 +15,11 @@ texture_region_size = Vector2i(32, 32)
 1:1/0/custom_data_0 = "GoalOff"
 2:1/0 = 0
 2:1/0/custom_data_0 = "GoalOn"
-3:1/0 = 0
-3:1/0/custom_data_0 = "CogCrystal"
-4:1/0 = 0
-4:1/0/custom_data_0 = "InforcedCogCrystal"
 4:0/0 = 0
 4:0/0/custom_data_0 = "Teleporter"
 3:0/0 = 0
 3:0/0/custom_data_0 = "Ice"
-5:0/0 = 0
-0:2/next_alternative_id = 4
+0:2/next_alternative_id = 5
 0:2/animation_columns = 4
 0:2/animation_speed = 2.0
 0:2/animation_frame_0/duration = 0.5
@@ -45,12 +38,10 @@ texture_region_size = Vector2i(32, 32)
 0:2/3/flip_v = true
 0:2/3/transpose = true
 0:2/3/custom_data_0 = "Conveyor"
-5:1/0 = 0
-5:1/0/custom_data_0 = "Cog"
 
 [resource]
 tile_size = Vector2i(32, 32)
 navigation_layer_0/layers = 1
 custom_data_layer_0/name = "CustomType"
 custom_data_layer_0/type = 4
-sources/1 = SubResource("TileSetAtlasSource_81xng")
+sources/1 = SubResource("TileSetAtlasSource_aea71")

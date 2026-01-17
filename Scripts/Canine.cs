@@ -12,7 +12,7 @@ public partial class Canine : CharacterBody2D
 	[Export] GameManager gameManager;
 
 	[Export]
-	public Control winMenu,
+	public Menu winMenu,
 		pauseMenu,
 		loseMenu;
 
@@ -22,11 +22,11 @@ public partial class Canine : CharacterBody2D
 	private List<string> blockingObstacles =
 	[
 		"Rock",
-		"CogCrystal",
-		"InforcedCogCrystal"
+		"InforcedCogCrystal",
+		"ReinforcedCogCrystal"
 	] ;
 
-	// true while the moving, false otherwise
+	// true while the canine is moving, false otherwise
 	private bool isMoving = false,
 
 	// true during death animation to prevent controlling the character
@@ -135,9 +135,10 @@ public partial class Canine : CharacterBody2D
 		{
 			animatedSprite.FlipH = true;
 		}
-
-		// don't move if the canine will move to a rock
-		if (!blockingObstacles.Contains(newTileData.obstacleTile.customType))
+	
+		// don't move if the canine will move to a blocking obstacle
+		if (!blockingObstacles.Contains(newTileData.obstacleTile.customType) 
+			&& !(currentTileData.groundTile.customType == "Conveyor" && movementDirection == -1 * currentTileData.groundTile.direction))
 		{
 			isMoving = true;
 			targetPosition = newPosition;
@@ -177,6 +178,12 @@ public partial class Canine : CharacterBody2D
 	// runs every physics frame
 	public override void _PhysicsProcess(double delta)
 	{
+		// for debugging allow skipping a level with the = key
+		if (Input.IsActionJustPressed("SkipLevel"))
+		{
+			winMenu.OnNextLevelClicked();
+		}
+
 		// toggle pause menu only if no other menu is visible
 		if (Input.IsActionJustPressed("Pause") && !winMenu.Visible && !loseMenu.Visible)
 		{
@@ -192,7 +199,7 @@ public partial class Canine : CharacterBody2D
 		// reset the level when reset button is pressed
 		if (Input.IsActionJustPressed("Reset"))
 		{
-			GetTree().ChangeSceneToFile("res://Scenes/level.tscn");
+			winMenu.OnRestartClicked();
 		}
 
 		// don't allow controlling character while dying but allow resetting
@@ -286,7 +293,7 @@ public partial class Canine : CharacterBody2D
 
 			Move(newPosition);
 		}
-		// don't allow paradigm shifting if none are remainging
+		// don't allow paradigm shifting if none are remaining
 		else if (Input.IsActionJustPressed("ParadigmShift") && gameManager.paradigmShiftsRemaining > 0)
 		{
 			// game manager updates the remaining count
@@ -313,23 +320,23 @@ public partial class Canine : CharacterBody2D
 				currentTilePosition + Vector2I.Right + Vector2I.Up		
 			];
 
-			// replace both CogCrystals and InforcedCogCrystals with a cog for adjacent tiles
+			// replace both InforcedCogCrystals and ReinforcedCogCrystals with a cog for adjacent tiles
 			foreach (Vector2I adjacentCoordinate in adjacentCoordinates)
 			{
 				CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(adjacentCoordinate));
 
-				if (obstacleData.customType == "CogCrystal" || obstacleData.customType == "InforcedCogCrystal")
+				if (obstacleData.customType == "InforcedCogCrystal" || obstacleData.customType == "ReinforcedCogCrystal")
 				{
 					gameManager.obstacleLayer.SetCell(adjacentCoordinate, 1, new(5, 1));
 				}
 			}
 			
-			// replace only normal CogCrystals with a cog for diagonal tiles
+			// replace only normal InforcedCogCrystals with a cog for diagonal tiles
 			foreach (Vector2I diagonalCoordinate in diagonalCoordinates)
 			{
 				CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(diagonalCoordinate));
 
-				if (obstacleData.customType == "CogCrystal")
+				if (obstacleData.customType == "InforcedCogCrystal")
 				{
 					gameManager.obstacleLayer.SetCell(diagonalCoordinate, 1, new(5, 1));
 				}
