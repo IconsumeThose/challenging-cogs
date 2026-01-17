@@ -17,7 +17,7 @@ public partial class Ui : Control
 
 	public void UpdateCogCountLabel(int newCount)
 	{
-		cogCountLabel.Text = $"Cogs Challenged: {newCount} / {gameManager.totalNumberOfCogs}";
+		cogCountLabel.Text = $"Cogs Challenged: {newCount} / {gameManager.TotalNumberOfCogs}";
 	}
 
 	public void UpdateParadigmShiftCountLabel(int newCount)

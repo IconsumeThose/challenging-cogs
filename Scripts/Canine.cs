@@ -1,4 +1,5 @@
 using Godot;
+using System.Collections.Generic;
 using System;
 
 public partial class Canine : CharacterBody2D
@@ -8,9 +9,7 @@ public partial class Canine : CharacterBody2D
 
 	[Export] public float movementSpeed = 150;
 
-	[Export]
-	public TileMapLayer obstacleLayer,
-		groundLayer;
+	[Export] GameManager gameManager;
 
 	[Export]
 	public Control winMenu,
@@ -19,6 +18,13 @@ public partial class Canine : CharacterBody2D
 
 	[Export] public AnimatedSprite2D animatedSprite;
 	[Export] public AnimationPlayer animationPlayer;
+
+	private List<string> blockingObstacles =
+	[
+		"Rock",
+		"CogCrystal",
+		"InforcedCogCrystal"
+	] ;
 
 	// true while the moving, false otherwise
 	private bool isMoving = false,
@@ -102,21 +108,21 @@ public partial class Canine : CharacterBody2D
 	private void Move(Vector2 newPosition)
 	{
 		// convert position to tile positions
-		Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, obstacleLayer);
+		Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, gameManager.obstacleLayer);
 
 		// identify what the canine is currently standing on
-		LayeredCustomTileData currentTileData = GetTileCustomType(currentTilePosition, groundLayer,
-				obstacleLayer);
+		LayeredCustomTileData currentTileData = GetTileCustomType(currentTilePosition, gameManager.groundLayer,
+				gameManager.obstacleLayer);
 
 		// where the tile is that the canine will move to
 		Vector2I newTilePosition = PositionToAtlasIndex(
 			GetParent<Node2D>().ToGlobal(newPosition),
-			obstacleLayer
+			gameManager.obstacleLayer
 		);
 
 		// the type of tile the canine will move to
-		LayeredCustomTileData newTileData = GetTileCustomType(newTilePosition, groundLayer,
-			obstacleLayer);
+		LayeredCustomTileData newTileData = GetTileCustomType(newTilePosition, gameManager.groundLayer,
+			gameManager.obstacleLayer);
 
 		Vector2 movementDirection = (newPosition - Position).Normalized();
 
@@ -131,7 +137,7 @@ public partial class Canine : CharacterBody2D
 		}
 
 		// don't move if the canine will move to a rock
-		if (!(newTileData.obstacleTile.customType == "Rock"))
+		if (!blockingObstacles.Contains(newTileData.obstacleTile.customType))
 		{
 			isMoving = true;
 			targetPosition = newPosition;
@@ -150,7 +156,7 @@ public partial class Canine : CharacterBody2D
 			if (currentTileData.groundTile.customType == "Sand")
 			{
 				// make sand fall after walking off that tile
-				groundLayer.SetCell(currentTilePosition, 1, new(2, 0));
+				gameManager.groundLayer.SetCell(currentTilePosition, 1, new(2, 0));
 			}
 		}
 	}
@@ -215,12 +221,12 @@ public partial class Canine : CharacterBody2D
 				// where the tile is that the canine will move to
 				Vector2I newTilePosition = PositionToAtlasIndex(
 					GetParent<Node2D>().ToGlobal(Position),
-					obstacleLayer
+					gameManager.obstacleLayer
 				);
 
 				// the type of tile the canine will move to
-				LayeredCustomTileData newTileData = GetTileCustomType(newTilePosition, groundLayer,
-					obstacleLayer);
+				LayeredCustomTileData newTileData = GetTileCustomType(newTilePosition, gameManager.groundLayer,
+					gameManager.obstacleLayer);
 
 				if (newTileData.groundTile.customType == "GoalOn")
 				{
@@ -241,6 +247,11 @@ public partial class Canine : CharacterBody2D
 				{
 					Vector2 newPosition = Position + newTileData.groundTile.direction * movementDistance;
 					Move(newPosition);
+				}
+				else if (newTileData.obstacleTile.customType == "Cog")
+				{
+					gameManager.CogChallenged();
+					gameManager.obstacleLayer.SetCell(newTilePosition);
 				}
 			}
 			return;
@@ -274,6 +285,55 @@ public partial class Canine : CharacterBody2D
 			Vector2 newPosition = Position + inputDirection * movementDistance;
 
 			Move(newPosition);
+		}
+		// don't allow paradigm shifting if none are remainging
+		else if (Input.IsActionJustPressed("ParadigmShift") && gameManager.paradigmShiftsRemaining > 0)
+		{
+			// game manager updates the remaining count
+			gameManager.ParadigmShifted();
+
+			// convert position to tile positions
+			Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, gameManager.obstacleLayer);
+
+			// get all adjacent tile coordinates
+			List<Vector2I> adjacentCoordinates =
+			[
+				currentTilePosition + Vector2I.Left,
+				currentTilePosition + Vector2I.Right,
+				currentTilePosition + Vector2I.Down,
+				currentTilePosition + Vector2I.Up	
+			];
+
+			// get all diagonal tile coordinates
+			List<Vector2I> diagonalCoordinates =
+			[
+				currentTilePosition + Vector2I.Left + Vector2I.Down,
+				currentTilePosition + Vector2I.Right + Vector2I.Down,
+				currentTilePosition + Vector2I.Left + Vector2I.Up,
+				currentTilePosition + Vector2I.Right + Vector2I.Up		
+			];
+
+			// replace both CogCrystals and InforcedCogCrystals with a cog for adjacent tiles
+			foreach (Vector2I adjacentCoordinate in adjacentCoordinates)
+			{
+				CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(adjacentCoordinate));
+
+				if (obstacleData.customType == "CogCrystal" || obstacleData.customType == "InforcedCogCrystal")
+				{
+					gameManager.obstacleLayer.SetCell(adjacentCoordinate, 1, new(5, 1));
+				}
+			}
+			
+			// replace only normal CogCrystals with a cog for diagonal tiles
+			foreach (Vector2I diagonalCoordinate in diagonalCoordinates)
+			{
+				CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(diagonalCoordinate));
+
+				if (obstacleData.customType == "CogCrystal")
+				{
+					gameManager.obstacleLayer.SetCell(diagonalCoordinate, 1, new(5, 1));
+				}
+			}
 		}
 	}
 }
