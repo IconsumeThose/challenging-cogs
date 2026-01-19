@@ -1,7 +1,7 @@
 [gd_scene load_steps=15 format=3 uid="uid://2jx57nk5tsbj"]
 
 [ext_resource type="Script" uid="uid://ddif0qkv78ffm" path="res://Scripts/Canine.cs" id="1_eoj5r"]
-[ext_resource type="PackedScene" uid="uid://ewiwb3dxscp2" path="res://Scenes/falling_sand.tscn" id="2_e0kin"]
+[ext_resource type="PackedScene" uid="uid://ewiwb3dxscp2" path="res://Scenes/falling_sand_banana.tscn" id="2_e0kin"]
 [ext_resource type="Texture2D" uid="uid://dok1fu6yin71i" path="res://Assets/Sprites/cogitosheet.png" id="2_eoj5r"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e0kin"]
