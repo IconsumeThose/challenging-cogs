@@ -6,7 +6,8 @@ public partial class Ui : Control
 {
 	[Export]
 	public Label cogCountLabel,
-		paradigmShiftCountLabel;
+		paradigmShiftCountLabel,
+		levelInfoLabel;
 
 	[Export] public GameManager gameManager;
 
@@ -14,6 +15,9 @@ public partial class Ui : Control
 	{
 		UpdateCogCountLabel(0);
 		UpdateParadigmShiftCountLabel(gameManager.maxParadigmShifts);
+
+		gameManager.CalculateCurrentWorldAndLevel();
+		levelInfoLabel.Text = $"World: {GameManager.currentWorld} | Level: {GameManager.currentLevel}";
 	}
 
 	public void UpdateCogCountLabel(int newCount)
