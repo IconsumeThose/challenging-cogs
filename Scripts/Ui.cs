@@ -19,7 +19,7 @@ public partial class Ui : Control
 		gameManager.CalculateCurrentWorldAndLevel();
 		levelInfoLabel.Text = $"World: {GameManager.currentWorld} | Level: {GameManager.currentLevel}";
 	}
-
+	// useless line
 	public void UpdateCogCountLabel(int newCount)
 	{
 		cogCountLabel.Text = $"Cogs Challenged: {newCount} / {gameManager.TotalNumberOfCogs}";
