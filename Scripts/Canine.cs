@@ -9,6 +9,8 @@ public partial class Canine : CharacterBody2D
 
 	[Export] public float movementSpeed = 150;
 
+	[Export] public bool holdToMove = true;
+
 	[Export] GameManager gameManager;
 
 	[Export]
@@ -19,12 +21,16 @@ public partial class Canine : CharacterBody2D
 	[Export] public AnimatedSprite2D animatedSprite;
 	[Export] public AnimationPlayer animationPlayer;
 
+	[Export] public PackedScene fallingSandScene;
+
 	private readonly List<string> blockingObstacles =
 	[
 		"Rock",
-		"InforcedCogCrystal",
+		"CogCrystal",
 		"ReinforcedCogCrystal"
 	] ;
+
+	private Vector2 bufferedInput = Vector2.Zero;
 
 	// true while the canine is moving, false otherwise
 	private bool isMoving = false,
@@ -116,6 +122,9 @@ public partial class Canine : CharacterBody2D
 
 	private void Move(Vector2 newPosition)
 	{
+		// reset buffered input value
+		bufferedInput = Vector2.Zero;
+
 		// convert position to tile positions
 		Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, gameManager.obstacleLayer);
 
@@ -171,6 +180,11 @@ public partial class Canine : CharacterBody2D
 			{
 				// make sand fall after walking off that tile
 				gameManager.groundLayer.SetCell(currentTilePosition, 1, new(2, 0));
+
+				Node2D fallingSand = fallingSandScene.Instantiate<Node2D>();
+				GetParent().AddChild(fallingSand);
+				fallingSand.Position = targetPosition - movementDirection * tileSize;
+				fallingSand.GetNode<AnimationPlayer>("AnimationPlayer").Play("Fall");
 			}
 		}
 	}
@@ -186,6 +200,32 @@ public partial class Canine : CharacterBody2D
 	{
 		Engine.TimeScale = 0;
 		loseMenu.Visible = true;
+	}
+
+	public Vector2 GetInputDirection()
+	{
+		// read the inputs of the player
+		Vector2 inputDirection = Input.GetVector("Left", "Right", "Up", "Down");
+
+		// handle diagonal inputs (values get normalized so x will be ~0.7)
+		if (Math.Abs(inputDirection.X) > 0 && Math.Abs(inputDirection.X) < 1)
+		{
+			// randomly select which input to use, if 1 is generated, select horizontal, otherwise select the vertical
+			bool horizontal = GD.RandRange(0, 1) == 1;
+
+			if (horizontal)
+			{
+				// keep the direction of the x component but make its magnitude 1
+				inputDirection = new(inputDirection.X / Math.Abs(inputDirection.X), 0);
+			}
+			else
+			{
+				// keep the direction of the y component but make its magnitude 1
+				inputDirection = new(0, inputDirection.Y / Math.Abs(inputDirection.X));
+			}
+		}
+
+		return inputDirection;
 	}
 
 	// runs every physics frame
@@ -228,6 +268,12 @@ public partial class Canine : CharacterBody2D
 		// move the canine to target position
 		if (isMoving)
 		{
+			if (Input.IsActionJustPressed("Left") || Input.IsActionJustPressed("Right") 
+				|| Input.IsActionJustPressed("Up") || Input.IsActionJustPressed("Down"))
+			{
+				bufferedInput = GetInputDirection();
+			}
+
 			Vector2 movementDirection = (targetPosition - Position).Normalized();
 
 			Velocity = movementDirection * movementSpeed;
@@ -291,32 +337,21 @@ public partial class Canine : CharacterBody2D
 			}
 		}
 
-		// read the inputs of the player
-		Vector2 inputDirection = Input.GetVector("Left", "Right", "Up", "Down");
-
-		// handle diagonal inputs (values get normalized so x will be ~0.7)
-		if (Math.Abs(inputDirection.X) > 0 && Math.Abs(inputDirection.X) < 1)
-		{
-			// randomly select which input to use, if 1 is generated, select horizontal, otherwise select the vertical
-			bool horizontal = GD.RandRange(0, 1) == 1;
-
-			if (horizontal)
-			{
-				// keep the direction of the x component but make its magnitude 1
-				inputDirection = new(inputDirection.X / Math.Abs(inputDirection.X), 0);
-			}
-			else
-			{
-				// keep the direction of the y component but make its magnitude 1
-				inputDirection = new(0, inputDirection.Y / Math.Abs(inputDirection.X));
-			}
-		}
+		Vector2 inputDirection = GetInputDirection();
 
 		// i'm sammyrog
-		if (inputDirection != Vector2.Zero)
+		if (inputDirection != Vector2.Zero && (holdToMove || (!holdToMove && (Input.IsActionJustPressed("Left") 
+			|| Input.IsActionJustPressed("Right") || Input.IsActionJustPressed("Up") || Input.IsActionJustPressed("Down")))))
 		{
 			// where the canine will move
 			Vector2 newPosition = Position + inputDirection * movementDistance;
+
+			Move(newPosition);
+		}
+		else if (bufferedInput != Vector2.Zero)
+		{
+			// where the canine will move
+			Vector2 newPosition = Position + bufferedInput * movementDistance;
 
 			Move(newPosition);
 		}
@@ -347,25 +382,37 @@ public partial class Canine : CharacterBody2D
 				currentTilePosition + Vector2I.Right + Vector2I.Up		
 			];
 
-			// replace both InforcedCogCrystals and ReinforcedCogCrystals with a cog for adjacent tiles
+			// replace both CogCrystals and ReinforcedCogCrystals with a cog for adjacent tiles
 			foreach (Vector2I adjacentCoordinate in adjacentCoordinates)
 			{
 				CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(adjacentCoordinate));
 
-				if (obstacleData.customType == "InforcedCogCrystal" || obstacleData.customType == "ReinforcedCogCrystal")
+				if (obstacleData.customType == "CogCrystal" || obstacleData.customType == "ReinforcedCogCrystal")
 				{
 					gameManager.obstacleLayer.SetCell(adjacentCoordinate, 1, new(5, 1));
 				}
 			}
 			
-			// replace only normal InforcedCogCrystals with a cog for diagonal tiles
+			// replace only normal CogCrystals with a cog for diagonal tiles
 			foreach (Vector2I diagonalCoordinate in diagonalCoordinates)
 			{
 				CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(diagonalCoordinate));
 
-				if (obstacleData.customType == "InforcedCogCrystal")
+				if (obstacleData.customType == "CogCrystal")
 				{
 					gameManager.obstacleLayer.SetCell(diagonalCoordinate, 1, new(5, 1));
+				}
+			}
+
+			// check if any unshifted crystals remain and when out of shifts and if so, show fail menu
+			if (gameManager.paradigmShiftsRemaining == 0)
+			{
+				var reinforcedCogCrystals = gameManager.obstacleLayer.GetUsedCellsById(1, new(4, 1));
+				var cogCrystals = gameManager.obstacleLayer.GetUsedCellsById(1, new(3, 1));
+
+				if (reinforcedCogCrystals.Count + cogCrystals.Count > 0)
+				{
+					Lose();
 				}
 			}
 		}
