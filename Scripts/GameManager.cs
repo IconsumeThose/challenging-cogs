@@ -3,6 +3,7 @@ using System;
 
 public partial class GameManager : Node2D
 {
+	public static int currentWorld = 1;
 	public static int currentLevel = 1;
 	
 	[Export]
