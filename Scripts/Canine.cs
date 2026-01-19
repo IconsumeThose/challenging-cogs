@@ -19,7 +19,7 @@ public partial class Canine : CharacterBody2D
 	[Export] public AnimatedSprite2D animatedSprite;
 	[Export] public AnimationPlayer animationPlayer;
 
-	private List<string> blockingObstacles =
+	private readonly List<string> blockingObstacles =
 	[
 		"Rock",
 		"InforcedCogCrystal",
@@ -63,6 +63,15 @@ public partial class Canine : CharacterBody2D
 	{
 		public CustomTileData groundTile = groundTile,
 			obstacleTile = obstacleTile;
+	}
+
+	// only set the animation if its different to possibly avoid resetting the animation
+	public void SetSpriteAnimation(string animationName)
+	{
+		if (animatedSprite.Animation != animationName)
+		{
+			animatedSprite.Animation = animationName;
+		}
 	}
 
 	// get the direction the tile is facing (from alternate tiles)
@@ -138,7 +147,8 @@ public partial class Canine : CharacterBody2D
 	
 		// don't move if the canine will move to a blocking obstacle
 		if (!blockingObstacles.Contains(newTileData.obstacleTile.customType) 
-			&& !(currentTileData.groundTile.customType == "Conveyor" && movementDirection == -1 * currentTileData.groundTile.direction))
+			&& !(currentTileData.groundTile.customType == "Conveyor" && movementDirection == -1 * currentTileData.groundTile.direction)
+			&& newTileData.groundTile.customType != null)
 		{
 			isMoving = true;
 			targetPosition = newPosition;
@@ -146,13 +156,16 @@ public partial class Canine : CharacterBody2D
 			// set animation accordingly to the current tile
 			if (currentTileData.groundTile.customType == "Conveyor")
 			{
-				animatedSprite.Animation = "Idle";
+				SetSpriteAnimation("Idle");
+			}
+			else if (currentTileData.groundTile.customType == "Ice")
+			{
+				SetSpriteAnimation("Slide");
 			}
 			else
 			{
-				animatedSprite.Animation = "Move";
+				SetSpriteAnimation("Move");
 			}
-
 
 			if (currentTileData.groundTile.customType == "Sand")
 			{
@@ -182,6 +195,12 @@ public partial class Canine : CharacterBody2D
 		if (Input.IsActionJustPressed("SkipLevel"))
 		{
 			winMenu.OnNextLevelClicked();
+		}
+
+		// for debugging allow skipping a world with the - key
+		if (Input.IsActionJustPressed("SkipWorld"))
+		{
+			winMenu.OnNextWorldClicked();
 		}
 
 		// toggle pause menu only if no other menu is visible
@@ -215,15 +234,20 @@ public partial class Canine : CharacterBody2D
 
 			MoveAndSlide();
 
+			// skip checking movement inputs if canine is too far from target destination
+			if ((Position - targetPosition).Length() >= 1)
+			{
+				return;
+			}
 			// stop moving when close enough to target position
-			if ((Position - targetPosition).Length() < 1)
+			else
 			{
 				// set position exactly to target
 				Position = targetPosition;
 				isMoving = false;
 
 				// set animation to idle
-				animatedSprite.Animation = "Idle";
+				SetSpriteAnimation("Idle");
 				
 				// where the tile is that the canine will move to
 				Vector2I newTilePosition = PositionToAtlasIndex(
@@ -261,7 +285,6 @@ public partial class Canine : CharacterBody2D
 					gameManager.obstacleLayer.SetCell(newTilePosition);
 				}
 			}
-			return;
 		}
 
 		// read the inputs of the player
