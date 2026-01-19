@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=4 uid="uid://cylpqe8tukplu"]
 
-[ext_resource type="TileSet" uid="uid://baliot562tha7" path="res://TileSets/banana_ground.tres" id="1_qqss0"]
-[ext_resource type="TileSet" uid="uid://bg2x7dajuff8p" path="res://TileSets/banana_obstacles.tres" id="2_i4xld"]
+[ext_resource type="TileSet" uid="uid://dwh2tr6x3yg4e" path="res://TileSets/mechanical_ground.tres" id="1_qqss0"]
+[ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_i4xld"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Canine.tscn" id="3_i13tx"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="4_hrj4j"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="5_10dqx"]
@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://dj8vu6t4xi3je" path="res://Scenes/pause_menu.tscn" id="7_lq4qt"]
 [ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="8_ghxl5"]
 
-[node name="Level" type="Node2D"]
+[node name="Level2" type="Node2D"]
 
 [node name="ScalingParent" type="Node2D" parent="."]
 scale = Vector2(3, 3)
