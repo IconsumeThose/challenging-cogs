@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dokcv4psexiyx" path="res://Scripts/Ui.cs" id="1_jxero"]
 [ext_resource type="LabelSettings" uid="uid://6jq228wrs6k" path="res://Labels/ui.tres" id="2_qdvrb"]
 
-[node name="UI" type="Control" node_paths=PackedStringArray("cogCountLabel", "paradigmShiftCountLabel")]
+[node name="UI" type="Control" node_paths=PackedStringArray("cogCountLabel", "paradigmShiftCountLabel", "levelInfoLabel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -16,6 +16,7 @@ size_flags_vertical = 3
 script = ExtResource("1_jxero")
 cogCountLabel = NodePath("CogCount")
 paradigmShiftCountLabel = NodePath("ParadigmCount")
+levelInfoLabel = NodePath("LevelInfo")
 
 [node name="CogCount" type="Label" parent="."]
 layout_mode = 0
@@ -34,3 +35,16 @@ offset_bottom = 23.0
 grow_horizontal = 0
 text = "Paradigm Shifts Left: x/x"
 label_settings = ExtResource("2_qdvrb")
+
+[node name="LevelInfo" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -188.0
+offset_right = 188.0
+offset_bottom = 45.0
+grow_horizontal = 2
+text = "World: x | Level: x"
+label_settings = ExtResource("2_qdvrb")
+horizontal_alignment = 1

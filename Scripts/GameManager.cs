@@ -42,8 +42,7 @@ public partial class GameManager : Node2D
 
 	private Vector2I goalCoordinates;
 
-	// initialize the game manager
-	public override void _Ready()
+	public void CalculateCurrentWorldAndLevel()
 	{
 		string scenePath = GetTree().CurrentScene.SceneFilePath;
 
@@ -56,11 +55,15 @@ public partial class GameManager : Node2D
 
 		// get the current level for testing when launching scene directly from godot editor (f6)
 		currentLevel = scenePath.Substring(31 + worldNumberDigits, levelNumberDigits).ToInt();
-
-		GD.Print("world " + currentWorld + " level " + currentLevel);
 		
 		// set shifts remaining to the max that was set
 		paradigmShiftsRemaining = maxParadigmShifts;
+	}
+
+	// initialize the game manager
+	public override void _Ready()
+	{
+		CalculateCurrentWorldAndLevel();
 
 		// find all goals
 		var offGoals = groundLayer.GetUsedCellsById(1, new(1, 1));
