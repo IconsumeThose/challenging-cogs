@@ -4,7 +4,7 @@ using System;
 
 public partial class Canine : CharacterBody2D
 {
-	// the distance the canine moves every time
+	// the distance the canine moves every time   
 	[Export] public int tileSize = 32;
 
 	[Export] public float movementSpeed = 150;
