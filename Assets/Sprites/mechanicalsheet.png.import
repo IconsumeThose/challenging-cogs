@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djhmxiw5sfus"
-path="res://.godot/imported/rocksheet.png-5ad63c3c2b7c3f57d3e20fc5c99c8218.ctex"
+uid="uid://d3de5buokgttn"
+path="res://.godot/imported/mechanicalsheet.png-0d39452fbf0173ba72ce719eba67b689.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Sprites/rocksheet.png"
-dest_files=["res://.godot/imported/rocksheet.png-5ad63c3c2b7c3f57d3e20fc5c99c8218.ctex"]
+source_file="res://Assets/Sprites/mechanicalsheet.png"
+dest_files=["res://.godot/imported/mechanicalsheet.png-0d39452fbf0173ba72ce719eba67b689.ctex"]
 
 [params]
 
