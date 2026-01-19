@@ -263,21 +263,25 @@ public partial class Canine : CharacterBody2D
 				{
 					Engine.TimeScale = 0;
 					winMenu.Visible = true;
+					return;
 				}
 				else if (newTileData.groundTile.customType == "Void")
 				{
 					isDying = true;
 					animationPlayer.Play("Fall");
+					return;
 				}
 				else if (newTileData.groundTile.customType == "Ice")
 				{
 					Vector2 newPosition = Position + movementDirection * movementDistance;
 					Move(newPosition);
+					return;
 				}
 				else if (newTileData.groundTile.customType == "Conveyor")
 				{
 					Vector2 newPosition = Position + newTileData.groundTile.direction * movementDistance;
 					Move(newPosition);
+					return;
 				}
 				else if (newTileData.obstacleTile.customType == "Cog")
 				{
