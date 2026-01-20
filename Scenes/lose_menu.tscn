@@ -34,6 +34,10 @@ text = "Fail!"
 label_settings = ExtResource("2_iy3yv")
 horizontal_alignment = 1
 
+[node name="UndoButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Undo"
+
 [node name="RestartButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Restart Level"
@@ -46,6 +50,7 @@ text = "Main Menu"
 layout_mode = 2
 text = "Rage Quit"
 
+[connection signal="pressed" from="VBoxContainer/UndoButton" to="." method="OnUndoClicked"]
 [connection signal="pressed" from="VBoxContainer/RestartButton" to="." method="OnRestartClicked"]
 [connection signal="pressed" from="VBoxContainer/MainMenuButton" to="." method="OnMainMenuPressed"]
 [connection signal="pressed" from="VBoxContainer/CloseButton" to="." method="OnCloseClicked"]

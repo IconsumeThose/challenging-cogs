@@ -299,7 +299,16 @@ public partial class Cogito : CharacterBody2D
 
 		// don't allow controlling character while dying but allow resetting
 		if (isDying)
-			return;
+		{
+			if (Input.IsActionJustPressed("Undo") && previousMoves.Count > 0)
+			{
+				Rebirth();
+			}
+			else
+			{
+				return;
+			}
+		}
 
 		// move cogito to target position
 		if (isMoving)
@@ -530,50 +539,62 @@ public partial class Cogito : CharacterBody2D
 		}
 		else if (Input.IsActionJustPressed("Undo") && previousMoves.Count > 0)
 		{
-			// get the latest move's data
-			PreviousMove previousMove = previousMoves.Pop();
+			Undo();
+		}
+	}
 
-			// move the canine to the previous position
-			if (previousMove.movementDirection != null)
-				Position -= (Vector2)previousMove.movementDirection * movementDistance;
+	public void Rebirth()
+	{
+		isDying = false;
+		animationPlayer.Play("RESET");
+		Undo();
+	}
 
-			// replace the piece of sand that may have fallen
-			if (previousMove.fallenSandPosition != null)
-				gameManager.groundLayer.SetCell((Vector2I)previousMove.fallenSandPosition, 1, new(0, 0));
+	public void Undo()
+	{
+		// get the latest move's data
+		PreviousMove previousMove = previousMoves.Pop();
 
-			// replace any challenged cogs
-			if (previousMove.challengedCogCoordinates != null)
+		// move the canine to the previous position
+		if (previousMove.movementDirection != null)
+			Position -= (Vector2)previousMove.movementDirection * movementDistance;
+
+		// replace the piece of sand that may have fallen
+		if (previousMove.fallenSandPosition != null)
+			gameManager.groundLayer.SetCell((Vector2I)previousMove.fallenSandPosition, 1, new(0, 0));
+
+		// replace any challenged cogs
+		if (previousMove.challengedCogCoordinates != null)
+		{
+			foreach (Vector2I challengedCogPosition in previousMove.challengedCogCoordinates)
 			{
-				foreach (Vector2I challengedCogPosition in previousMove.challengedCogCoordinates)
+				gameManager.obstacleLayer.SetCell(challengedCogPosition, 1, new(5, 1));
+
+				// turn the goal back off if it was on		
+				if (gameManager.cogsChallenged == gameManager.TotalNumberOfCogs)
 				{
-					gameManager.obstacleLayer.SetCell(challengedCogPosition, 1, new(5, 1));
+					gameManager.groundLayer.SetCell(gameManager.goalCoordinates, 1, new(1, 1));
+				}
 
-					// turn the goal back off if it was on		
-					if (gameManager.cogsChallenged == gameManager.TotalNumberOfCogs)
-					{
-						gameManager.groundLayer.SetCell(gameManager.goalCoordinates, 1, new(1, 1));	
-					}
+				// adjust counter
+				gameManager.CogChallenged(-1);
+			}
+		}
 
-					// adjust counter
-					gameManager.CogChallenged(-1);
-				}				
+		// un-shift crystals 
+		if (previousMove.usedParadigmShift)
+		{
+			// adjust counter
+			gameManager.ParadigmShifted(-1);
+
+			foreach (Vector2I cogCrystalPosition in previousMove.shiftedCogCrystals)
+			{
+				gameManager.obstacleLayer.SetCell(cogCrystalPosition, 1, new(3, 1));
 			}
 
-			// un-shift crystals 
-			if (previousMove.usedParadigmShift)
+			foreach (Vector2I cogReinforcedCrystalPosition in previousMove.shiftedReinforcedCogCrystals)
 			{
-				// adjust counter
-				gameManager.ParadigmShifted(-1);
-				
-				foreach (Vector2I cogCrystalPosition in previousMove.shiftedCogCrystals)
-				{
-					gameManager.obstacleLayer.SetCell(cogCrystalPosition, 1, new(3, 1));
-				}
-				
-				foreach (Vector2I cogReinforcedCrystalPosition in previousMove.shiftedReinforcedCogCrystals)
-				{
-					gameManager.obstacleLayer.SetCell(cogReinforcedCrystalPosition, 1, new(4, 1));
-				}
+				gameManager.obstacleLayer.SetCell(cogReinforcedCrystalPosition, 1, new(4, 1));
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 
 [ext_resource type="TileSet" uid="uid://baliot562tha7" path="res://TileSets/banana_ground.tres" id="1_08vl7"]
 [ext_resource type="TileSet" uid="uid://bg2x7dajuff8p" path="res://TileSets/banana_obstacles.tres" id="2_pt0sv"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Canine.tscn" id="3_t788b"]
+[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_t788b"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="4_f11tu"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="5_ykvih"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="6_rp22a"]

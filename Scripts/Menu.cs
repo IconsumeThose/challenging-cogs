@@ -3,10 +3,6 @@ using System;
 
 public partial class Menu : Control
 {
-	[Export]
-	public Button restartButton,
-		closeButton;
-
 	// restart the level
 	public void OnRestartClicked()
 	{
@@ -57,6 +53,14 @@ public partial class Menu : Control
 	{
 		Visible = false;
 		Engine.TimeScale = 1;
+	}
+
+	public void OnUndoClicked()
+	{
+		Engine.TimeScale = 1;
+		Visible = false;
+		Cogito cogito = GetParent().FindChild("ScalingParent").FindChild("Cogito") as Cogito;	
+		cogito.Rebirth();
 	}
 
 	// take you back to the main menu

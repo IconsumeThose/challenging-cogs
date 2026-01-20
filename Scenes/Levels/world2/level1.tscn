@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=4 uid="uid://b4yhnm5xg6a4l"]
 
 [ext_resource type="TileSet" uid="uid://dwh2tr6x3yg4e" path="res://TileSets/mechanical_ground.tres" id="1_xeygf"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Canine.tscn" id="2_i36j2"]
+[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="2_i36j2"]
 [ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_xeygf"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="3_hkfpk"]
 [ext_resource type="PackedScene" uid="uid://c0w7gpuy6o8qj" path="res://Scenes/falling_sand_mechanical.tscn" id="4_6yk56"]
@@ -25,7 +25,7 @@ tile_set = ExtResource("1_xeygf")
 tile_map_data = PackedByteArray("AAAEAAgAAQABAAAAAAAHAAQAAQABAAAAAAAOAAcAAQABAAAAAAALAAkAAQABAAAAAAAMAAkAAQABAAAAAAANAAMAAQABAAAAAAAGAAEAAQABAAAAAAAIAAcAAQAFAAEAAAAFAAkAAQADAAEAAAAGAAkAAQAEAAEAAAABAAIAAQAEAAEAAAACAAEAAQAEAAEAAAABAAAAAQAEAAEAAAAAAAEAAQAEAAEAAAAAAAIAAQADAAEAAAACAAIAAQADAAEAAAACAAAAAQADAAEAAAAAAAAAAQADAAEAAAA=")
 tile_set = ExtResource("2_xeygf")
 
-[node name="Canine" parent="ScalingParent" node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("2_i36j2")]
+[node name="Cogito" parent="ScalingParent" node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("2_i36j2")]
 position = Vector2(48, 48)
 gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")

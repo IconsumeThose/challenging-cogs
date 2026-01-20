@@ -2,7 +2,7 @@
 
 [ext_resource type="TileSet" uid="uid://baliot562tha7" path="res://TileSets/banana_ground.tres" id="1_n6gal"]
 [ext_resource type="TileSet" uid="uid://bg2x7dajuff8p" path="res://TileSets/banana_obstacles.tres" id="2_0hp0w"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Canine.tscn" id="3_b28h8"]
+[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_b28h8"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="4_mrgfn"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="5_ob3ge"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="6_624g2"]
@@ -24,7 +24,7 @@ tile_set = ExtResource("1_n6gal")
 tile_map_data = PackedByteArray("AAAKAAQAAQADAAEAAAALAAUAAQADAAEAAAALAAMAAQAEAAEAAAAMAAYAAQADAAEAAAALAAcAAQAEAAEAAAAGAAcAAQAEAAEAAAAFAAYAAQAEAAEAAAAHAAYAAQAEAAEAAAAGAAUAAQAEAAEAAAAFAAcAAQADAAEAAAAHAAcAAQADAAEAAAAHAAUAAQADAAEAAAAFAAUAAQADAAEAAAADAAMAAQAEAAEAAAACAAQAAQAEAAEAAAAEAAMAAQADAAEAAAACAAUAAQADAAEAAAAHAAgAAQABAAAAAAAIAAgAAQABAAAAAAAOAAIAAQABAAAAAAAOAAMAAQABAAAAAAAOAAQAAQABAAAAAAAOAAcAAQABAAAAAAAOAAgAAQABAAAAAAAOAAkAAQABAAAAAAAKAAcAAQADAAEAAAAPAAcAAQAEAAEAAAAEAAcAAQABAAAAAAAEAAYAAQABAAAAAAANAAIAAQABAAAAAAAMAAIAAQABAAAAAAA=")
 tile_set = ExtResource("2_0hp0w")
 
-[node name="Canine" parent="ScalingParent" node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_b28h8")]
+[node name="Cogito" parent="ScalingParent" node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_b28h8")]
 position = Vector2(208, 208)
 gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
