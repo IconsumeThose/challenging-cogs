@@ -40,7 +40,7 @@ public partial class GameManager : Node2D
 	public TileMapLayer obstacleLayer,
 		groundLayer;
 
-	private Vector2I goalCoordinates;
+	public Vector2I goalCoordinates;
 
 	public void CalculateCurrentWorldAndLevel()
 	{
@@ -106,17 +106,17 @@ public partial class GameManager : Node2D
 	}
 
 	// update the paradigm shift counts and ui
-	public void ParadigmShifted()
+	public void ParadigmShifted(int count)
 	{
-		paradigmShiftsRemaining--;
+		paradigmShiftsRemaining -= count;
 
 		ui.UpdateParadigmShiftCountLabel(paradigmShiftsRemaining);
 	}
 
 	// update the cogs challenged count and ui
-	public void CogChallenged()
+	public void CogChallenged(int count)
 	{
-		cogsChallenged++;
+		cogsChallenged += count;
 		ui.UpdateCogCountLabel(cogsChallenged);
 
 		// if all cogs were challenged, turn the goal on
