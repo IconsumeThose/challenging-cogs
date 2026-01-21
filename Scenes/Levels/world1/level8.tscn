@@ -29,6 +29,7 @@ tile_map_data = PackedByteArray("AAAHAAMAAQACAAEAAAAHAAQAAQAAAAAAAAAHAAUAAQAAAAE
 tile_set = ExtResource("1_ixsai")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps"]
+position = Vector2(0, 0.33333334)
 tile_map_data = PackedByteArray("AAAIAAcAAQADAAEAAAAKAAUAAQADAAEAAAALAAQAAQADAAEAAAAKAAMAAQADAAEAAAAJAAYAAQADAAEAAAAMAAQAAQABAAAAAAAMAAUAAQABAAAAAAAMAAYAAQABAAAAAAAMAAcAAQABAAAAAAANAAcAAQADAAEAAAAMAAMAAQADAAEAAAAHAAUAAQABAAAAAAAIAAUAAQADAAEAAAAHAAkAAQADAAEAAAAIAAkAAQADAAEAAAAIAAgAAQADAAEAAAAGAAgAAQABAAAAAAAGAAkAAQABAAAAAAALAAcAAQABAAAAAAAKAAIAAQABAAAAAAAJAAIAAQABAAAAAAAIAAIAAQABAAAAAAAIAAQAAQABAAAAAAA=")
 tile_set = ExtResource("2_jrxxx")
 
@@ -49,6 +50,7 @@ gameManager = NodePath("../GameManager")
 
 [node name="GameManager" parent="." node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("5_pauqr")]
 maxParadigmShifts = 4
+levelName = "Handout"
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
 groundLayer = NodePath("../ScalingParent/TileMaps/Ground")

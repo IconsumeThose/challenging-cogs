@@ -17,7 +17,7 @@ public partial class Ui : Control
 		UpdateParadigmShiftCountLabel(gameManager.maxParadigmShifts);
 
 		gameManager.CalculateCurrentWorldAndLevel();
-		levelInfoLabel.Text = $"World: {GameManager.currentWorld} | Level: {GameManager.currentLevel}";
+		levelInfoLabel.Text = $"Level {GameManager.currentWorld}-{GameManager.currentLevel} \"{gameManager.levelName}\"";
 	}
 	// useless line
 	public void UpdateCogCountLabel(int newCount)

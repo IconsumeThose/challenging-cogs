@@ -9,6 +9,8 @@ public partial class GameManager : Node2D
 	[Export]
 	public int maxParadigmShifts = 1;
 
+	[Export] public string levelName = "Name this level yo!";
+	
 	// do not use this variable, use TotalNumberOfCogs
 	private int totalNumberOfCogs = -1;
 

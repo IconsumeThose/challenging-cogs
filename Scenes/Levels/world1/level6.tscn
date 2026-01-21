@@ -49,6 +49,7 @@ gameManager = NodePath("../GameManager")
 
 [node name="GameManager" parent="." node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("5_pkiue")]
 maxParadigmShifts = 5
+levelName = "Positive Reinforcement"
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
 groundLayer = NodePath("../ScalingParent/TileMaps/Ground")
