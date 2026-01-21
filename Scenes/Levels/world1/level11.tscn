@@ -41,6 +41,7 @@ gameManager = NodePath("../GameManager")
 
 [node name="GameManager" parent="." node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("5_y7re7")]
 maxParadigmShifts = 9
+levelName = "Rereinforcement"
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
 groundLayer = NodePath("../ScalingParent/TileMaps/Ground")
