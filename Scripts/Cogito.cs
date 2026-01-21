@@ -61,7 +61,7 @@ public partial class Cogito : CharacterBody2D
 	private bool isMoving = false,
 
 	// true during death animation to prevent controlling the character
-		isDying = false,
+		isAnimating = false,
 
 	// true if the move was forced by a special tile, needed for keeping track of moves to undo
 		mergeNextMove = false;
@@ -101,11 +101,11 @@ public partial class Cogito : CharacterBody2D
 	}
 
 	// only set the animation if its different to possibly avoid resetting the animation
-	public void SetSpriteAnimation(string animationName)
+	public void SetSpriteAnimation(string animationName, float speed = 1)
 	{
 		if (animatedSprite.Animation != animationName)
 		{
-			animatedSprite.Animation = animationName;
+			animatedSprite.Play(animationName, speed);
 		}
 	}
 
@@ -298,16 +298,12 @@ public partial class Cogito : CharacterBody2D
 		}
 
 		// don't allow controlling character while dying but allow resetting
-		if (isDying)
+		if (isAnimating)
 		{
-			if (Input.IsActionJustPressed("Undo") && previousMoves.Count > 0)
-			{
+			if (Input.IsActionJustPressed("Undo"))
 				Rebirth();
-			}
-			else
-			{
-				return;
-			}
+
+			return;
 		}
 
 		// move cogito to target position
@@ -380,7 +376,6 @@ public partial class Cogito : CharacterBody2D
 					// use previous data with added direction
 					PreviousMove currentMove = new(movementDirection: previousMove.movementDirection + movementDirection, 
 						fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates);
-
 					previousMoves.Push(currentMove);	
 				}
 				else
@@ -408,8 +403,8 @@ public partial class Cogito : CharacterBody2D
 				}
 				else if (newTileData.groundTile.customType == "Void")
 				{
-					isDying = true;
-					animationPlayer.Play("Fall");
+					isAnimating = true;
+					animationPlayer.Play("Fall", customSpeed: 0.5f);
 					skipCheckingInputs = true;
 				}
 				else if (newTileData.groundTile.customType == "Ice")
@@ -457,101 +452,125 @@ public partial class Cogito : CharacterBody2D
 		// don't allow paradigm shifting if none are remaining
 		else if (Input.IsActionJustPressed("ParadigmShift") && gameManager.paradigmShiftsRemaining > 0)
 		{
+			isAnimating = true;
+			animationPlayer.Play("ParadigmShift", customSpeed: 1);
+
 			// game manager updates the remaining count
 			gameManager.ParadigmShifted(1);
 
-			// convert position to tile positions
-			Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, gameManager.obstacleLayer);
-
-			// get all adjacent tile coordinates
-			List<Vector2I> adjacentCoordinates =
-			[
-				currentTilePosition + Vector2I.Left,
-				currentTilePosition + Vector2I.Right,
-				currentTilePosition + Vector2I.Down,
-				currentTilePosition + Vector2I.Up	
-			];
-
-			// get all diagonal tile coordinates
-			List<Vector2I> diagonalCoordinates =
-			[
-				currentTilePosition + Vector2I.Left + Vector2I.Down,
-				currentTilePosition + Vector2I.Right + Vector2I.Down,
-				currentTilePosition + Vector2I.Left + Vector2I.Up,
-				currentTilePosition + Vector2I.Right + Vector2I.Up		
-			];
-
-			// keep track of crystals shifted if it needs to be undone
-			List<Vector2I> shiftedCogCrystals = [];
-			List<Vector2I> shiftedReinforcedCogCrystals = [];
-
-			// replace both CogCrystals and ReinforcedCogCrystals with a cog for adjacent tiles
-			foreach (Vector2I adjacentCoordinate in adjacentCoordinates)
-			{
-				CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(adjacentCoordinate), adjacentCoordinate);
-
-				if (obstacleData.customType == "CogCrystal" || obstacleData.customType == "ReinforcedCogCrystal")
-				{
-					gameManager.obstacleLayer.SetCell(adjacentCoordinate, 1, new(5, 1));
-
-					// add each crystal shifted to the appropriate list
-					if (obstacleData.customType == "ReinforcedCogCrystal")
-					{
-						shiftedReinforcedCogCrystals.Add(adjacentCoordinate);
-					}
-					else
-					{
-						shiftedCogCrystals.Add(adjacentCoordinate);
-					}
-				}
-			}
-			
-			// replace only normal CogCrystals with a cog for diagonal tiles
-			foreach (Vector2I diagonalCoordinate in diagonalCoordinates)
-			{
-				CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(diagonalCoordinate), diagonalCoordinate);
-
-				if (obstacleData.customType == "CogCrystal")
-				{
-					gameManager.obstacleLayer.SetCell(diagonalCoordinate, 1, new(5, 1));
-
-					// add to undo list
-					shiftedCogCrystals.Add(diagonalCoordinate);
-				}
-			}
-
-			// save paradigm shift data to be undone
-			PreviousMove currentMove = new(shiftedCogCrystals: shiftedCogCrystals, shiftedReinforcedCogCrystals: shiftedReinforcedCogCrystals, 
+			PreviousMove currentMove = new(shiftedCogCrystals: [], shiftedReinforcedCogCrystals: [],
 				usedParadigmShift: true);
 			previousMoves.Push(currentMove);
-
-			// check if any un-shifted crystals remain and when out of shifts and if so, show fail menu
-			if (gameManager.paradigmShiftsRemaining == 0)
-			{
-				var reinforcedCogCrystals = gameManager.obstacleLayer.GetUsedCellsById(1, new(4, 1));
-				var cogCrystals = gameManager.obstacleLayer.GetUsedCellsById(1, new(3, 1));
-
-				if (reinforcedCogCrystals.Count + cogCrystals.Count > 0)
-				{
-					Lose();
-				}
-			}
 		}
-		else if (Input.IsActionJustPressed("Undo") && previousMoves.Count > 0)
+		else if (Input.IsActionJustPressed("Undo"))
 		{
 			Undo();
 		}
 	}
 
+	public void ParadigmShift()
+	{
+		// convert position to tile positions
+		Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, gameManager.obstacleLayer);
+
+		// get all adjacent tile coordinates
+		List<Vector2I> adjacentCoordinates =
+		[
+			currentTilePosition + Vector2I.Left,
+				currentTilePosition + Vector2I.Right,
+				currentTilePosition + Vector2I.Down,
+				currentTilePosition + Vector2I.Up
+		];
+
+		// get all diagonal tile coordinates
+		List<Vector2I> diagonalCoordinates =
+		[
+			currentTilePosition + Vector2I.Left + Vector2I.Down,
+				currentTilePosition + Vector2I.Right + Vector2I.Down,
+				currentTilePosition + Vector2I.Left + Vector2I.Up,
+				currentTilePosition + Vector2I.Right + Vector2I.Up
+		];
+
+		// keep track of crystals shifted if it needs to be undone
+		List<Vector2I> shiftedCogCrystals = [];
+		List<Vector2I> shiftedReinforcedCogCrystals = [];
+
+		// replace both CogCrystals and ReinforcedCogCrystals with a cog for adjacent tiles
+		foreach (Vector2I adjacentCoordinate in adjacentCoordinates)
+		{
+			CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(adjacentCoordinate), adjacentCoordinate);
+
+			if (obstacleData.customType == "CogCrystal" || obstacleData.customType == "ReinforcedCogCrystal")
+			{
+				gameManager.obstacleLayer.SetCell(adjacentCoordinate, 1, new(5, 1));
+
+				// add each crystal shifted to the appropriate list
+				if (obstacleData.customType == "ReinforcedCogCrystal")
+				{
+					shiftedReinforcedCogCrystals.Add(adjacentCoordinate);
+				}
+				else
+				{
+					shiftedCogCrystals.Add(adjacentCoordinate);
+				}
+			}
+		}
+
+		// replace only normal CogCrystals with a cog for diagonal tiles
+		foreach (Vector2I diagonalCoordinate in diagonalCoordinates)
+		{
+			CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(diagonalCoordinate), diagonalCoordinate);
+
+			if (obstacleData.customType == "CogCrystal")
+			{
+				gameManager.obstacleLayer.SetCell(diagonalCoordinate, 1, new(5, 1));
+
+				// add to undo list
+				shiftedCogCrystals.Add(diagonalCoordinate);
+			}
+		}
+
+		// previous move was just lowering paradigm shift count but this will merge with the crystals removed to allow undoing mid animation
+		previousMoves.Pop();
+		
+		// save paradigm shift data to be undone
+		PreviousMove currentMove = new(shiftedCogCrystals: shiftedCogCrystals, shiftedReinforcedCogCrystals: shiftedReinforcedCogCrystals,
+			usedParadigmShift: true);
+		previousMoves.Push(currentMove);
+
+		// check if any un-shifted crystals remain and when out of shifts and if so, show fail menu
+		if (gameManager.paradigmShiftsRemaining == 0)
+		{
+			var reinforcedCogCrystals = gameManager.obstacleLayer.GetUsedCellsById(1, new(4, 1));
+			var cogCrystals = gameManager.obstacleLayer.GetUsedCellsById(1, new(3, 1));
+
+			if (reinforcedCogCrystals.Count + cogCrystals.Count > 0)
+			{
+				Lose();
+			}
+		}
+	}
+
+	public void StopAnimating()
+	{
+		isAnimating = false;
+	}
+
 	public void Rebirth()
 	{
-		isDying = false;
-		animationPlayer.Play("RESET");
+		Engine.TimeScale = 1;
+		isAnimating = false;
 		Undo();
+		animatedSprite.Play("Idle", 1);
+		animationPlayer.Stop();
+		animationPlayer.Play("RESET");
 	}
 
 	public void Undo()
 	{
+		if (previousMoves.Count < 1)
+			return;
+
 		// get the latest move's data
 		PreviousMove previousMove = previousMoves.Pop();
 
@@ -586,7 +605,7 @@ public partial class Cogito : CharacterBody2D
 		{
 			// adjust counter
 			gameManager.ParadigmShifted(-1);
-
+			
 			foreach (Vector2I cogCrystalPosition in previousMove.shiftedCogCrystals)
 			{
 				gameManager.obstacleLayer.SetCell(cogCrystalPosition, 1, new(3, 1));

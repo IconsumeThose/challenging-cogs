@@ -12,12 +12,11 @@ public partial class Menu : Control
 
 	// take you to the next level, win menu only or dev key pressed (=)
 	public void OnNextLevelClicked()
-	{
-		Engine.TimeScale = 1;
-		
+	{		
 		// check if the next level even exists
 		if (ResourceLoader.Exists($"res://Scenes/Levels/world{GameManager.currentWorld}/level{GameManager.currentLevel + 1}.tscn"))
 		{
+			Engine.TimeScale = 1;
 			GameManager.currentLevel++;
 
 			GetTree().ChangeSceneToFile($"res://Scenes/Levels/world{GameManager.currentWorld}/level{GameManager.currentLevel}.tscn");
@@ -29,12 +28,11 @@ public partial class Menu : Control
 	}
 
 	public void OnNextWorldClicked()
-	{
-		Engine.TimeScale = 1;
-		
+	{		
 		// check if the next level even exists
 		if (ResourceLoader.Exists($"res://Scenes/Levels/world{GameManager.currentWorld + 1}/level{1}.tscn"))
 		{
+			Engine.TimeScale = 1;
 			GameManager.currentWorld++;
 			GameManager.currentLevel = 1;
 

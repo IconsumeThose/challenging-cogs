@@ -4,6 +4,7 @@
 [ext_resource type="LabelSettings" uid="uid://6jq228wrs6k" path="res://Labels/ui.tres" id="2_qdvrb"]
 
 [node name="UI" type="Control" node_paths=PackedStringArray("cogCountLabel", "paradigmShiftCountLabel", "levelInfoLabel")]
+z_index = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
