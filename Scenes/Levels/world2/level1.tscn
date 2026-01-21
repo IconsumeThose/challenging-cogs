@@ -43,6 +43,7 @@ gameManager = NodePath("../GameManager")
 
 [node name="GameManager" parent="." node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("4_ir7pk")]
 maxParadigmShifts = 2
+levelName = "THE GREETING"
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
 groundLayer = NodePath("../ScalingParent/TileMaps/Ground")
