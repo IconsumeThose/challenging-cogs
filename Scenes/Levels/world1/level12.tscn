@@ -1,5 +1,6 @@
-[gd_scene load_steps=9 format=4 uid="uid://bmt6r7s2jhced"]
+[gd_scene load_steps=10 format=4 uid="uid://bmt6r7s2jhced"]
 
+[ext_resource type="Texture2D" uid="uid://bdd86i8d18wa0" path="res://Assets/Sprites/bananabeach.png" id="1_imhnw"]
 [ext_resource type="TileSet" uid="uid://baliot562tha7" path="res://TileSets/banana_ground.tres" id="1_n6gal"]
 [ext_resource type="TileSet" uid="uid://bg2x7dajuff8p" path="res://TileSets/banana_obstacles.tres" id="2_0hp0w"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_b28h8"]
@@ -10,6 +11,13 @@
 [ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="8_104vh"]
 
 [node name="Level" type="Node2D"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 1929.0
+offset_bottom = 1080.0
+texture = ExtResource("1_imhnw")
+expand_mode = 3
+stretch_mode = 4
 
 [node name="ScalingParent" type="Node2D" parent="."]
 scale = Vector2(3, 3)
