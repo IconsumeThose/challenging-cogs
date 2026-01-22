@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=4 uid="uid://bx5ckkx4es1q3"]
+[gd_scene load_steps=11 format=4 uid="uid://bx5ckkx4es1q3"]
 
 [ext_resource type="TileSet" uid="uid://dwh2tr6x3yg4e" path="res://TileSets/mechanical_ground.tres" id="1_3eumt"]
+[ext_resource type="Texture2D" uid="uid://c5o4hm5530gna" path="res://Assets/Sprites/mechanicalmachinery.png" id="1_vuphy"]
 [ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_vuphy"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_au3xy"]
 [ext_resource type="PackedScene" uid="uid://c0w7gpuy6o8qj" path="res://Scenes/falling_sand_mechanical.tscn" id="4_oaouo"]
@@ -11,6 +12,11 @@
 [ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="9_qw5c2"]
 
 [node name="Level" type="Node2D"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("1_vuphy")
 
 [node name="ScalingParent" type="Node2D" parent="."]
 scale = Vector2(3, 3)
