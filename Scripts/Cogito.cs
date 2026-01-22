@@ -9,13 +9,13 @@ public partial class Cogito : CharacterBody2D
 		List<Vector2I> shiftedReinforcedCogCrystals = null, Vector2I? fallenSandPosition = null, List<Vector2I> challengedCogPositions = null, bool usedParadigmShift = false)
 	{
 		// direction that cogito moved
-		public Vector2? movementDirection = movementDirection;
-		public readonly List<Vector2I> shiftedCogCrystals = shiftedCogCrystals;
-		public readonly List<Vector2I> shiftedReinforcedCogCrystals = shiftedReinforcedCogCrystals;
-		public Vector2I? fallenSandPosition = fallenSandPosition;
+		public Vector2? movementDirection = movementDirection ?? Vector2.Zero;
+		public readonly List<Vector2I> shiftedCogCrystals = shiftedCogCrystals ?? [];
+		public readonly List<Vector2I> shiftedReinforcedCogCrystals = shiftedReinforcedCogCrystals ?? [];
+		public Vector2I? fallenSandPosition = fallenSandPosition ?? Vector2I.Down;
 		
 		// list needed as multiple cogs can be collected in one move from sliding on ice
-		public List<Vector2I> challengedCogCoordinates = challengedCogPositions;
+		public List<Vector2I> challengedCogCoordinates = challengedCogPositions ?? [];
 		public bool usedParadigmShift = usedParadigmShift;
 	}
 
@@ -76,6 +76,16 @@ public partial class Cogito : CharacterBody2D
 	public override void _Ready()
 	{
 		movementDistance = tileSize;
+
+		// convert position to tile positions
+		Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, gameManager.obstacleLayer);
+
+		// identify what cogito is currently standing on
+		currentTileData = GetTileCustomType(currentTilePosition, gameManager.groundLayer,
+				gameManager.obstacleLayer);
+
+		// check if cogito starts on a conveyor and move them accordingly
+		ConveyorPushedFromStill();
 	}
 
 	// convert global position to the tile position at the specified tile map
@@ -159,10 +169,8 @@ public partial class Cogito : CharacterBody2D
 		Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, gameManager.obstacleLayer);
 		
 		// identify what cogito is currently standing on
-		LayeredCustomTileData currentTileData = GetTileCustomType(currentTilePosition, gameManager.groundLayer,
+		currentTileData = GetTileCustomType(currentTilePosition, gameManager.groundLayer,
 				gameManager.obstacleLayer);
-
-		this.currentTileData = currentTileData;
 
 		// where the tile is that cogito will move to
 		Vector2I newTilePosition = PositionToAtlasIndex(
@@ -262,6 +270,25 @@ public partial class Cogito : CharacterBody2D
 		}
 
 		return inputDirection;
+	}
+
+	// called at the end of the paradigm shift animation
+	public void EndParadigmShiftAnimation()
+	{
+		ConveyorPushedFromStill();
+		StopAnimating();
+	}
+
+	// push cogito when an obstacle is removed from a conveyor (paradigm shifting) or spawning on a conveyor
+	public void ConveyorPushedFromStill()
+	{
+		// don't do anything if not on a conveyor
+		if (currentTileData.groundTile.customType != "Conveyor")
+			return;
+
+		// move to where the conveyor is pushing
+		Vector2 newPosition = Position + currentTileData.groundTile.direction * movementDistance;
+		mergeNextMove = Move(newPosition);
 	}
 
 	// runs every physics frame
@@ -364,19 +391,26 @@ public partial class Cogito : CharacterBody2D
 				// if the previous move was forced (ice, conveyor, etc...) then merge the previous moves data with the current one
 				if (mergeNextMove)
 				{
-					// get the previous data
-					PreviousMove previousMove = previousMoves.Pop();
-
-					// append cog position to list if one was found
-					if (challengedCogPosition != Vector2I.Down)
+					// there may be no previous moves if spawned on a conveyor so don't log if so
+					if (previousMoves.Count > 0)
 					{
-						previousMove.challengedCogCoordinates.Add(challengedCogPosition);
-					}
+						// get the previous data
+						PreviousMove previousMove = previousMoves.Pop();
 
-					// use previous data with added direction
-					PreviousMove currentMove = new(movementDirection: previousMove.movementDirection + movementDirection, 
-						fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates);
-					previousMoves.Push(currentMove);	
+						// append cog position to list if one was found
+						if (challengedCogPosition != Vector2I.Down)
+						{
+							previousMove.challengedCogCoordinates.Add(challengedCogPosition);
+						}
+
+						// use previous data with added direction
+						PreviousMove currentMove = new(movementDirection: previousMove.movementDirection + movementDirection, 
+							fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates,
+							shiftedCogCrystals: previousMove.shiftedCogCrystals, shiftedReinforcedCogCrystals: previousMove.shiftedReinforcedCogCrystals, 
+							usedParadigmShift: previousMove.usedParadigmShift);
+
+						previousMoves.Push(currentMove);	
+					}
 				}
 				else
 				{
@@ -388,7 +422,8 @@ public partial class Cogito : CharacterBody2D
 						challengedCogs.Add(challengedCogPosition);
 					}
 
-					PreviousMove currentMove = new(movementDirection: movementDirection, fallenSandPosition: fallenSandPosition, challengedCogPositions: challengedCogs);
+					PreviousMove currentMove = new(movementDirection: movementDirection, fallenSandPosition: fallenSandPosition, 
+						challengedCogPositions: challengedCogs);
 					previousMoves.Push(currentMove);
 				}
 
@@ -452,6 +487,7 @@ public partial class Cogito : CharacterBody2D
 		// don't allow paradigm shifting if none are remaining
 		else if (Input.IsActionJustPressed("ParadigmShift") && gameManager.paradigmShiftsRemaining > 0)
 		{
+			mergeNextMove = false;
 			isAnimating = true;
 			animationPlayer.Play("ParadigmShift", customSpeed: 1);
 
@@ -464,6 +500,7 @@ public partial class Cogito : CharacterBody2D
 		}
 		else if (Input.IsActionJustPressed("Undo"))
 		{
+			mergeNextMove = false;
 			Undo();
 		}
 	}
@@ -575,29 +612,26 @@ public partial class Cogito : CharacterBody2D
 		PreviousMove previousMove = previousMoves.Pop();
 
 		// move the canine to the previous position
-		if (previousMove.movementDirection != null)
+		if (previousMove.movementDirection != Vector2.Zero)
 			Position -= (Vector2)previousMove.movementDirection * movementDistance;
 
 		// replace the piece of sand that may have fallen
-		if (previousMove.fallenSandPosition != null)
+		if (previousMove.fallenSandPosition != Vector2I.Down)
 			gameManager.groundLayer.SetCell((Vector2I)previousMove.fallenSandPosition, 1, new(0, 0));
 
 		// replace any challenged cogs
-		if (previousMove.challengedCogCoordinates != null)
+		foreach (Vector2I challengedCogPosition in previousMove.challengedCogCoordinates)
 		{
-			foreach (Vector2I challengedCogPosition in previousMove.challengedCogCoordinates)
+			gameManager.obstacleLayer.SetCell(challengedCogPosition, 1, new(5, 1));
+
+			// turn the goal back off if it was on		
+			if (gameManager.cogsChallenged == gameManager.TotalNumberOfCogs)
 			{
-				gameManager.obstacleLayer.SetCell(challengedCogPosition, 1, new(5, 1));
-
-				// turn the goal back off if it was on		
-				if (gameManager.cogsChallenged == gameManager.TotalNumberOfCogs)
-				{
-					gameManager.groundLayer.SetCell(gameManager.goalCoordinates, 1, new(1, 1));
-				}
-
-				// adjust counter
-				gameManager.CogChallenged(-1);
+				gameManager.groundLayer.SetCell(gameManager.goalCoordinates, 1, new(1, 1));
 			}
+
+			// adjust counter
+			gameManager.CogChallenged(-1);
 		}
 
 		// un-shift crystals 

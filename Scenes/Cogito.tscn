@@ -195,7 +195,7 @@ tracks/0/keys = {
 "method": &"ParadigmShift"
 }, {
 "args": [],
-"method": &"StopAnimating"
+"method": &"EndParadigmShiftAnimation"
 }]
 }
 tracks/1/type = "value"
