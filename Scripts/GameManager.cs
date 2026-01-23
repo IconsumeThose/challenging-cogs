@@ -105,6 +105,16 @@ public partial class GameManager : Node2D
 				}
 			}
 		}
+
+		for (int i = 0; i < 4; i++)
+		{
+			var teleporters = groundLayer.GetUsedCellsById(1, new(4 + i, 0));
+
+			if (teleporters.Count == 1 || teleporters.Count > 2)
+			{
+				GD.PushError("For each teleporter type, please put exactly 2 tiles or none!");
+			}
+		}
 	}
 
 	// update the paradigm shift counts and ui
