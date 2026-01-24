@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://2jx57nk5tsbj"]
+[gd_scene load_steps=25 format=3 uid="uid://2jx57nk5tsbj"]
 
 [ext_resource type="Script" uid="uid://ddif0qkv78ffm" path="res://Scripts/Cogito.cs" id="1_eoj5r"]
 [ext_resource type="PackedScene" uid="uid://ewiwb3dxscp2" path="res://Scenes/falling_sand_banana.tscn" id="2_e0kin"]
@@ -353,11 +353,32 @@ tracks/6/keys = {
 "values": [1]
 }
 
+[sub_resource type="Animation" id="Animation_1ujft"]
+resource_name = "Teleport"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.5, 1),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [false],
+"method": &"Teleport"
+}, {
+"args": [],
+"method": &"StopAnimating"
+}]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_dsxq2"]
 _data = {
 &"Fall": SubResource("Animation_eoj5r"),
 &"ParadigmShift": SubResource("Animation_l63y4"),
-&"RESET": SubResource("Animation_e0kin")
+&"RESET": SubResource("Animation_e0kin"),
+&"Teleport": SubResource("Animation_1ujft")
 }
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h1ytp"]

@@ -58,7 +58,7 @@ public partial class Menu : Control
 		Engine.TimeScale = 1;
 		Visible = false;
 		Cogito cogito = GetParent().FindChild("ScalingParent").FindChild("Cogito") as Cogito;	
-		cogito.Rebirth();
+		cogito.UndoDuringAnimation();
 	}
 
 	// take you back to the main menu
