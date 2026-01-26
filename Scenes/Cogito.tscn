@@ -368,8 +368,8 @@ tracks/0/keys = {
 "args": [false],
 "method": &"Teleport"
 }, {
-"args": [],
-"method": &"StopAnimating"
+"args": [0, null],
+"method": &"SetCogitoState"
 }]
 }
 

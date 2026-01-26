@@ -4,30 +4,44 @@ using System;
 
 public partial class Cogito : CharacterBody2D
 {
-	// keep track of all relevant information for a move so that it can be undone
+	/** <summary>
+		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
+		</summary> */
 	public class PreviousMove(Vector2? movementDirection = null, List<Vector2I> shiftedCogCrystals = null, 
 		List<Vector2I> shiftedReinforcedCogCrystals = null, Vector2I? fallenSandPosition = null, List<Vector2I> challengedCogPositions = null, bool usedParadigmShift = false)
 	{
-		// direction that cogito moved
+		/** <summary> The direction that cogito moved</summary> */
 		public Vector2? movementDirection = movementDirection ?? Vector2.Zero;
 		public readonly List<Vector2I> shiftedCogCrystals = shiftedCogCrystals ?? [];
 		public readonly List<Vector2I> shiftedReinforcedCogCrystals = shiftedReinforcedCogCrystals ?? [];
 		public Vector2I? fallenSandPosition = fallenSandPosition ?? Vector2I.Up;
 		
-		// list needed as multiple cogs can be collected in one move from sliding on ice
+		/** <summary>A list of all cogs collected in this move. Needed as multiple cogs can be collected in one move from sliding on ice</summary> */
 		public List<Vector2I> challengedCogCoordinates = challengedCogPositions ?? [];
 		public bool usedParadigmShift = usedParadigmShift;
 	}
 
-	// stack of all previous moves so that they can be undone in correct order(FILO)
+	/** <summary>stack of all previous moves so that they can be undone in correct order(LIFO)</summary> */
 	public readonly Stack<PreviousMove> previousMoves = new();
 
-	// the distance cogito moves every time   
+	/** <summary> the state cogito is in </summary> */
+	public enum CogitoState
+	{
+		moving,
+		animating,
+		idle
+	}
+	
+	/** <summary>The distance cogito moves every time  </summary> */
 	[Export] public int tileSize = 32;
+
+	/** <summary>The screen dimensions in tiles that cogito is in</summary> */ 
 	[Export] public Vector2I screenTileDimensions = new(20, 11);
+	
+	/** <summary>The speed in which cogito moves</summary> */
 	[Export] public float movementSpeed = 150;
 
-	// setting to allow holding down a direction to keep moving in that direction
+	/** <summary>setting to allow holding down a direction to keep moving in that direction</summary> */ 
 	[Export] public bool holdToMove = true;
 
 	[Export] GameManager gameManager;
@@ -40,10 +54,10 @@ public partial class Cogito : CharacterBody2D
 	[Export] public AnimatedSprite2D animatedSprite;
 	[Export] public AnimationPlayer animationPlayer;
 
-	// used for the falling sand animation
+	/** <summary>Used for the falling sand animation</summary> */
 	[Export] public PackedScene fallingSandScene;
 
-	// list of all obstacles that block movement
+	/** <summary>List of all obstacles that block movement</summary> */
 	private readonly List<string> blockingObstacles =
 	[
 		"Rock",
@@ -51,34 +65,252 @@ public partial class Cogito : CharacterBody2D
 		"ReinforcedCogCrystal"
 	];
 	
-	// store the input direction to be buffered
+	/** <summary>Store the input direction to be buffered</summary> */
 	private Vector2 bufferedInput = Vector2.Zero;
 
-	// store the current data of the tiles cogito is on
+	/** <summary>Store the current data of the tiles cogito is on</summary> */
 	private LayeredCustomTileData currentTileData;
 
-	// true while cogito is moving, false otherwise
-	private bool isMoving = false,
+	/** <summary>true if the move was forced by a special tile, needed for keeping track of moves to undo</summary> */
+	private bool mergeNextMove = false,
 
-	// true during death animation to prevent controlling the character
-		isAnimating = false,
-
-	// true if the move was forced by a special tile, needed for keeping track of moves to undo
-		mergeNextMove = false,
-
-	// true if just teleported
+	/** <summary>true if just teleported</summary> */
 		teleported = false;
 
-	// the position to move to
+	/** <summary>the position to move to</summary> */
 	private Vector2 targetPosition = Vector2.Zero;
 
-	// the difference vector from the original position to target in tile units, mainly used for logging teleports to undo
+	/** <summary>the difference vector from the original position to target in tile units, mainly used for logging teleports to undo</summary> */
 	private Vector2I targetTileDifferenceVector = Vector2I.Zero;
 
-	// distance cogito moves to get to the next tile
+	/** <summary>distance cogito moves to get to the next tile</summary> */
 	private float movementDistance = 0;
 
-	// ran during start up
+	/** <summary> The state that cogito is currently in</summary> */
+	public CogitoState currentCogitoState = CogitoState.idle;
+
+	public void SetCogitoState(CogitoState newState)
+	{
+		CogitoState oldState = currentCogitoState;
+
+		if (oldState == newState)
+		{
+			return;
+		}
+
+		currentCogitoState = newState;
+
+		switch (oldState)
+		{
+			case CogitoState.idle:
+				ExitIdle();
+				break;
+			case CogitoState.moving:
+				ExitMoving();
+				break;
+			case CogitoState.animating:
+				ExitAnimating();
+				break;
+		}
+
+		// some exit methods change the state so if that happens do not even try entering the previous state
+		if (newState != currentCogitoState)
+		{
+			return;	
+		}
+
+		switch (currentCogitoState)
+		{
+			case CogitoState.idle:
+				EnterIdle();
+				break;
+			case CogitoState.moving:
+				EnterMoving();
+				break;
+			case CogitoState.animating:
+				EnterAnimating();
+				break;
+		}
+	}
+
+	/** <summary></summary> */
+	public void ExitIdle()
+	{
+		
+	}
+
+	/** <summary></summary> */
+	public void ExitMoving()
+	{
+		// set position exactly to target
+		Position = targetPosition;
+
+		// position of sand that was fallen from last move, needed to be tracked for undo
+		Vector2I? fallenSandPosition = null;
+
+		// position of any cogs that were challenged, needed to be tracked for undo and is the down vector by default (impossible normally)
+		Vector2I challengedCogPosition = Vector2I.Up;
+
+		// set sand position if found from previous tile (current tile has yet to be updated)
+		if (this.currentTileData.groundTile.customType == "Sand")
+		{
+			fallenSandPosition = this.currentTileData.groundTile.position;
+		}
+		
+		UpdateCurrentTileData();
+
+		// set cog position if found
+		if (currentTileData.obstacleTile.customType == "Cog")
+		{
+			challengedCogPosition = currentTileData.obstacleTile.position;
+		}
+
+		// if the previous move was forced (ice, conveyor, etc...) then merge the previous moves data with the current one
+		if (mergeNextMove)
+		{
+			// there may be no previous moves if spawned on a conveyor so don't log if so
+			if (previousMoves.Count > 0)
+			{
+				// get the previous data
+				PreviousMove previousMove = previousMoves.Pop();
+
+				// append cog position to list if one was found
+				if (challengedCogPosition != Vector2I.Up)
+				{
+					previousMove.challengedCogCoordinates.Add(challengedCogPosition);
+				}
+
+				// use previous data with added direction
+				PreviousMove currentMove = new(movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
+					fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates,
+					shiftedCogCrystals: previousMove.shiftedCogCrystals, shiftedReinforcedCogCrystals: previousMove.shiftedReinforcedCogCrystals,
+					usedParadigmShift: previousMove.usedParadigmShift);
+
+				previousMoves.Push(currentMove);
+			}
+		}
+		else if (targetTileDifferenceVector.Length() > 0)
+		{
+			// save move information for undo normally
+			List<Vector2I> challengedCogs = [];
+
+			if (challengedCogPosition != Vector2I.Up)
+			{
+				challengedCogs.Add(challengedCogPosition);
+			}
+
+			PreviousMove currentMove = new(movementDirection: targetTileDifferenceVector, fallenSandPosition: fallenSandPosition,
+				challengedCogPositions: challengedCogs);
+			previousMoves.Push(currentMove);
+		}
+
+		mergeNextMove = false;
+
+		// win the game if on the goal while it is activated
+		if (currentTileData.groundTile.customType == "GoalOn")
+		{
+			Engine.TimeScale = 0;
+			winMenu.Visible = true;
+		}
+		// if tile is void or null then make cogito fall
+		else if ((currentTileData.groundTile.customType ?? "Void") == "Void")
+		{
+			SetCogitoState(CogitoState.animating);
+			animationPlayer.Play("Fall", customSpeed: 0.5f);
+		}
+		// if tile is ice, make cogito continue moving in the same direction they were moving
+		else if (currentTileData.groundTile.customType == "Ice" && targetTileDifferenceVector.Length() > 0)
+		{
+			Vector2 newPosition = Position + ((Vector2)targetTileDifferenceVector).Normalized() * movementDistance;
+			mergeNextMove = AttemptMove(newPosition);
+		}
+		// if tile is conveyor, make cogito move in the direction the conveyor is facing
+		else if (currentTileData.groundTile.customType == "Conveyor")
+		{
+			Vector2 newPosition = Position + currentTileData.groundTile.direction * movementDistance;
+			mergeNextMove = AttemptMove(newPosition);
+		}
+		// if the tile is a teleporter or it is the first move and cogito has moved and nothing is blocked on the other teleporter, move
+		else if (currentTileData.groundTile.customType == "Teleporter" && !(previousMoves.Count > 0
+			&& targetTileDifferenceVector == Vector2.Zero) && Teleport(true))
+		{
+			animationPlayer.Play("Teleport");
+			SetCogitoState(CogitoState.animating);
+		}
+
+		// collect the cog if its on the same tile as cogito
+		if (currentTileData.obstacleTile.customType == "Cog")
+		{
+			gameManager.CogChallenged(1);
+			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
+		}
+	}
+
+	/** <summary></summary> */
+	public void ExitAnimating()
+	{
+		Engine.TimeScale = 1;
+		animationPlayer.Stop();
+		animationPlayer.Play("RESET");
+	}
+
+	/** <summary></summary> */
+	public void EnterIdle()
+	{
+		// set animation to idle
+		SetSpriteAnimation("Idle");
+	}
+
+	/** <summary></summary> */
+	public void EnterMoving()
+	{
+		// where the tile is that cogito will move to
+		Vector2I newTilePosition = PositionToAtlasIndex(
+			GetParent<Node2D>().ToGlobal(targetPosition),
+			gameManager.obstacleLayer
+		);
+
+		targetTileDifferenceVector = newTilePosition - currentTileData.groundTile.position;
+
+		// set animation accordingly to the current tile
+		if (currentTileData.groundTile.customType == "Conveyor")
+		{
+			SetSpriteAnimation("Idle");
+		}
+		else if (currentTileData.groundTile.customType == "Ice")
+		{
+			SetSpriteAnimation("Slide");
+		}
+		else
+		{
+			SetSpriteAnimation("Move");
+		}
+
+		if (currentTileData.groundTile.customType == "Sand" && targetTileDifferenceVector.Length() > 0)
+		{
+			// make sand fall after walking off that tile
+			gameManager.groundLayer.SetCell(currentTileData.groundTile.position, 1, new(2, 0));
+
+			Node2D fallingSand = fallingSandScene.Instantiate<Node2D>();
+			GetParent().AddChild(fallingSand);
+			fallingSand.Position = targetPosition - ((Vector2)targetTileDifferenceVector).Normalized() * movementDistance;
+			fallingSand.GetNode<AnimationPlayer>("AnimationPlayer").Play("Fall");
+		}
+
+		// instantly tp to destination if teleporting
+		if (teleported)
+		{
+			Position = targetPosition;
+		}
+	}
+
+	/** <summary></summary> */
+	public void EnterAnimating()
+	{
+		
+	}
+
+	/** <summary>ran during start up</summary> */
 	public override void _Ready()
 	{
 		movementDistance = tileSize;
@@ -90,7 +322,7 @@ public partial class Cogito : CharacterBody2D
 		currentTileData = GetTileCustomType(currentTilePosition, gameManager.groundLayer,
 				gameManager.obstacleLayer);
 
-		Move(Position);
+		AttemptMove(Position);
 	}
 
 	// convert global position to the tile position at the specified tile map
@@ -163,9 +395,10 @@ public partial class Cogito : CharacterBody2D
 
 		return new(groundData, obstacleData);
 	}
+	
 
 	// return true if successfully moved
-	private bool Move(Vector2 newPosition, bool teleport = false, bool dryRun = false)
+	private bool AttemptMove(Vector2 newPosition, bool teleport = false, bool dryRun = false)
 	{
 		// where the tile is that cogito will move to
 		Vector2I newTilePosition = PositionToAtlasIndex(
@@ -206,42 +439,10 @@ public partial class Cogito : CharacterBody2D
 			if (dryRun)
 				return true;
 
-			isMoving = true;
+			teleported = teleport;
 			targetPosition = newPosition;
-			targetTileDifferenceVector = newTilePosition - currentTileData.groundTile.position;
-
-			// set animation accordingly to the current tile
-			if (currentTileData.groundTile.customType == "Conveyor")
-			{
-				SetSpriteAnimation("Idle");
-			}
-			else if (currentTileData.groundTile.customType == "Ice")
-			{
-				SetSpriteAnimation("Slide");
-			}
-			else
-			{
-				SetSpriteAnimation("Move");
-			}
-
-			if (currentTileData.groundTile.customType == "Sand" && targetTileDifferenceVector.Length() > 0)
-			{
-				// make sand fall after walking off that tile
-				gameManager.groundLayer.SetCell(currentTileData.groundTile.position, 1, new(2, 0));
-
-				Node2D fallingSand = fallingSandScene.Instantiate<Node2D>();
-				GetParent().AddChild(fallingSand);
-				fallingSand.Position = targetPosition - movementDirection * movementDistance;
-				fallingSand.GetNode<AnimationPlayer>("AnimationPlayer").Play("Fall");
-			}
-
-			// instantly tp to destination if teleporting
-			if (teleport)
-			{
-				teleported = true;
-				Position = targetPosition;
-			}
-
+			SetCogitoState(CogitoState.moving);
+			
 			return true;
 		}
 
@@ -278,8 +479,8 @@ public partial class Cogito : CharacterBody2D
 	// called at the end of the paradigm shift animation
 	public void EndParadigmShiftAnimation()
 	{
-		Move(Position);
-		StopAnimating();
+		AttemptMove(Position);
+		SetCogitoState(CogitoState.idle);
 	}
 
 	// update the tile data cogito is on
@@ -297,7 +498,7 @@ public partial class Cogito : CharacterBody2D
 	public bool UpdateMove()
 	{
 		// move cogito to target position
-		if (isMoving)
+		if (currentCogitoState == CogitoState.moving)
 		{
 			if (Input.IsActionJustPressed("Left") ^ Input.IsActionJustPressed("Right")
 				^ Input.IsActionJustPressed("Up") ^ Input.IsActionJustPressed("Down"))
@@ -317,121 +518,7 @@ public partial class Cogito : CharacterBody2D
 			// stop moving when close enough to target position
 			else
 			{
-				// set position exactly to target
-				Position = targetPosition;
-				isMoving = false;
-
-				// set animation to idle
-				SetSpriteAnimation("Idle");
-
-				// position of sand that was fallen from last move, needed to be tracked for undo
-				Vector2I? fallenSandPosition = null;
-
-				// position of any cogs that were challenged, needed to be tracked for undo and is the down vector by default (impossible normally)
-				Vector2I challengedCogPosition = Vector2I.Up;
-
-				// set sand position if found from previous tile (current tile has yet to be updated)
-				if (this.currentTileData.groundTile.customType == "Sand")
-				{
-					fallenSandPosition = this.currentTileData.groundTile.position;
-				}
-
-				UpdateCurrentTileData();
-
-				// set cog position if found
-				if (currentTileData.obstacleTile.customType == "Cog")
-				{
-					challengedCogPosition = currentTileData.obstacleTile.position;
-				}
-
-				// if the previous move was forced (ice, conveyor, etc...) then merge the previous moves data with the current one
-				if (mergeNextMove)
-				{
-					// there may be no previous moves if spawned on a conveyor so don't log if so
-					if (previousMoves.Count > 0)
-					{
-						// get the previous data
-						PreviousMove previousMove = previousMoves.Pop();
-
-						// append cog position to list if one was found
-						if (challengedCogPosition != Vector2I.Up)
-						{
-							previousMove.challengedCogCoordinates.Add(challengedCogPosition);
-						}
-
-						// use previous data with added direction
-						PreviousMove currentMove = new(movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
-							fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates,
-							shiftedCogCrystals: previousMove.shiftedCogCrystals, shiftedReinforcedCogCrystals: previousMove.shiftedReinforcedCogCrystals,
-							usedParadigmShift: previousMove.usedParadigmShift);
-
-						previousMoves.Push(currentMove);
-					}
-				}
-				else if (targetTileDifferenceVector.Length() > 0)
-				{
-					// save move information for undo normally
-					List<Vector2I> challengedCogs = [];
-
-					if (challengedCogPosition != Vector2I.Up)
-					{
-						challengedCogs.Add(challengedCogPosition);
-					}
-
-					PreviousMove currentMove = new(movementDirection: targetTileDifferenceVector, fallenSandPosition: fallenSandPosition,
-						challengedCogPositions: challengedCogs);
-					previousMoves.Push(currentMove);
-				}
-
-				mergeNextMove = false;
-				bool skipCheckingInputs = false;
-
-				// win the game if on the goal while it is activated
-				if (currentTileData.groundTile.customType == "GoalOn")
-				{
-					Engine.TimeScale = 0;
-					winMenu.Visible = true;
-					skipCheckingInputs = true;
-				}
-				// if tile is void or null then make cogito fall
-				else if ((currentTileData.groundTile.customType ?? "Void") == "Void" )
-				{
-					isAnimating = true;
-					animationPlayer.Play("Fall", customSpeed: 0.5f);
-					skipCheckingInputs = true;
-				}
-				// if tile is ice, make cogito continue moving in the same direction they were moving
-				else if (currentTileData.groundTile.customType == "Ice" && targetTileDifferenceVector.Length() > 0)
-				{
-					Vector2 newPosition = Position + ((Vector2)targetTileDifferenceVector).Normalized() * movementDistance;
-					mergeNextMove = Move(newPosition);
-					skipCheckingInputs = true;
-				}
-				// if tile is conveyor, make cogito move in the direction the conveyor is facing
-				else if (currentTileData.groundTile.customType == "Conveyor")
-				{
-					Vector2 newPosition = Position + currentTileData.groundTile.direction * movementDistance;
-					mergeNextMove = Move(newPosition);
-					skipCheckingInputs = true;
-				}
-				// if the tile is a teleporter or it is the first move and cogito has moved and nothing is blocked on the other teleporter, move
-				else if (currentTileData.groundTile.customType == "Teleporter" && !(previousMoves.Count > 0 
-					&& targetTileDifferenceVector == Vector2.Zero) && Teleport(true))
-				{
-					animationPlayer.Play("Teleport");
-					isAnimating = true;
-					skipCheckingInputs = true;
-				}
-
-				// collect the cog if its on the same tile as cogito
-				if (currentTileData.obstacleTile.customType == "Cog")
-				{
-					gameManager.CogChallenged(1);
-					gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
-				}
-
-				if (skipCheckingInputs)
-					return false;
+				SetCogitoState(CogitoState.idle);			
 			}
 		}
 		
@@ -472,19 +559,19 @@ public partial class Cogito : CharacterBody2D
 		}
 
 		// don't allow controlling character while dying but allow resetting
-		if (isAnimating)
+		if (currentCogitoState == CogitoState.animating)
 		{
 			if (Input.IsActionJustPressed("Undo"))
-				UndoDuringAnimation();
+				Undo();
 
 			return;
 		}
 
-		if (!UpdateMove())
+		if (!UpdateMove() || currentCogitoState != CogitoState.idle)
 			return;
 
 		Vector2 inputDirection = GetInputDirection();
-
+		
 		// i'm sammyrog
 		if (inputDirection != Vector2.Zero && (holdToMove || (!holdToMove && (Input.IsActionJustPressed("Left") 
 			|| Input.IsActionJustPressed("Right") || Input.IsActionJustPressed("Up") || Input.IsActionJustPressed("Down")))))
@@ -492,21 +579,21 @@ public partial class Cogito : CharacterBody2D
 			// where cogito will move
 			Vector2 newPosition = Position + inputDirection * movementDistance;
 
-			Move(newPosition);
+			AttemptMove(newPosition);
 		}
 		else if (bufferedInput != Vector2.Zero)
 		{
 			// where cogito will move
 			Vector2 newPosition = Position + bufferedInput * movementDistance;
 
-			Move(newPosition);
+			AttemptMove(newPosition);
 		}
 		// don't allow paradigm shifting if none are remaining
 		else if (Input.IsActionJustPressed("ParadigmShift") && gameManager.paradigmShiftsRemaining > 0)
 		{
 			teleported = false;
 			mergeNextMove = false;
-			isAnimating = true;
+			SetCogitoState(CogitoState.animating);
 			animationPlayer.Play("ParadigmShift", customSpeed: 1);
 
 			// game manager updates the remaining count
@@ -541,9 +628,9 @@ public partial class Cogito : CharacterBody2D
 				Vector2 teleporterPositionDifference = (Vector2)(teleporterPosition - currentTileData.groundTile.position) * movementDistance;
 
 				if (dryRun)
-					return Move(Position + teleporterPositionDifference, true, true);
+					return AttemptMove(Position + teleporterPositionDifference, true, true);
 				
-				mergeNextMove = Move(Position + teleporterPositionDifference, true);
+				mergeNextMove = AttemptMove(Position + teleporterPositionDifference, true);
 				
 				// only actually move and return true if successfully teleported
 				if (mergeNextMove)
@@ -640,22 +727,6 @@ public partial class Cogito : CharacterBody2D
 		}
 	}
 
-	public void StopAnimating()
-	{
-		isAnimating = false;
-	}
-
-	// properly cancels an animation if undo is pressed
-	public void UndoDuringAnimation()
-	{
-		Engine.TimeScale = 1;
-		isAnimating = false;
-		Undo();
-		animatedSprite.Play("Idle", 1);
-		animationPlayer.Stop();
-		animationPlayer.Play("RESET");
-	}
-
 	// undo the last saved move
 	public void Undo()
 	{
@@ -709,5 +780,7 @@ public partial class Cogito : CharacterBody2D
 
 		// update the tile data cogito is currently on after restoring everything
 		UpdateCurrentTileData();
+
+		SetCogitoState(CogitoState.idle);
 	}
 }
