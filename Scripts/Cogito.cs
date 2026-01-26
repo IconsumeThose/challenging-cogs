@@ -263,8 +263,8 @@ public partial class Cogito : CharacterBody2D
 
 	public static Vector2 GetInputDirection()
 	{
-		if (Input.IsActionJustPressed("Left") ^ Input.IsActionJustPressed("Right")
-			^ Input.IsActionJustPressed("Up") ^ Input.IsActionJustPressed("Down"))
+		if (Input.IsActionPressed("Left") ^ Input.IsActionPressed("Right")
+			^ Input.IsActionPressed("Up") ^ Input.IsActionPressed("Down"))
 		{
 			// read the inputs of the player
 			Vector2 inputDirection = Input.GetVector("Left", "Right", "Up", "Down");
@@ -671,9 +671,6 @@ public partial class Cogito : CharacterBody2D
 		if (previousMove.movementDirection != Vector2.Zero)
 			Position -= (Vector2)previousMove.movementDirection * movementDistance;
 
-		// update the tile data cogito is currently on
-		UpdateCurrentTileData();
-
 		// replace the piece of sand that may have fallen
 		if (previousMove.fallenSandPosition != Vector2I.Up)
 			gameManager.groundLayer.SetCell((Vector2I)previousMove.fallenSandPosition, 1, new(0, 0));
@@ -709,5 +706,8 @@ public partial class Cogito : CharacterBody2D
 				gameManager.obstacleLayer.SetCell(cogReinforcedCrystalPosition, 1, new(4, 1));
 			}
 		}
+
+		// update the tile data cogito is currently on after restoring everything
+		UpdateCurrentTileData();
 	}
 }
