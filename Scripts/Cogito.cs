@@ -62,7 +62,9 @@ public partial class Cogito : CharacterBody2D
 	[
 		"Rock",
 		"CogCrystal",
-		"ReinforcedCogCrystal"
+		"ReinforcedCogCrystal",
+		"LeverLeft",
+		"LeverRight"
 	];
 	
 	/** <summary>Store the input direction to be buffered</summary> */
@@ -670,25 +672,26 @@ public partial class Cogito : CharacterBody2D
 		// keep track of crystals shifted if it needs to be undone
 		List<Vector2I> shiftedCogCrystals = [];
 		List<Vector2I> shiftedReinforcedCogCrystals = [];
+		List<Vector2I> shiftedLevers = [];
 
 		// replace both CogCrystals and ReinforcedCogCrystals with a cog for adjacent tiles
 		foreach (Vector2I adjacentCoordinate in adjacentCoordinates)
 		{
 			CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(adjacentCoordinate), adjacentCoordinate);
 
-			if (obstacleData.customType == "CogCrystal" || obstacleData.customType == "ReinforcedCogCrystal")
+			switch (obstacleData.customType)
 			{
-				gameManager.obstacleLayer.SetCell(adjacentCoordinate, 1, new(5, 1));
-
-				// add each crystal shifted to the appropriate list
-				if (obstacleData.customType == "ReinforcedCogCrystal")
-				{
+				// add each object shifted to the appropriate list
+				case "ReinforcedCogCrystal":
 					shiftedReinforcedCogCrystals.Add(adjacentCoordinate);
-				}
-				else
-				{
+					break;
+				case "CogCrystal":
 					shiftedCogCrystals.Add(adjacentCoordinate);
-				}
+					break;
+				case "LeverLeft":
+				case "LeverRight":
+					shiftedLevers.Add(adjacentCoordinate);
+					break;
 			}
 		}
 
@@ -697,13 +700,32 @@ public partial class Cogito : CharacterBody2D
 		{
 			CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(diagonalCoordinate), diagonalCoordinate);
 
-			if (obstacleData.customType == "CogCrystal")
+			switch (obstacleData.customType)
 			{
-				gameManager.obstacleLayer.SetCell(diagonalCoordinate, 1, new(5, 1));
-
-				// add to undo list
-				shiftedCogCrystals.Add(diagonalCoordinate);
+				// add each object shifted to the appropriate list
+				case "CogCrystal":
+					shiftedCogCrystals.Add(diagonalCoordinate);
+					break;
+				case "LeverLeft":
+				case "LeverRight":
+					shiftedLevers.Add(diagonalCoordinate);
+					break;
 			}
+		}
+
+		// create a list that contains normal and reinforced cog crystals
+		List<Vector2I> totalShiftedCogCrystals = [.. shiftedCogCrystals];
+		totalShiftedCogCrystals.AddRange(shiftedReinforcedCogCrystals);
+		
+		// convert all crystals shifted to cogs
+		foreach (Vector2I crystalPosition in totalShiftedCogCrystals)
+		{
+			gameManager.obstacleLayer.SetCell(crystalPosition, 1, new(5, 1));
+		}
+
+		foreach (Vector2I shiftedLeverPosition in shiftedLevers)
+		{
+			ToggleLever(shiftedLeverPosition);
 		}
 
 		// previous move was just lowering paradigm shift count but this will merge with the crystals removed to allow undoing mid animation
@@ -724,6 +746,47 @@ public partial class Cogito : CharacterBody2D
 			{
 				Lose();
 			}
+		}
+	}
+
+	public void ToggleLever(Vector2I position)
+	{
+		CustomTileData leverData = new(gameManager.obstacleLayer.GetCellTileData(position), position);
+
+		if (leverData.customType == "LeverLeft")
+		{
+			gameManager.obstacleLayer.SetCell(position, 1, new(7, 1));
+		}
+		else if (leverData.customType == "LeverRight")
+		{
+			gameManager.obstacleLayer.SetCell(position, 1, new(6, 1));
+		}
+		else
+		{
+			return;
+		}
+
+		var conveyors = gameManager.groundLayer.GetUsedCellsById(1, new (0, 2));
+		conveyors.AddRange(gameManager.groundLayer.GetUsedCellsById(1, new (0, 2), 1));
+		conveyors.AddRange(gameManager.groundLayer.GetUsedCellsById(1, new (0, 2), 2));
+		conveyors.AddRange(gameManager.groundLayer.GetUsedCellsById(1, new (0, 2), 3));
+
+		foreach (Vector2I conveyorPosition in conveyors)
+		{
+			CustomTileData conveyorData = new(gameManager.groundLayer.GetCellTileData(conveyorPosition), conveyorPosition);
+			int alt = 0;
+
+			if (conveyorData.direction.X == 1) alt = 1;
+			else if (conveyorData.direction.X == -1) alt = 0;
+			else if (conveyorData.direction.Y == 1) alt = 3;
+			else if (conveyorData.direction.Y == -1) alt = 2;
+
+			gameManager.groundLayer.SetCell(
+				conveyorPosition,
+				1,
+				new Vector2I(0, 2),
+				alt
+			);
 		}
 	}
 
