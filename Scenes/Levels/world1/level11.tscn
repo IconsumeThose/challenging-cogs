@@ -1,6 +1,6 @@
-[gd_scene load_steps=10 format=4 uid="uid://brb7dty7sbphe"]
+[gd_scene format=4 uid="uid://brb7dty7sbphe"]
 
-[ext_resource type="Texture2D" uid="uid://bdd86i8d18wa0" path="res://Assets/Sprites/bananabeach.png" id="1_7g3yg"]
+[ext_resource type="Texture2D" uid="uid://bdd86i8d18wa0" path="res://Assets/Backgrounds/bananabeach.png" id="1_7g3yg"]
 [ext_resource type="TileSet" uid="uid://baliot562tha7" path="res://TileSets/banana_ground.tres" id="1_7p4b5"]
 [ext_resource type="TileSet" uid="uid://bg2x7dajuff8p" path="res://TileSets/banana_obstacles.tres" id="2_gm3ur"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_f3jum"]

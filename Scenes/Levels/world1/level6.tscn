@@ -1,7 +1,7 @@
-[gd_scene load_steps=10 format=4 uid="uid://chwvi8y7b7bte"]
+[gd_scene format=4 uid="uid://chwvi8y7b7bte"]
 
 [ext_resource type="TileSet" uid="uid://baliot562tha7" path="res://TileSets/banana_ground.tres" id="1_r1txt"]
-[ext_resource type="Texture2D" uid="uid://bdd86i8d18wa0" path="res://Assets/Sprites/bananabeach.png" id="1_rpx2v"]
+[ext_resource type="Texture2D" uid="uid://bdd86i8d18wa0" path="res://Assets/Backgrounds/bananabeach.png" id="1_rpx2v"]
 [ext_resource type="TileSet" uid="uid://bg2x7dajuff8p" path="res://TileSets/banana_obstacles.tres" id="2_gy1w6"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_sdbqq"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="4_bfv11"]

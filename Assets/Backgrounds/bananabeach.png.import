@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c5o4hm5530gna"
-path="res://.godot/imported/mechanicalmachinery.png-1dc5e0e1c41cf19df4d7d1162cc08306.ctex"
+uid="uid://bdd86i8d18wa0"
+path="res://.godot/imported/bananabeach.png-7632886a2f237846416850ed2ae53aeb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Sprites/mechanicalmachinery.png"
-dest_files=["res://.godot/imported/mechanicalmachinery.png-1dc5e0e1c41cf19df4d7d1162cc08306.ctex"]
+source_file="res://Assets/Backgrounds/bananabeach.png"
+dest_files=["res://.godot/imported/bananabeach.png-7632886a2f237846416850ed2ae53aeb.ctex"]
 
 [params]
 

@@ -1,6 +1,6 @@
-[gd_scene load_steps=11 format=4 uid="uid://hoahs5qcodbm"]
+[gd_scene format=4 uid="uid://hoahs5qcodbm"]
 
-[ext_resource type="Texture2D" uid="uid://c5o4hm5530gna" path="res://Assets/Sprites/mechanicalmachinery.png" id="1_1xqic"]
+[ext_resource type="Texture2D" uid="uid://c5o4hm5530gna" path="res://Assets/Backgrounds/mechanicalmachinery.png" id="1_1xqic"]
 [ext_resource type="TileSet" uid="uid://dwh2tr6x3yg4e" path="res://TileSets/mechanical_ground.tres" id="1_iru21"]
 [ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_1xqic"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_b7hsw"]
@@ -11,27 +11,27 @@
 [ext_resource type="PackedScene" uid="uid://dj8vu6t4xi3je" path="res://Scenes/pause_menu.tscn" id="8_oxaqo"]
 [ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="9_8es1g"]
 
-[node name="Level" type="Node2D"]
+[node name="Level" type="Node2D" unique_id=1914273187]
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=2025547570]
 offset_right = 1920.0
 offset_bottom = 1080.0
 texture = ExtResource("1_1xqic")
 
-[node name="ScalingParent" type="Node2D" parent="."]
+[node name="ScalingParent" type="Node2D" parent="." unique_id=1408446932]
 scale = Vector2(3, 3)
 
-[node name="TileMaps" type="Node2D" parent="ScalingParent"]
+[node name="TileMaps" type="Node2D" parent="ScalingParent" unique_id=1673740183]
 
-[node name="Ground" type="TileMapLayer" parent="ScalingParent/TileMaps"]
+[node name="Ground" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=916905301]
 tile_map_data = PackedByteArray("AAACAAMAAQAAAAEAAAACAAQAAQAAAAIAAgACAAUAAQAAAAIAAgACAAYAAQAAAAEAAAACAAcAAQAAAAEAAAACAAgAAQAAAAEAAAACAAkAAQAAAAEAAAADAAMAAQAAAAIAAAADAAQAAQAAAAAAAAADAAUAAQAAAAAAAAADAAYAAQAAAAIAAAADAAcAAQAAAAEAAAADAAgAAQAAAAAAAAADAAkAAQAAAAIAAAAEAAMAAQAAAAIAAwAEAAQAAQAAAAAAAAAEAAUAAQAAAAAAAAAEAAYAAQAAAAEAAAAEAAcAAQAAAAAAAAAEAAgAAQAAAAAAAAAEAAkAAQAAAAAAAAAFAAMAAQAAAAAAAAAFAAQAAQAAAAIAAQAFAAUAAQAAAAIAAgAFAAYAAQAAAAIAAgAFAAcAAQAAAAEAAAAFAAgAAQAAAAIAAwAFAAkAAQAAAAEAAAAGAAMAAQAAAAAAAAAGAAQAAQAAAAIAAQAGAAUAAQAAAAEAAAAGAAYAAQAAAAIAAwAGAAcAAQAAAAEAAAAGAAgAAQAAAAIAAAAGAAkAAQAAAAEAAAAHAAMAAQAAAAAAAAAHAAQAAQAAAAEAAAAHAAUAAQAAAAIAAwAHAAYAAQAAAAAAAAAHAAcAAQAAAAEAAAAHAAgAAQAAAAIAAgAHAAkAAQAAAAEAAAAIAAMAAQAAAAEAAAAIAAQAAQAAAAEAAAAIAAUAAQAAAAEAAAAIAAYAAQAAAAAAAAAIAAcAAQAAAAEAAAAIAAgAAQAAAAAAAAAIAAkAAQAAAAEAAAAJAAMAAQAAAAEAAAAJAAQAAQAAAAAAAAAJAAUAAQAAAAAAAAAJAAYAAQAAAAIAAwAJAAcAAQAAAAAAAAAJAAgAAQAAAAAAAAAJAAkAAQAAAAIAAQAKAAMAAQAAAAEAAAAKAAQAAQAAAAAAAAAKAAUAAQAAAAAAAAAKAAYAAQAAAAIAAAAKAAcAAQAAAAAAAAAKAAgAAQAAAAAAAAAKAAkAAQAAAAAAAAALAAQAAQAAAAIAAwALAAUAAQAAAAIAAwALAAYAAQAAAAIAAwALAAcAAQAAAAEAAAALAAgAAQAAAAIAAQALAAkAAQAAAAEAAAAMAAMAAQAAAAIAAgAMAAQAAQAAAAIAAgAMAAUAAQAAAAIAAgAMAAYAAQAAAAIAAgAMAAcAAQAAAAEAAAAMAAgAAQAAAAIAAQAMAAkAAQAAAAEAAAANAAMAAQAAAAEAAAANAAQAAQAAAAAAAAANAAUAAQAAAAAAAAANAAYAAQAAAAAAAAANAAcAAQACAAEAAAANAAgAAQAAAAIAAQANAAkAAQAAAAEAAAAOAAMAAQAAAAEAAAAOAAQAAQAAAAAAAAAOAAUAAQAAAAEAAAAOAAYAAQAAAAAAAAAOAAcAAQAAAAAAAAAOAAgAAQAAAAIAAQAOAAkAAQAAAAAAAAAPAAMAAQAAAAAAAAAPAAQAAQAAAAAAAAAPAAUAAQAAAAEAAAAPAAYAAQAAAAAAAAAPAAcAAQAAAAAAAAAPAAgAAQAAAAAAAAAPAAkAAQAAAAAAAAAQAAMAAQAAAAAAAAAQAAQAAQAAAAIAAQAQAAUAAQAAAAAAAAAQAAYAAQAAAAAAAAAQAAcAAQAAAAAAAAAQAAgAAQAAAAIAAAAQAAkAAQAAAAAAAAARAAMAAQAAAAAAAAARAAQAAQAAAAAAAAARAAUAAQAAAAAAAAARAAYAAQAAAAAAAAARAAcAAQAAAAAAAAARAAkAAQAAAAAAAAD/////AQACAAAAAAD//wAAAQACAAAAAAD//wEAAQACAAAAAAD//wYAAQACAAAAAAD//wcAAQACAAAAAAD//wgAAQACAAAAAAD//wkAAQACAAAAAAD//wwAAQACAAAAAAAAAAwAAQACAAAAAAABAAwAAQACAAAAAAACAAwAAQACAAAAAAADAAwAAQACAAAAAAAEAAwAAQACAAAAAAAFAAwAAQACAAAAAAAGAAwAAQACAAAAAAAHAAwAAQACAAAAAAAPAAwAAQACAAAAAAAQAAwAAQACAAAAAAARAAwAAQACAAAAAAASAAwAAQACAAAAAAATAAwAAQACAAAAAAAUAAwAAQACAAAAAAAUAAsAAQACAAAAAAAUAAoAAQACAAAAAAAUAAYAAQACAAAAAAAUAAUAAQACAAAAAAAUAAQAAQACAAAAAAAUAAMAAQACAAAAAAAUAAIAAQACAAAAAAAUAAEAAQACAAAAAAAUAAAAAQACAAAAAAAUAP//AQACAAAAAAATAP//AQACAAAAAAASAP//AQACAAAAAAARAP//AQACAAAAAAAQAP//AQACAAAAAAAPAP//AQACAAAAAAAOAP//AQACAAAAAAANAP//AQACAAAAAAAMAP//AQACAAAAAAALAP//AQACAAAAAAAKAP//AQACAAAAAAAJAP//AQACAAAAAAAIAP//AQACAAAAAAAHAP//AQACAAAAAAAGAP//AQACAAAAAAAFAP//AQACAAAAAAAEAP//AQACAAAAAAADAP//AQACAAAAAAACAP//AQACAAAAAAABAP//AQACAAAAAAAAAP//AQACAAAAAAARAAgAAQAAAAEAAAADAAIAAQAAAAIAAQAEAAIAAQAAAAIAAQAFAAIAAQAAAAAAAAAGAAIAAQAAAAEAAAAHAAIAAQAAAAIAAQAIAAIAAQAAAAEAAAAJAAIAAQAAAAIAAQAKAAIAAQAAAAIAAQALAAIAAQAAAAIAAQAMAAIAAQAAAAIAAQANAAIAAQAAAAEAAAAOAAIAAQAAAAIAAgAPAAIAAQAAAAEAAAAQAAIAAQAAAAEAAAARAAIAAQAAAAIAAgACAAIAAQAAAAIAAgALAAMAAQAAAAEAAAA=")
 tile_set = ExtResource("1_iru21")
 
-[node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps"]
+[node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=1638854745]
 tile_map_data = PackedByteArray("AAALAAQAAQADAAEAAAAGAAgAAQADAAEAAAAKAAYAAQADAAEAAAAFAAMAAQADAAEAAAAQAAMAAQADAAEAAAAIAAkAAQADAAEAAAAQAAgAAQADAAEAAAADAAMAAQADAAEAAAADAAQAAQABAAAAAAADAAUAAQABAAAAAAAHAAMAAQABAAAAAAAPAAgAAQABAAAAAAAPAAcAAQABAAAAAAAPAAYAAQABAAAAAAAOAAYAAQABAAAAAAAIAAYAAQABAAAAAAAIAAcAAQABAAAAAAAIAAgAAQABAAAAAAAJAAgAAQABAAAAAAAHAAYAAQABAAAAAAANAAIAAQABAAAAAAANAAMAAQABAAAAAAANAAQAAQABAAAAAAANAAYAAQABAAAAAAAFAAIAAQABAAAAAAAQAAIAAQAEAAEAAAARAAgAAQAEAAEAAAAJAAkAAQABAAAAAAA=")
 tile_set = ExtResource("2_1xqic")
 
-[node name="Cogito" parent="ScalingParent" node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_b7hsw")]
+[node name="Cogito" parent="ScalingParent" unique_id=358708326 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_b7hsw")]
 position = Vector2(336, 144)
 gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
@@ -39,36 +39,36 @@ pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
 fallingSandScene = ExtResource("4_t524m")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=275701374]
 position = Vector2(960, 540)
 
-[node name="UI" parent="." node_paths=PackedStringArray("gameManager") instance=ExtResource("5_gfa0b")]
+[node name="UI" parent="." unique_id=510015502 node_paths=PackedStringArray("gameManager") instance=ExtResource("5_gfa0b")]
 offset_right = 1920.0
 offset_bottom = 1080.0
 gameManager = NodePath("../GameManager")
 
-[node name="GameManager" parent="." node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("6_y065i")]
+[node name="GameManager" parent="." unique_id=671059067 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("6_y065i")]
 maxParadigmShifts = 5
 levelName = "Automation"
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
 groundLayer = NodePath("../ScalingParent/TileMaps/Ground")
 
-[node name="WinMenu" parent="." instance=ExtResource("7_gro24")]
+[node name="WinMenu" parent="." unique_id=1158347456 instance=ExtResource("7_gro24")]
 visible = false
 offset_left = 960.0
 offset_top = 540.0
 offset_right = 960.0
 offset_bottom = 540.0
 
-[node name="PauseMenu" parent="." instance=ExtResource("8_oxaqo")]
+[node name="PauseMenu" parent="." unique_id=2062757842 instance=ExtResource("8_oxaqo")]
 visible = false
 offset_left = 960.0
 offset_top = 540.0
 offset_right = 960.0
 offset_bottom = 540.0
 
-[node name="LoseMenu" parent="." instance=ExtResource("9_8es1g")]
+[node name="LoseMenu" parent="." unique_id=2097387469 instance=ExtResource("9_8es1g")]
 visible = false
 offset_left = 960.0
 offset_top = 540.0
