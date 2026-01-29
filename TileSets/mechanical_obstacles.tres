@@ -13,6 +13,10 @@ texture_region_size = Vector2i(32, 32)
 4:1/0/custom_data_0 = "ReinforcedCogCrystal"
 5:1/0 = 0
 5:1/0/custom_data_0 = "Cog"
+6:1/0 = 0
+6:1/0/custom_data_0 = "LeverLeft"
+7:1/0 = 0
+7:1/0/custom_data_0 = "LeverRight"
 
 [resource]
 tile_size = Vector2i(32, 32)
