@@ -7,8 +7,8 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>
 		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
 		</summary> */
-	public class PreviousMove(Vector2? movementDirection = null, List<Vector2I> shiftedCogCrystals = null, 
-		List<Vector2I> shiftedReinforcedCogCrystals = null, Vector2I? fallenSandPosition = null, List<Vector2I> challengedCogPositions = null, bool usedParadigmShift = false)
+	public class PreviousMove(Vector2? movementDirection = null, List<Vector2I> shiftedCogCrystals = null, List<Vector2I> shiftedReinforcedCogCrystals = null, 
+		Vector2I? fallenSandPosition = null, List<Vector2I> challengedCogPositions = null, bool usedParadigmShift = false, bool leversToggled = false)
 	{
 		/** <summary> The direction that cogito moved</summary> */
 		public Vector2? movementDirection = movementDirection ?? Vector2.Zero;
@@ -19,6 +19,7 @@ public partial class Cogito : CharacterBody2D
 		/** <summary>A list of all cogs collected in this move. Needed as multiple cogs can be collected in one move from sliding on ice</summary> */
 		public List<Vector2I> challengedCogCoordinates = challengedCogPositions ?? [];
 		public bool usedParadigmShift = usedParadigmShift;
+		public bool leversToggled = leversToggled;
 	}
 
 	/** <summary>stack of all previous moves so that they can be undone in correct order(LIFO)</summary> */
@@ -56,6 +57,8 @@ public partial class Cogito : CharacterBody2D
 
 	/** <summary>Used for the falling sand animation</summary> */
 	[Export] public PackedScene fallingSandScene;
+
+	public bool leversAreLeft = true;
 
 	/** <summary>List of all obstacles that block movement</summary> */
 	private readonly List<string> blockingObstacles =
@@ -186,7 +189,7 @@ public partial class Cogito : CharacterBody2D
 				PreviousMove currentMove = new(movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
 					fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates,
 					shiftedCogCrystals: previousMove.shiftedCogCrystals, shiftedReinforcedCogCrystals: previousMove.shiftedReinforcedCogCrystals,
-					usedParadigmShift: previousMove.usedParadigmShift);
+					usedParadigmShift: previousMove.usedParadigmShift, leversToggled: previousMove.leversToggled);
 
 				previousMoves.Push(currentMove);
 			}
@@ -325,6 +328,9 @@ public partial class Cogito : CharacterBody2D
 				gameManager.obstacleLayer);
 
 		AttemptMove(Position);
+
+		// sync all levers
+		SetLevers(true);
 	}
 
 	// convert global position to the tile position at the specified tile map
@@ -723,9 +729,14 @@ public partial class Cogito : CharacterBody2D
 			gameManager.obstacleLayer.SetCell(crystalPosition, 1, new(5, 1));
 		}
 
-		foreach (Vector2I shiftedLeverPosition in shiftedLevers)
+		// keep track if levers were toggled to save for undo information
+		bool leversJustToggled = false;
+
+		// toggle levers if at least one was shifted
+		if (shiftedLevers.Count >= 1)
 		{
-			ToggleLever(shiftedLeverPosition);
+			leversJustToggled = true;
+			ToggleLevers();
 		}
 
 		// previous move was just lowering paradigm shift count but this will merge with the crystals removed to allow undoing mid animation
@@ -733,7 +744,7 @@ public partial class Cogito : CharacterBody2D
 		
 		// save paradigm shift data to be undone
 		PreviousMove currentMove = new(shiftedCogCrystals: shiftedCogCrystals, shiftedReinforcedCogCrystals: shiftedReinforcedCogCrystals,
-			usedParadigmShift: true);
+			usedParadigmShift: true, leversToggled: leversJustToggled);
 		previousMoves.Push(currentMove);
 
 		// check if any un-shifted crystals remain and when out of shifts and if so, show fail menu
@@ -749,28 +760,38 @@ public partial class Cogito : CharacterBody2D
 		}
 	}
 
-	public void ToggleLever(Vector2I position)
+	// set all levers to the specified direction but doesn't adjust conveyors
+	public void SetLevers(bool leversAreLeft)
 	{
-		CustomTileData leverData = new(gameManager.obstacleLayer.GetCellTileData(position), position);
+		this.leversAreLeft = leversAreLeft;
 
-		if (leverData.customType == "LeverLeft")
+		// get all levers
+		var levers = gameManager.obstacleLayer.GetUsedCellsById(1, new(6, 1));
+		levers.AddRange( gameManager.obstacleLayer.GetUsedCellsById(1, new(7, 1)));
+		
+		foreach (Vector2I leverPosition in levers)
 		{
-			gameManager.obstacleLayer.SetCell(position, 1, new(7, 1));
+			if (!leversAreLeft)
+			{
+				gameManager.obstacleLayer.SetCell(leverPosition, 1, new(7, 1));
+			}
+			else
+			{
+				gameManager.obstacleLayer.SetCell(leverPosition, 1, new(6, 1));
+			}
 		}
-		else if (leverData.customType == "LeverRight")
-		{
-			gameManager.obstacleLayer.SetCell(position, 1, new(6, 1));
-		}
-		else
-		{
-			return;
-		}
+	}
 
+	// toggle all levers, switching all conveyors
+	public void ToggleLevers()
+	{
+		// set levers to the opposite direction
+		SetLevers(!leversAreLeft);
+
+		// get all conveyors
 		var conveyors = gameManager.groundLayer.GetUsedCellsById(1, new (0, 2));
-		conveyors.AddRange(gameManager.groundLayer.GetUsedCellsById(1, new (0, 2), 1));
-		conveyors.AddRange(gameManager.groundLayer.GetUsedCellsById(1, new (0, 2), 2));
-		conveyors.AddRange(gameManager.groundLayer.GetUsedCellsById(1, new (0, 2), 3));
 
+		// flip the direction of every conveyor
 		foreach (Vector2I conveyorPosition in conveyors)
 		{
 			CustomTileData conveyorData = new(gameManager.groundLayer.GetCellTileData(conveyorPosition), conveyorPosition);
@@ -795,6 +816,9 @@ public partial class Cogito : CharacterBody2D
 	{
 		if (previousMoves.Count < 1)
 			return;
+		
+		// cancel buffered inputs
+		bufferedInput = Vector2.Zero;
 
 		mergeNextMove = false;
 
@@ -840,6 +864,9 @@ public partial class Cogito : CharacterBody2D
 				gameManager.obstacleLayer.SetCell(cogReinforcedCrystalPosition, 1, new(4, 1));
 			}
 		}
+
+		if (previousMove.leversToggled)
+			ToggleLevers();
 
 		// update the tile data cogito is currently on after restoring everything
 		UpdateCurrentTileData();
