@@ -1,0 +1,26 @@
+[gd_resource type="TileSet" format=3 uid="uid://c81cx7647ulg3"]
+
+[ext_resource type="Texture2D" uid="uid://d3de5buokgttn" path="res://Assets/Sprites/mechanicalsheet.png" id="1_jixsu"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y0qyj"]
+texture = ExtResource("1_jixsu")
+texture_region_size = Vector2i(32, 32)
+1:0/0 = 0
+1:0/0/custom_data_0 = "Rock"
+3:1/0 = 0
+3:1/0/custom_data_0 = "CogCrystal"
+4:1/0 = 0
+4:1/0/custom_data_0 = "ReinforcedCogCrystal"
+5:1/0 = 0
+5:1/0/custom_data_0 = "Cog"
+6:1/0 = 0
+6:1/0/custom_data_0 = "LeverLeft"
+7:1/0 = 0
+7:1/0/custom_data_0 = "LeverRight"
+
+[resource]
+tile_size = Vector2i(32, 32)
+navigation_layer_0/layers = 1
+custom_data_layer_0/name = "CustomType"
+custom_data_layer_0/type = 4
+sources/1 = SubResource("TileSetAtlasSource_y0qyj")
