@@ -278,7 +278,7 @@ public partial class Cogito : CharacterBody2D
 		targetTileDifferenceVector = newTilePosition - currentTileData.groundTile.position;
 
 		// set animation accordingly to the current tile
-		if (currentTileData.groundTile.customType == "Conveyor")
+		if (currentTileData.groundTile.customType == "Conveyor" && mergeNextMove)
 		{
 			SetSpriteAnimation("Idle");
 		}
