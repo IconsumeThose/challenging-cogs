@@ -227,12 +227,14 @@ public partial class Cogito : CharacterBody2D
 		else if (currentTileData.groundTile.customType == "Ice" && targetTileDifferenceVector.Length() > 0)
 		{
 			Vector2 newPosition = Position + ((Vector2)targetTileDifferenceVector).Normalized() * movementDistance;
+			mergeNextMove = true;
 			mergeNextMove = AttemptMove(newPosition);
 		}
 		// if tile is conveyor, make cogito move in the direction the conveyor is facing
 		else if (currentTileData.groundTile.customType == "Conveyor")
 		{
 			Vector2 newPosition = Position + currentTileData.groundTile.direction * movementDistance;
+			mergeNextMove = true;
 			mergeNextMove = AttemptMove(newPosition);
 		}
 		// if the tile is a teleporter or it is the first move and cogito has moved and nothing is blocked on the other teleporter, move
@@ -454,6 +456,7 @@ public partial class Cogito : CharacterBody2D
 			return true;
 		}
 
+		mergeNextMove = false;
 		return false;
 	}
 
