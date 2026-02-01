@@ -149,10 +149,10 @@ tracks/2/path = NodePath("AnimatedSprite2D:animation")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.75),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.75),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [&"Move"]
+"values": [&"Idle", &"Move"]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
