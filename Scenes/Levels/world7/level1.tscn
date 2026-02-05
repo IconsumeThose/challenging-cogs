@@ -1,0 +1,74 @@
+[gd_scene format=4 uid="uid://fa4xt3w8lu6a"]
+
+[ext_resource type="TileSet" uid="uid://1u282qhp7y1b" path="res://TileSets/gloomy_ground.tres" id="1_8aqhv"]
+[ext_resource type="Texture2D" uid="uid://b37gr8ssk8csg" path="res://Assets/Backgrounds/uuplaceholder.webp" id="1_vqry6"]
+[ext_resource type="TileSet" uid="uid://c81cx7647ulg3" path="res://TileSets/gloomy_obstacles.tres" id="2_vqry6"]
+[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_2p2p6"]
+[ext_resource type="PackedScene" uid="uid://crw0aj4h2h0ss" path="res://Scenes/falling_sand_gloomy.tscn" id="4_vmt6y"]
+[ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_dngnd"]
+[ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_6xoed"]
+[ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_u18mf"]
+[ext_resource type="PackedScene" uid="uid://dj8vu6t4xi3je" path="res://Scenes/pause_menu.tscn" id="8_uyjo0"]
+[ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="9_jku70"]
+
+[node name="Level" type="Node2D" unique_id=1015827580]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1636909542]
+offset_right = 1912.0
+offset_bottom = 1078.0
+texture = ExtResource("1_vqry6")
+
+[node name="ScalingParent" type="Node2D" parent="." unique_id=1030117494]
+scale = Vector2(3, 3)
+
+[node name="TileMaps" type="Node2D" parent="ScalingParent" unique_id=443479030]
+
+[node name="Ground" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=1945708784]
+tile_map_data = PackedByteArray("AAACAAMAAQAAAAAAAAACAAQAAQAAAAAAAAACAAUAAQAAAAAAAAACAAYAAQAAAAAAAAACAAcAAQAAAAAAAAACAAgAAQAAAAAAAAADAAMAAQAAAAAAAAADAAQAAQAAAAAAAAADAAUAAQAAAAAAAAADAAYAAQAAAAAAAAADAAcAAQAAAAAAAAADAAgAAQAAAAAAAAAEAAMAAQAAAAAAAAAEAAQAAQAAAAAAAAAEAAUAAQAAAAAAAAAEAAYAAQAAAAAAAAAEAAcAAQAAAAAAAAAEAAgAAQAAAAAAAAAFAAMAAQAAAAAAAAAFAAQAAQAAAAAAAAAFAAUAAQAAAAAAAAAFAAYAAQAAAAAAAAAFAAcAAQAAAAAAAAAFAAgAAQAAAAAAAAAGAAMAAQAAAAAAAAAGAAQAAQAAAAAAAAAGAAUAAQAAAAAAAAAGAAYAAQAAAAAAAAAGAAcAAQAAAAAAAAAGAAgAAQAAAAAAAAAHAAMAAQAAAAAAAAAHAAQAAQAAAAAAAAAHAAUAAQAAAAAAAAAHAAYAAQAAAAAAAAAHAAcAAQAAAAAAAAAHAAgAAQAAAAAAAAAIAAMAAQAAAAAAAAAIAAQAAQAAAAAAAAAIAAUAAQAAAAAAAAAIAAYAAQAAAAAAAAAIAAcAAQAAAAAAAAAIAAgAAQAAAAAAAAAJAAMAAQAAAAAAAAAJAAQAAQAAAAAAAAAJAAUAAQAAAAAAAAAJAAYAAQAAAAAAAAAJAAcAAQAAAAAAAAAJAAgAAQAAAAAAAAAKAAMAAQAAAAAAAAAKAAQAAQAAAAAAAAAKAAUAAQACAAEAAAAKAAYAAQAAAAAAAAAKAAcAAQAAAAAAAAAKAAgAAQAAAAAAAAALAAMAAQAAAAAAAAALAAQAAQAAAAAAAAALAAUAAQAAAAAAAAALAAYAAQAAAAAAAAALAAcAAQAAAAAAAAALAAgAAQAAAAAAAAAMAAMAAQAAAAAAAAAMAAQAAQAAAAAAAAAMAAUAAQAAAAAAAAAMAAYAAQAAAAAAAAAMAAcAAQAAAAAAAAAMAAgAAQAAAAAAAAANAAMAAQAAAAAAAAANAAQAAQAAAAAAAAANAAUAAQAAAAAAAAANAAYAAQAAAAAAAAANAAcAAQAAAAAAAAANAAgAAQAAAAAAAAAOAAMAAQAAAAAAAAAOAAQAAQAAAAAAAAAOAAUAAQAAAAAAAAAOAAYAAQAAAAAAAAAOAAcAAQAAAAAAAAAOAAgAAQAAAAAAAAAPAAMAAQAAAAAAAAAPAAQAAQAAAAAAAAAPAAUAAQAAAAAAAAAPAAYAAQAAAAAAAAAPAAcAAQAAAAAAAAAPAAgAAQAAAAAAAAAQAAMAAQAAAAAAAAAQAAQAAQAAAAAAAAAQAAUAAQAAAAAAAAAQAAYAAQAAAAAAAAAQAAcAAQAAAAAAAAAQAAgAAQAAAAAAAAARAAMAAQAAAAAAAAARAAQAAQAAAAAAAAARAAUAAQAAAAAAAAARAAYAAQAAAAAAAAARAAcAAQAAAAAAAAD/////AQACAAAAAAD//wIAAQACAAAAAAD//wMAAQACAAAAAAD//wQAAQACAAAAAAD//wUAAQACAAAAAAD//wYAAQACAAAAAAD//wcAAQACAAAAAAD//wgAAQACAAAAAAD//wkAAQACAAAAAAD//wsAAQACAAAAAAD//wwAAQACAAAAAAAAAAwAAQACAAAAAAABAAwAAQACAAAAAAACAAwAAQACAAAAAAADAAwAAQACAAAAAAAEAAwAAQACAAAAAAAFAAwAAQACAAAAAAAGAAwAAQACAAAAAAAHAAwAAQACAAAAAAAIAAwAAQACAAAAAAAJAAwAAQACAAAAAAAKAAwAAQACAAAAAAALAAwAAQACAAAAAAAMAAwAAQACAAAAAAANAAwAAQACAAAAAAAOAAwAAQACAAAAAAAPAAwAAQACAAAAAAAQAAwAAQACAAAAAAARAAwAAQACAAAAAAASAAwAAQACAAAAAAATAAwAAQACAAAAAAAUAAwAAQACAAAAAAAUAAoAAQACAAAAAAAUAAkAAQACAAAAAAAUAAgAAQACAAAAAAAUAAcAAQACAAAAAAAUAAYAAQACAAAAAAAUAAUAAQACAAAAAAAUAAQAAQACAAAAAAAUAAMAAQACAAAAAAAUAAIAAQACAAAAAAAUAAEAAQACAAAAAAAUAAAAAQACAAAAAAAUAP//AQACAAAAAAATAP//AQACAAAAAAASAP//AQACAAAAAAARAP//AQACAAAAAAAQAP//AQACAAAAAAAPAP//AQACAAAAAAAOAP//AQACAAAAAAANAP//AQACAAAAAAAMAP//AQACAAAAAAALAP//AQACAAAAAAAKAP//AQACAAAAAAAJAP//AQACAAAAAAAIAP//AQACAAAAAAAHAP//AQACAAAAAAAGAP//AQACAAAAAAAFAP//AQACAAAAAAAEAP//AQACAAAAAAADAP//AQACAAAAAAACAP//AQACAAAAAAABAP//AQACAAAAAAAAAP//AQACAAAAAAARAAgAAQAAAAAAAAA=")
+tile_set = ExtResource("1_8aqhv")
+
+[node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=419153632]
+tile_set = ExtResource("2_vqry6")
+
+[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_2p2p6")]
+position = Vector2(208, 208)
+gameManager = NodePath("../../GameManager")
+winMenu = NodePath("../../WinMenu")
+pauseMenu = NodePath("../../PauseMenu")
+loseMenu = NodePath("../../LoseMenu")
+fallingSandScene = ExtResource("4_vmt6y")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
+position = Vector2(960, 540)
+
+[node name="UI" parent="." unique_id=868482676 node_paths=PackedStringArray("gameManager") instance=ExtResource("5_dngnd")]
+offset_right = 1920.0
+offset_bottom = 1080.0
+gameManager = NodePath("../GameManager")
+
+[node name="GameManager" parent="." unique_id=1933725455 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("6_6xoed")]
+maxParadigmShifts = 10
+ui = NodePath("../UI")
+obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
+groundLayer = NodePath("../ScalingParent/TileMaps/Ground")
+
+[node name="WinMenu" parent="." unique_id=1931602780 instance=ExtResource("7_u18mf")]
+visible = false
+offset_left = 960.0
+offset_top = 540.0
+offset_right = 960.0
+offset_bottom = 540.0
+
+[node name="PauseMenu" parent="." unique_id=1411021336 instance=ExtResource("8_uyjo0")]
+visible = false
+offset_left = 960.0
+offset_top = 540.0
+offset_right = 960.0
+offset_bottom = 540.0
+
+[node name="LoseMenu" parent="." unique_id=74940406 instance=ExtResource("9_jku70")]
+visible = false
+offset_left = 960.0
+offset_top = 540.0
+offset_right = 960.0
+offset_bottom = 540.0
