@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/bananabeach.ogg-a810e2809c263db89b6e8135f42fc
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0

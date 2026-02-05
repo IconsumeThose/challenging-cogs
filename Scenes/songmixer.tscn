@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://b2pqav0teuakt"]
+
+[ext_resource type="AudioStream" uid="uid://bxrsjv1xlnoh0" path="res://Assets/Music/bananabeach.ogg" id="1_uqrw6"]
+[ext_resource type="Script" uid="uid://bg08qpsm4kw8h" path="res://Scripts/Songmixer.cs" id="2_4631e"]
+[ext_resource type="AudioStream" uid="uid://cgjtg7muu66bb" path="res://Assets/Music/mechanicalmachinery.ogg" id="2_wxc3n"]
+[ext_resource type="AudioStream" uid="uid://cgm3n4q8i1m1u" path="res://Assets/Music/Johann Sebastian Bach (1685 - 1750) - Prelude I.mp3" id="4_4631e"]
+
+[node name="World1Song" type="AudioStreamPlayer" unique_id=327098985]
+autoplay = true
+script = ExtResource("2_4631e")
+world1 = ExtResource("1_uqrw6")
+world2 = ExtResource("2_wxc3n")
+mainmenu = ExtResource("4_4631e")

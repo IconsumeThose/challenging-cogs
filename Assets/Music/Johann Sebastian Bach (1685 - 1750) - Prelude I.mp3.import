@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cgm3n4q8i1m1u"
+path="res://.godot/imported/Johann Sebastian Bach (1685 - 1750) - Prelude I.mp3-a1c071098c081aeae60cc5c7ffbff056.mp3str"
+
+[deps]
+
+source_file="res://Assets/Music/Johann Sebastian Bach (1685 - 1750) - Prelude I.mp3"
+dest_files=["res://.godot/imported/Johann Sebastian Bach (1685 - 1750) - Prelude I.mp3-a1c071098c081aeae60cc5c7ffbff056.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
