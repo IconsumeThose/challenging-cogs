@@ -47,6 +47,7 @@ texture_region_size = Vector2i(32, 32)
 4:2/animation_frame_0/duration = 1.0
 4:2/animation_frame_1/duration = 1.0
 4:2/0 = 0
+4:2/0/custom_data_0 = "Water"
 
 [resource]
 tile_size = Vector2i(32, 32)

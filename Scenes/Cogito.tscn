@@ -5,6 +5,26 @@
 [ext_resource type="Texture2D" uid="uid://dok1fu6yin71i" path="res://Assets/Sprites/cogitosheet.png" id="2_eoj5r"]
 [ext_resource type="Texture2D" uid="uid://ghh3pckjfw5t" path="res://Assets/Sprites/particlesheet.png" id="4_1ujft"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_7hp1u"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kpgjw"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yo5o3"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aes1x"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2llrw"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(224, 224, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_e0kin"]
 atlas = ExtResource("2_eoj5r")
 region = Rect2(0, 0, 32, 32)
@@ -45,8 +65,52 @@ region = Rect2(128, 0, 32, 32)
 atlas = ExtResource("2_eoj5r")
 region = Rect2(160, 0, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_j8sqe"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_422ea"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sdbyn"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(128, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ue1oh"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(160, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4g0g8"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(192, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1avbt"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(224, 32, 32, 32)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_e0kin"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7hp1u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kpgjw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yo5o3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aes1x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2llrw")
+}],
+"loop": false,
+"name": &"Drown",
+"speed": 3.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_e0kin")
@@ -96,10 +160,59 @@ animations = [{
 "loop": true,
 "name": &"Slide",
 "speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j8sqe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_422ea")
+}],
+"loop": true,
+"name": &"SwimIdle",
+"speed": 1.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sdbyn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ue1oh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4g0g8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1avbt")
+}],
+"loop": false,
+"name": &"SwimParadigmShift",
+"speed": 10.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kihqq"]
 radius = 18.027756
+
+[sub_resource type="Animation" id="Animation_tr1jv"]
+resource_name = "Drown"
+length = 1.67
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.6666666),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": ["Drown", 1.0],
+"method": &"SetSpriteAnimation"
+}, {
+"args": [],
+"method": &"Lose"
+}]
+}
 
 [sub_resource type="Animation" id="Animation_eoj5r"]
 resource_name = "Fall"
@@ -189,9 +302,12 @@ tracks/0/path = NodePath(".")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.2, 0.5),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.2, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
 "values": [{
+"args": ["ParadigmShift", 1.0],
+"method": &"SetSpriteAnimation"
+}, {
 "args": [],
 "method": &"ParadigmShift"
 }, {
@@ -211,42 +327,25 @@ tracks/1/keys = {
 "update": 1,
 "values": [0]
 }
-tracks/2/type = "method"
+tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("AnimatedSprite2D")
+tracks/2/path = NodePath("ParadigmShiftParticles:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
-"values": [{
-"args": [&"ParadigmShift"],
-"method": &"play"
-}, {
-"args": [&"Idle", 1.0],
-"method": &"play"
-}]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("ParadigmShiftParticles:visible")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
 }
-tracks/4/type = "method"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("ParadigmShiftParticles")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("ParadigmShiftParticles")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -254,13 +353,13 @@ tracks/4/keys = {
 "method": &"play"
 }]
 }
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("ParadigmShiftParticles:frame")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("ParadigmShiftParticles:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -284,74 +383,64 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("AnimatedSprite2D:animation")
+tracks/1/path = NodePath("AnimatedSprite2D:speed_scale")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"Idle"]
+"update": 0,
+"values": [1.0]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("AnimatedSprite2D:speed_scale")
+tracks/2/path = NodePath("AnimatedSprite2D:rotation")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [1.0]
+"values": [0.0]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("AnimatedSprite2D:rotation")
+tracks/3/path = NodePath("ParadigmShiftParticles:visible")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
+"update": 1,
+"values": [false]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("AnimatedSprite2D:frame")
+tracks/4/path = NodePath("ParadigmShiftParticles:frame")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [0]
+"values": [1]
 }
-tracks/5/type = "value"
+tracks/5/type = "method"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("ParadigmShiftParticles:visible")
+tracks/5/path = NodePath(".")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("ParadigmShiftParticles:frame")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [1]
+"values": [{
+"args": ["Idle", 1.0],
+"method": &"SetSpriteAnimation"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_1ujft"]
@@ -376,6 +465,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_dsxq2"]
 _data = {
+&"Drown": SubResource("Animation_tr1jv"),
 &"Fall": SubResource("Animation_eoj5r"),
 &"ParadigmShift": SubResource("Animation_l63y4"),
 &"RESET": SubResource("Animation_e0kin"),

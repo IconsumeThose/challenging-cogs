@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://i2xx1e807dx0"]
+[gd_scene format=3 uid="uid://i2xx1e807dx0"]
 
 [ext_resource type="Script" uid="uid://dokcv4psexiyx" path="res://Scripts/Ui.cs" id="1_jxero"]
 [ext_resource type="LabelSettings" uid="uid://6jq228wrs6k" path="res://Labels/ui.tres" id="2_qdvrb"]
 
-[node name="UI" type="Control" node_paths=PackedStringArray("cogCountLabel", "paradigmShiftCountLabel", "levelInfoLabel")]
+[node name="UI" type="Control" unique_id=1636633512 node_paths=PackedStringArray("cogCountLabel", "paradigmShiftCountLabel", "levelInfoLabel")]
 z_index = 2
 layout_mode = 3
 anchors_preset = 15
@@ -19,14 +19,14 @@ cogCountLabel = NodePath("CogCount")
 paradigmShiftCountLabel = NodePath("ParadigmCount")
 levelInfoLabel = NodePath("LevelInfo")
 
-[node name="CogCount" type="Label" parent="."]
+[node name="CogCount" type="Label" parent="." unique_id=498219094]
 layout_mode = 0
 offset_right = 160.0
 offset_bottom = 23.0
 text = "Cogs Challenged: x/x"
 label_settings = ExtResource("2_qdvrb")
 
-[node name="ParadigmCount" type="Label" parent="."]
+[node name="ParadigmCount" type="Label" parent="." unique_id=843708440]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -37,7 +37,7 @@ grow_horizontal = 0
 text = "Paradigm Shifts Left: x/x"
 label_settings = ExtResource("2_qdvrb")
 
-[node name="LevelInfo" type="Label" parent="."]
+[node name="LevelInfo" type="Label" parent="." unique_id=1381278233]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
