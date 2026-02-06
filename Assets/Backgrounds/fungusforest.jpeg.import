@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b4w7l5r4xl5g3"
-path="res://.godot/imported/ccplaceholder.jpeg-1afc6109b9c05c5daffea924132f30c1.ctex"
+uid="uid://bc8foeg722sf8"
+path="res://.godot/imported/fungusforest.jpeg-52a869e484ebe49bf317f05f8df97971.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Backgrounds/ccplaceholder.jpeg"
-dest_files=["res://.godot/imported/ccplaceholder.jpeg-1afc6109b9c05c5daffea924132f30c1.ctex"]
+source_file="res://Assets/Backgrounds/fungusforest.jpeg"
+dest_files=["res://.godot/imported/fungusforest.jpeg-52a869e484ebe49bf317f05f8df97971.ctex"]
 
 [params]
 

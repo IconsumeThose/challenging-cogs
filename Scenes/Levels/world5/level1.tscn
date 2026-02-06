@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://dmdsgrrajd6wd"]
 
 [ext_resource type="TileSet" uid="uid://1u282qhp7y1b" path="res://TileSets/gloomy_ground.tres" id="1_3th05"]
-[ext_resource type="Texture2D" uid="uid://bc8foeg722sf8" path="res://Assets/Backgrounds/ffplaceholder.jpeg" id="1_pobql"]
+[ext_resource type="Texture2D" uid="uid://bc8foeg722sf8" path="res://Assets/Backgrounds/fungusforest.jpeg" id="1_pobql"]
 [ext_resource type="TileSet" uid="uid://c81cx7647ulg3" path="res://TileSets/gloomy_obstacles.tres" id="2_pobql"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_4lb7o"]
 [ext_resource type="PackedScene" uid="uid://crw0aj4h2h0ss" path="res://Scenes/falling_sand_gloomy.tscn" id="4_uwx6u"]

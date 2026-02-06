@@ -1,5 +1,6 @@
 [gd_scene format=4 uid="uid://beovmsg5wn751"]
 
+[ext_resource type="Texture2D" uid="uid://cdxfful3ufp27" path="res://Assets/Backgrounds/gloomyglacier.png" id="1_c0wt4"]
 [ext_resource type="TileSet" uid="uid://1u282qhp7y1b" path="res://TileSets/gloomy_ground.tres" id="1_dunqt"]
 [ext_resource type="TileSet" uid="uid://c81cx7647ulg3" path="res://TileSets/gloomy_obstacles.tres" id="2_c0wt4"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_beo07"]
@@ -11,6 +12,12 @@
 [ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="9_wrl1m"]
 
 [node name="Level" type="Node2D" unique_id=1015827580]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=718259018]
+offset_right = 1920.0
+offset_bottom = 1131.0
+texture = ExtResource("1_c0wt4")
+stretch_mode = 4
 
 [node name="ScalingParent" type="Node2D" parent="." unique_id=1030117494]
 scale = Vector2(3, 3)

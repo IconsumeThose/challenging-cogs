@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b37gr8ssk8csg"
-path="res://.godot/imported/uuplaceholder.webp-fe8dd100eb19ee133bfbf28fd6a93c3f.ctex"
+uid="uid://b4w7l5r4xl5g3"
+path="res://.godot/imported/chaoscosmos.jpeg-312230746eecb19749b79c12d003b7d0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Backgrounds/uuplaceholder.webp"
-dest_files=["res://.godot/imported/uuplaceholder.webp-fe8dd100eb19ee133bfbf28fd6a93c3f.ctex"]
+source_file="res://Assets/Backgrounds/chaoscosmos.jpeg"
+dest_files=["res://.godot/imported/chaoscosmos.jpeg-312230746eecb19749b79c12d003b7d0.ctex"]
 
 [params]
 

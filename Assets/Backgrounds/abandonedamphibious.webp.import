@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bc8foeg722sf8"
-path="res://.godot/imported/ffplaceholder.jpeg-cf4430fbd0b6b8b05cea1f4b3d94556a.ctex"
+uid="uid://c2wwrr2fyisom"
+path="res://.godot/imported/abandonedamphibious.webp-a666e9f139ccee68f2dc1c2bbad6afad.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Backgrounds/ffplaceholder.jpeg"
-dest_files=["res://.godot/imported/ffplaceholder.jpeg-cf4430fbd0b6b8b05cea1f4b3d94556a.ctex"]
+source_file="res://Assets/Backgrounds/abandonedamphibious.webp"
+dest_files=["res://.godot/imported/abandonedamphibious.webp-a666e9f139ccee68f2dc1c2bbad6afad.ctex"]
 
 [params]
 

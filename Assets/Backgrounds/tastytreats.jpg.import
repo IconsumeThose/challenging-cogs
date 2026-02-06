@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://t1c8rs5anotv"
-path="res://.godot/imported/ggplaceholder.jpg-bb32190bebe9f2fde3efdf399d5894e7.ctex"
+uid="uid://d1n35g6fqq15i"
+path="res://.godot/imported/tastytreats.jpg-47dca921b1614f3ab6ea18f0b0b6d2fc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Backgrounds/ggplaceholder.jpg"
-dest_files=["res://.godot/imported/ggplaceholder.jpg-bb32190bebe9f2fde3efdf399d5894e7.ctex"]
+source_file="res://Assets/Backgrounds/tastytreats.jpg"
+dest_files=["res://.godot/imported/tastytreats.jpg-47dca921b1614f3ab6ea18f0b0b6d2fc.ctex"]
 
 [params]
 

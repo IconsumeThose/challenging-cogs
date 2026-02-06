@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1n35g6fqq15i"
-path="res://.godot/imported/ttplaceholder.jpg-8c8fe3e9ce4e72abcce10e6732b279db.ctex"
+uid="uid://cdxfful3ufp27"
+path="res://.godot/imported/gloomyglacier.png-b4e44b836b0a02d2bdfad1f7683a515c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Backgrounds/ttplaceholder.jpg"
-dest_files=["res://.godot/imported/ttplaceholder.jpg-8c8fe3e9ce4e72abcce10e6732b279db.ctex"]
+source_file="res://Assets/Backgrounds/gloomyglacier.png"
+dest_files=["res://.godot/imported/gloomyglacier.png-b4e44b836b0a02d2bdfad1f7683a515c.ctex"]
 
 [params]
 

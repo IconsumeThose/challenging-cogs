@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://bd7rqijsupm5y"]
 
-[ext_resource type="Texture2D" uid="uid://c2wwrr2fyisom" path="res://Assets/Backgrounds/aaplaceholder.webp" id="1_jn0iq"]
+[ext_resource type="Texture2D" uid="uid://c2wwrr2fyisom" path="res://Assets/Backgrounds/abandonedamphibious.webp" id="1_jn0iq"]
 [ext_resource type="TileSet" uid="uid://1u282qhp7y1b" path="res://TileSets/gloomy_ground.tres" id="1_vlak7"]
 [ext_resource type="TileSet" uid="uid://c81cx7647ulg3" path="res://TileSets/gloomy_obstacles.tres" id="2_jn0iq"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_0gn78"]
