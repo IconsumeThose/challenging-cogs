@@ -25,8 +25,9 @@ public partial class GameManager : Node2D
 				// get all cogs to get the total cog count
 				var cogs = obstacleLayer.GetUsedCellsById(1, new(5, 1));
 				var reinforcedCogCrystals = obstacleLayer.GetUsedCellsById(1, new(4, 1));
+				var deinforcedCogCrystals = obstacleLayer.GetUsedCellsById(1, new(6 ,2));
 				var cogCrystals = obstacleLayer.GetUsedCellsById(1, new(3, 1));
-				totalNumberOfCogs = cogs.Count + reinforcedCogCrystals.Count + cogCrystals.Count;	
+				totalNumberOfCogs = cogs.Count + reinforcedCogCrystals.Count + deinforcedCogCrystals.Count + cogCrystals.Count;	
 			}
 
 			return totalNumberOfCogs;

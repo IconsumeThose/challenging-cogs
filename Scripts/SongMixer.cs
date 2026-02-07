@@ -4,9 +4,11 @@ using System;
 // hi sammy
 public partial class SongMixer : AudioStreamPlayer
 {
-	public static Song currentSong = 0;
+	public static Song currentSong = Song.nothing;
 	public enum Song
 	{
+		nothing = -1,
+		mainMenu = 0,
 		world1 = 1, 
 		world2 = 2, 
 		world3 = 3, 
@@ -15,7 +17,6 @@ public partial class SongMixer : AudioStreamPlayer
 		world6 = 6, 
 		world7 = 7, 
 		world8 = 8,
-		mainMenu = 9
 	}
 	private static SongMixer instance;
 
@@ -32,13 +33,13 @@ public partial class SongMixer : AudioStreamPlayer
 	}
 
 
-
 	public static void PlaySong(Song songToPlay)
 	{
 		if (currentSong == songToPlay)
 		{
 			return;
 		}
+
 		switch (songToPlay)
 		{
 			case Song.world1:

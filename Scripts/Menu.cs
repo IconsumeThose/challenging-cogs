@@ -9,8 +9,13 @@ public partial class Menu : Control
 		{
 			SongMixer.PlaySong(SongMixer.Song.mainMenu);
 		}
+		else
+		{
+			GD.Print(DataManager.currentWorld);
+			SongMixer.PlaySong((SongMixer.Song)DataManager.currentWorld);
+		}
 	}
-	
+
 	// restart the level
 	public void OnRestartClicked()
 	{

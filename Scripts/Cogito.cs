@@ -8,12 +8,14 @@ public partial class Cogito : CharacterBody2D
 		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
 		</summary> */
 	public class PreviousMove( int waterMovesLeft, Vector2? movementDirection = null, List<Vector2I> shiftedCogCrystals = null, List<Vector2I> shiftedReinforcedCogCrystals = null, 
-		Vector2I? fallenSandPosition = null, List<Vector2I> challengedCogPositions = null, bool usedParadigmShift = false, bool leversToggled = false)
+		List<Vector2I> shiftedDeinforcedCogCrystals = null,	Vector2I? fallenSandPosition = null, List<Vector2I> challengedCogPositions = null, bool usedParadigmShift = false, 
+		bool leversToggled = false)
 	{
 		/** <summary> The direction that cogito moved</summary> */
 		public Vector2? movementDirection = movementDirection ?? Vector2.Zero;
 		public readonly List<Vector2I> shiftedCogCrystals = shiftedCogCrystals ?? [];
 		public readonly List<Vector2I> shiftedReinforcedCogCrystals = shiftedReinforcedCogCrystals ?? [];
+		public readonly List<Vector2I> shiftedDeinforcedCogCrystals = shiftedDeinforcedCogCrystals ?? [];
 		public Vector2I? fallenSandPosition = fallenSandPosition ?? Vector2I.Up;
 		
 		/** <summary>A list of all cogs collected in this move. Needed as multiple cogs can be collected in one move from sliding on ice</summary> */
@@ -69,6 +71,7 @@ public partial class Cogito : CharacterBody2D
 		"Rock",
 		"CogCrystal",
 		"ReinforcedCogCrystal",
+		"DeinforcedCogCrystal",
 		"LeverLeft",
 		"LeverRight"
 	];
@@ -194,6 +197,7 @@ public partial class Cogito : CharacterBody2D
 				PreviousMove currentMove = new(waterMovesLeft, movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
 					fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates,
 					shiftedCogCrystals: previousMove.shiftedCogCrystals, shiftedReinforcedCogCrystals: previousMove.shiftedReinforcedCogCrystals,
+					shiftedDeinforcedCogCrystals: previousMove.shiftedDeinforcedCogCrystals,
 					usedParadigmShift: previousMove.usedParadigmShift, leversToggled: previousMove.leversToggled);
 
 				previousMoves.Push(currentMove);
@@ -645,7 +649,7 @@ public partial class Cogito : CharacterBody2D
 			gameManager.ParadigmShifted(1);
 
 			PreviousMove currentMove = new(waterMovesLeft, shiftedCogCrystals: [], shiftedReinforcedCogCrystals: [],
-				usedParadigmShift: true);
+				shiftedDeinforcedCogCrystals: [], usedParadigmShift: true);
 			previousMoves.Push(currentMove);
 		}
 		else if (Input.IsActionJustPressed("Undo"))
@@ -713,9 +717,10 @@ public partial class Cogito : CharacterBody2D
 		];
 
 		// keep track of crystals shifted if it needs to be undone
-		List<Vector2I> shiftedCogCrystals = [];
-		List<Vector2I> shiftedReinforcedCogCrystals = [];
-		List<Vector2I> shiftedLevers = [];
+		List<Vector2I> shiftedCogCrystals = [],
+			shiftedReinforcedCogCrystals = [],
+			shiftedDeinforcedCogCrystals = [],
+			shiftedLevers = [];
 
 		// replace both CogCrystals and ReinforcedCogCrystals with a cog for adjacent tiles
 		foreach (Vector2I adjacentCoordinate in adjacentCoordinates)
@@ -749,6 +754,9 @@ public partial class Cogito : CharacterBody2D
 				case "CogCrystal":
 					shiftedCogCrystals.Add(diagonalCoordinate);
 					break;
+				case "DeinforcedCogCrystal":
+					shiftedDeinforcedCogCrystals.Add(diagonalCoordinate);
+					break;
 				case "LeverLeft":
 				case "LeverRight":
 					shiftedLevers.Add(diagonalCoordinate);
@@ -759,7 +767,8 @@ public partial class Cogito : CharacterBody2D
 		// create a list that contains normal and reinforced cog crystals
 		List<Vector2I> totalShiftedCogCrystals = [.. shiftedCogCrystals];
 		totalShiftedCogCrystals.AddRange(shiftedReinforcedCogCrystals);
-		
+		totalShiftedCogCrystals.AddRange(shiftedDeinforcedCogCrystals);
+
 		// convert all crystals shifted to cogs
 		foreach (Vector2I crystalPosition in totalShiftedCogCrystals)
 		{
@@ -781,16 +790,17 @@ public partial class Cogito : CharacterBody2D
 		
 		// save paradigm shift data to be undone
 		PreviousMove currentMove = new(waterMovesLeft, shiftedCogCrystals: shiftedCogCrystals, shiftedReinforcedCogCrystals: shiftedReinforcedCogCrystals,
-			usedParadigmShift: true, leversToggled: leversJustToggled);
+			shiftedDeinforcedCogCrystals: shiftedDeinforcedCogCrystals,	usedParadigmShift: true, leversToggled: leversJustToggled);
 		previousMoves.Push(currentMove);
 
 		// check if any un-shifted crystals remain and when out of shifts and if so, show fail menu
 		if (gameManager.paradigmShiftsRemaining == 0)
 		{
 			var reinforcedCogCrystals = gameManager.obstacleLayer.GetUsedCellsById(1, new(4, 1));
+			var deinforcedCogCrystals = gameManager.obstacleLayer.GetUsedCellsById(1, new(6, 2));
 			var cogCrystals = gameManager.obstacleLayer.GetUsedCellsById(1, new(3, 1));
 
-			if (reinforcedCogCrystals.Count + cogCrystals.Count > 0)
+			if (reinforcedCogCrystals.Count + deinforcedCogCrystals.Count + cogCrystals.Count > 0)
 			{
 				Lose();
 			}
@@ -896,9 +906,14 @@ public partial class Cogito : CharacterBody2D
 				gameManager.obstacleLayer.SetCell(cogCrystalPosition, 1, new(3, 1));
 			}
 
-			foreach (Vector2I cogReinforcedCrystalPosition in previousMove.shiftedReinforcedCogCrystals)
+			foreach (Vector2I reinforcedCogCrystalPosition in previousMove.shiftedReinforcedCogCrystals)
 			{
-				gameManager.obstacleLayer.SetCell(cogReinforcedCrystalPosition, 1, new(4, 1));
+				gameManager.obstacleLayer.SetCell(reinforcedCogCrystalPosition, 1, new(4, 1));
+			}
+
+			foreach(Vector2I deinforcedCogCrystalPosition in previousMove.shiftedDeinforcedCogCrystals)
+			{
+				gameManager.obstacleLayer.SetCell(deinforcedCogCrystalPosition, 1, new(6, 2));
 			}
 		}
 
