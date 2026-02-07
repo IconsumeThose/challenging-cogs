@@ -3,7 +3,7 @@ using System;
 
 public partial class DataManager : Node
 {
-	public static string saveFileName = "a";
+	public static string saveFileName = "";
 	[Export(PropertyHint.GlobalSaveFile)] protected string saveFileNameInstance = "save.sav";
 
 	public static int currentLevel = 0,
@@ -40,10 +40,9 @@ public partial class DataManager : Node
 		}
 	}
 
-	// save data to file, currently saves records, seed, death positions and number of segments
+	// save data to file, currently saves level and world
 	public static void SaveGame(bool bypassCheck = false)
 	{
-		GD.Print("starting save " + (currentWorld == savedWorld && currentLevel == savedLevel + 1) + " " + (currentWorld == savedWorld + 1 && currentLevel == 1));
 		if (!bypassCheck && !((currentWorld == savedWorld && currentLevel == savedLevel + 1) 
 			|| (currentWorld == savedWorld + 1 && currentLevel == 1))
 		)
@@ -156,7 +155,7 @@ public partial class DataManager : Node
 			DataManager.currentLevel++;
 
 			instance.GetTree().ChangeSceneToFile(nextLevelPath);
-			SongMixer.PlaySong(DataManager.currentWorld);
+			SongMixer.PlaySong((SongMixer.Song)currentWorld);
 		}
 		else
 		{
@@ -176,7 +175,7 @@ public partial class DataManager : Node
 			DataManager.currentLevel = 1;
 
 			instance.GetTree().ChangeSceneToFile(nextWorldPath);
-			SongMixer.PlaySong(DataManager.currentWorld);
+			SongMixer.PlaySong((SongMixer.Song)currentWorld);
 		}
 	}
 

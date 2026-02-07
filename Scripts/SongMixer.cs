@@ -4,12 +4,21 @@ using System;
 // hi sammy
 public partial class SongMixer : AudioStreamPlayer
 {
-	public static int currentSong = 0;
+	public static Song currentSong = 0;
 	public enum Song
 	{
-		world1, world2, world3, world4, world5, world6, world7, world8, mainMenu
+		world1 = 1, 
+		world2 = 2, 
+		world3 = 3, 
+		world4 = 4, 
+		world5 = 5, 
+		world6 = 6, 
+		world7 = 7, 
+		world8 = 8,
+		mainMenu = 9
 	}
 	private static SongMixer instance;
+
 	[Export] private AudioStream world1, world2, world3, world4, world5, world6, world7, world8, mainMenu; // now THIS makes it so you file drop in rogot
 	public static void SetBusVolume(string bus, float volume) // adding this to settings sometime
 	{
@@ -21,7 +30,10 @@ public partial class SongMixer : AudioStreamPlayer
 	{
 		instance = this; // idk what this does
 	}
-	public static void PlaySong(int songToPlay)
+
+
+
+	public static void PlaySong(Song songToPlay)
 	{
 		if (currentSong == songToPlay)
 		{
@@ -29,34 +41,36 @@ public partial class SongMixer : AudioStreamPlayer
 		}
 		switch (songToPlay)
 		{
-			case 1:
+			case Song.world1:
 				instance.Stream = instance.world1;
 				break;
-			case 2:
+			case Song.world2:
 				instance.Stream = instance.world2;
 				break;
-			case 3:
+			case Song.world3:
 				instance.Stream = instance.world3;
 				break;
-			case 4:
+			case Song.world4:
 				instance.Stream = instance.world4;
 				break;
-			case 5:
+			case Song.world5:
 				instance.Stream = instance.world5;
 				break;
-			case 6:
+			case Song.world6:
 				instance.Stream = instance.world6;
 				break;
-			case 7:
+			case Song.world7:
 				instance.Stream = instance.world7;
 				break;
-			case 8:
+			case Song.world8:
 				instance.Stream = instance.world8;
 				break;
-			case 9:
+			case Song.mainMenu:
 				instance.Stream = instance.mainMenu;
 				break;
 		}
+
 		currentSong = songToPlay;
+		instance.Play();
 	}
 }

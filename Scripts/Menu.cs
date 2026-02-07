@@ -3,12 +3,20 @@ using System;
 
 public partial class Menu : Control
 {
+	public override void _Ready()
+	{
+		if (Name == "MainMenu")
+		{
+			SongMixer.PlaySong(SongMixer.Song.mainMenu);
+		}
+	}
+	
 	// restart the level
 	public void OnRestartClicked()
 	{
 		Engine.TimeScale = 1;
 		GetTree().ChangeSceneToFile($"res://Scenes/Levels/world{DataManager.currentWorld}/level{DataManager.currentLevel}.tscn");
-		SongMixer.PlaySong(DataManager.currentWorld);
+		SongMixer.PlaySong((SongMixer.Song)DataManager.currentWorld);
 	}
 
 	// take you to the next level, win menu only or dev key pressed (=)
@@ -49,6 +57,5 @@ public partial class Menu : Control
 	{
 		Engine.TimeScale = 1;
 		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
-		SongMixer.PlaySong(9);
 	}
 }
