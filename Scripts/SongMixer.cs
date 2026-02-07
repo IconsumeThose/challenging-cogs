@@ -21,7 +21,9 @@ public partial class SongMixer : AudioStreamPlayer
 	private static SongMixer instance;
 
 	[Export] private AudioStream world1, world2, world3, world4, world5, world6, world7, world8, mainMenu; // now THIS makes it so you file drop in rogot
-	public static void SetBusVolume(string bus, float volume) // adding this to settings sometime
+	
+	/** <summary>Adding this to settings sometime</summary> */
+	public static void SetBusVolume(string bus, float volume)
 	{
 		int busIndex = AudioServer.GetBusIndex(bus);
 		AudioServer.SetBusVolumeDb(busIndex, volume);
@@ -31,7 +33,6 @@ public partial class SongMixer : AudioStreamPlayer
 	{
 		instance = this; // idk what this does
 	}
-
 
 	public static void PlaySong(Song songToPlay)
 	{

@@ -5,16 +5,16 @@ public partial class GameManager : Node2D
 {
 
 	[Export]
-	public int maxParadigmShifts = 1;
-
+	public int maxParadigmShifts = 1,
+		totalWaterMoves = 3;
 	[Export] public string levelName = "Name this level yo!";
 	
-	// do not use this variable, use TotalNumberOfCogs
+	/** <summary>Do not use this variable, use TotalNumberOfCogs</summary> */
 	private int totalNumberOfCogs = -1;
 
 	[Export] public Ui ui;
 
-	// don't allow setting the variable and calculate the correct value exactly once
+	/** <summary>Don't allow setting the variable and calculate the correct value exactly once</summary> */
 	public int TotalNumberOfCogs
 	{
 		get
@@ -42,6 +42,7 @@ public partial class GameManager : Node2D
 		groundLayer;
 
 	public Vector2I goalCoordinates;
+
 	public void CalculateCurrentWorldAndLevel()
 	{
 		string scenePath = GetTree().CurrentScene.SceneFilePath;
@@ -61,7 +62,7 @@ public partial class GameManager : Node2D
 		paradigmShiftsRemaining = maxParadigmShifts;
 	}
 
-	// initialize the game manager
+	/** <summary>Initialize the game manager</summary> */
 	public override void _Ready()
 	{
 		CalculateCurrentWorldAndLevel();
@@ -116,7 +117,7 @@ public partial class GameManager : Node2D
 		}
 	}
 
-	// update the paradigm shift counts and ui
+	/** <summary>Update the paradigm shift counts and ui</summary> */
 	public void ParadigmShifted(int count)
 	{
 		paradigmShiftsRemaining -= count;
@@ -124,7 +125,7 @@ public partial class GameManager : Node2D
 		ui.UpdateParadigmShiftCountLabel(paradigmShiftsRemaining);
 	}
 
-	// update the cogs challenged count and ui
+	/** <summary>Update the cogs challenged count and ui</summary> */
 	public void CogChallenged(int count)
 	{
 		cogsChallenged += count;

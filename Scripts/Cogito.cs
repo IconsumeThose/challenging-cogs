@@ -11,7 +11,7 @@ public partial class Cogito : CharacterBody2D
 		List<Vector2I> shiftedDeinforcedCogCrystals = null,	Vector2I? fallenSandPosition = null, List<Vector2I> challengedCogPositions = null, bool usedParadigmShift = false, 
 		bool leversToggled = false)
 	{
-		/** <summary> The direction that cogito moved</summary> */
+		/** <summary> The direction that Cogito moved</summary> */
 		public Vector2? movementDirection = movementDirection ?? Vector2.Zero;
 		public readonly List<Vector2I> shiftedCogCrystals = shiftedCogCrystals ?? [];
 		public readonly List<Vector2I> shiftedReinforcedCogCrystals = shiftedReinforcedCogCrystals ?? [];
@@ -28,7 +28,7 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>stack of all previous moves so that they can be undone in correct order(LIFO)</summary> */
 	public readonly Stack<PreviousMove> previousMoves = new();
 
-	/** <summary> the state cogito is in </summary> */
+	/** <summary> the state Cogito is in </summary> */
 	public enum CogitoState
 	{
 		moving,
@@ -36,34 +36,42 @@ public partial class Cogito : CharacterBody2D
 		idle
 	}
 	
-	/** <summary>The distance cogito moves every time  </summary> */
+	/** <summary>The distance Cogito moves every time  </summary> */
 	[Export] public int tileSize = 32;
 
-	/** <summary>The screen dimensions in tiles that cogito is in</summary> */ 
+	/** <summary>The screen dimensions in tiles that Cogito is in</summary> */ 
 	[Export] public Vector2I screenTileDimensions = new(20, 11);
 	
-	/** <summary>The speed in which cogito moves</summary> */
+	/** <summary>The speed in which Cogito moves</summary> */
 	[Export] public float movementSpeed = 150;
 
-	[Export] public int totalWaterMoves = 3;
-
-	/** <summary>setting to allow holding down a direction to keep moving in that direction</summary> */ 
+	/** <summary>Setting to allow holding down a direction to keep moving in that direction</summary> */ 
 	[Export] public bool holdToMove = true;
 
+	/** <summary>Reference to the game manager in the current scene</summary> */
 	[Export] GameManager gameManager;
 
 	[Export]
+	/** <summary>Reference to win menu in scene</summary> */
 	public Menu winMenu,
+
+	/** <summary>Reference to pause menu in scene</summary> */
 		pauseMenu,
+	
+	/** <summary>Reference to lose menu in scene</summary> */
 		loseMenu;
 
+	/** <summary>Reference to Cogito's main animated sprite 2D</summary> */
 	[Export] public AnimatedSprite2D animatedSprite;
+
+	/** <summary>Reference to </summary> */
 	[Export] public AnimationPlayer animationPlayer;
 
 	/** <summary>Used for the falling sand animation</summary> */
 	[Export] public PackedScene fallingSandScene;
 
-	public bool leversAreLeft = true;
+	/** <summary>True when levers are facing left</summary> */
+	public bool leversAreFacingLeft = true;
 
 	/** <summary>List of all obstacles that block movement</summary> */
 	private readonly List<string> blockingObstacles =
@@ -79,29 +87,31 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>Store the input direction to be buffered</summary> */
 	private Vector2 bufferedInput = Vector2.Zero;
 
-	/** <summary>Store the current data of the tiles cogito is on</summary> */
+	/** <summary>Store the current data of the tiles Cogito is on</summary> */
 	private LayeredCustomTileData currentTileData;
 
-	/** <summary>true if the move was forced by a special tile, needed for keeping track of moves to undo</summary> */
+	/** <summary>True if the move was forced by a special tile, needed for keeping track of moves to undo</summary> */
 	private bool mergeNextMove = false,
 
-	/** <summary>true if just teleported</summary> */
+	/** <summary>True if just teleported</summary> */
 		teleported = false;
 
-	/** <summary>the position to move to</summary> */
+	/** <summary>The position to move to</summary> */
 	private Vector2 targetPosition = Vector2.Zero;
 
-	/** <summary>the difference vector from the original position to target in tile units, mainly used for logging teleports to undo</summary> */
+	/** <summary>The difference vector from the original position to target in tile units, mainly used for logging teleports to undo</summary> */
 	private Vector2I targetTileDifferenceVector = Vector2I.Zero;
 
-	/** <summary>distance cogito moves to get to the next tile</summary> */
+	/** <summary>Distance Cogito moves to get to the next tile</summary> */
 	private float movementDistance = 0;
 
+	/** <summary>The amount of water moves Cogito current has left</summary> */
 	private int waterMovesLeft;
 
-	/** <summary> The state that cogito is currently in</summary> */
+	/** <summary> The state that Cogito is currently in</summary> */
 	public CogitoState currentCogitoState = CogitoState.idle;
 
+	/** <summary>Set the finite state of Cogito</summary> */
 	public void SetCogitoState(CogitoState newState)
 	{
 		CogitoState oldState = currentCogitoState;
@@ -146,13 +156,13 @@ public partial class Cogito : CharacterBody2D
 		}
 	}
 
-	/** <summary></summary> */
+	/** <summary>Exit idle state</summary> */
 	public void ExitIdle()
 	{
 		
 	}
 
-	/** <summary></summary> */
+	/** <summary>Exit moving state, handles stopping on a tile and checking what further actions are needed</summary> */
 	public void ExitMoving()
 	{
 		// set position exactly to target
@@ -219,7 +229,7 @@ public partial class Cogito : CharacterBody2D
 		}
 
 		// properly update counter if on water
-		if (targetTileDifferenceVector.Length() > 0 || (previousMoves.Count == 0 && waterMovesLeft == totalWaterMoves))
+		if (targetTileDifferenceVector.Length() > 0 || (previousMoves.Count == 0 && waterMovesLeft == gameManager.totalWaterMoves))
 		{
 			if (currentTileData.groundTile.customType == "Water")
 			{
@@ -233,7 +243,7 @@ public partial class Cogito : CharacterBody2D
 			}
 			else
 			{
-				waterMovesLeft = totalWaterMoves;
+				waterMovesLeft = gameManager.totalWaterMoves;
 			}
 		}
 
@@ -247,27 +257,27 @@ public partial class Cogito : CharacterBody2D
 
 			DataManager.SaveGame();
 		}
-		// if tile is void or null then make cogito fall
+		// if tile is void or null then make Cogito fall
 		else if ((currentTileData.groundTile.customType ?? "Void") == "Void")
 		{
 			SetCogitoState(CogitoState.animating);
 			animationPlayer.Play("Fall", customSpeed: 0.5f);
 		}
-		// if tile is ice, make cogito continue moving in the same direction they were moving
+		// if tile is ice, make Cogito continue moving in the same direction they were moving
 		else if (currentTileData.groundTile.customType == "Ice" && targetTileDifferenceVector.Length() > 0)
 		{
 			Vector2 newPosition = Position + ((Vector2)targetTileDifferenceVector).Normalized() * movementDistance;
 			mergeNextMove = true;
 			mergeNextMove = AttemptMove(newPosition);
 		}
-		// if tile is conveyor, make cogito move in the direction the conveyor is facing
+		// if tile is conveyor, make Cogito move in the direction the conveyor is facing
 		else if (currentTileData.groundTile.customType == "Conveyor")
 		{
 			Vector2 newPosition = Position + currentTileData.groundTile.direction * movementDistance;
 			mergeNextMove = true;
 			mergeNextMove = AttemptMove(newPosition);
 		}
-		// if the tile is a teleporter or it is the first move and cogito has moved and nothing is blocked on the other teleporter, move
+		// if the tile is a teleporter or it is the first move and Cogito has moved and nothing is blocked on the other teleporter, move
 		else if (currentTileData.groundTile.customType == "Teleporter" && !(previousMoves.Count > 0
 			&& targetTileDifferenceVector == Vector2.Zero) && Teleport(true))
 		{
@@ -275,7 +285,7 @@ public partial class Cogito : CharacterBody2D
 			SetCogitoState(CogitoState.animating);
 		}
 
-		// collect the cog if its on the same tile as cogito
+		// collect the cog if its on the same tile as Cogito
 		if (currentTileData.obstacleTile.customType == "Cog")
 		{
 			gameManager.CogChallenged(1);
@@ -283,7 +293,7 @@ public partial class Cogito : CharacterBody2D
 		}
 	}
 
-	/** <summary></summary> */
+	/** <summary>Exit animation state, ensuring the animation player is reset</summary> */
 	public void ExitAnimating()
 	{
 		Engine.TimeScale = 1;
@@ -291,23 +301,26 @@ public partial class Cogito : CharacterBody2D
 		animationPlayer.Play("RESET");
 	}
 
-	/** <summary></summary> */
+	/** <summary>Enter the idle state</summary> */
 	public void EnterIdle()
 	{
 		// set animation to idle
 		SetSpriteAnimation("Idle");
 	}
 
-	/** <summary></summary> */
+	/** <summary>Enter the moving state, prepares Cogito for moving and starting the correct animations</summary> */
 	public void EnterMoving()
 	{
-		// where the tile is that cogito will move to
+		// where the tile is that Cogito will move to
 		Vector2I newTilePosition = PositionToAtlasIndex(
 			GetParent<Node2D>().ToGlobal(targetPosition),
 			gameManager.obstacleLayer
 		);
 
 		targetTileDifferenceVector = newTilePosition - currentTileData.groundTile.position;
+				
+		LayeredCustomTileData targetTileData = GetTileCustomType(newTilePosition, gameManager.groundLayer,
+				gameManager.obstacleLayer);
 
 		// set animation accordingly to the current tile
 		if (currentTileData.groundTile.customType == "Conveyor" && mergeNextMove)
@@ -320,7 +333,14 @@ public partial class Cogito : CharacterBody2D
 		}
 		else if (currentTileData.groundTile.customType == "Water")
 		{
-			SetSpriteAnimation("SwimIdle");
+			if (targetTileData.groundTile.customType == "Water")
+			{
+				SetSpriteAnimation("SwimIdle");
+			}
+			else
+			{
+				SetSpriteAnimation("Move");
+			}
 		}
 		else
 		{
@@ -345,23 +365,23 @@ public partial class Cogito : CharacterBody2D
 		}
 	}
 
-	/** <summary></summary> */
+	/** <summary>Enter the animation state</summary> */
 	public void EnterAnimating()
 	{
 		
 	}
 
-	/** <summary>ran during start up</summary> */
+	/** <summary>Ran during start up</summary> */
 	public override void _Ready()
 	{
 		movementDistance = tileSize;
 
-		waterMovesLeft = totalWaterMoves;
+		waterMovesLeft = gameManager.totalWaterMoves;
 
 		// convert position to tile positions
 		Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, gameManager.obstacleLayer);
 
-		// identify what cogito is currently standing on
+		// identify what Cogito is currently standing on
 		currentTileData = GetTileCustomType(currentTilePosition, gameManager.groundLayer,
 				gameManager.obstacleLayer);
 
@@ -371,13 +391,13 @@ public partial class Cogito : CharacterBody2D
 		SetLevers(true);
 	}
 
-	// convert global position to the tile position at the specified tile map
+	/** <summary>Convert global position to the tile position at the specified tile map</summary> */
 	public static Vector2I PositionToAtlasIndex(Vector2 position, TileMapLayer tileMap)
 	{
 		return tileMap.LocalToMap(tileMap.ToLocal(position));
 	}
 
-	// store all useful information about a tile
+	/** <summary>Store all useful information about a tile</summary> */
 	public class CustomTileData(TileData tileData, Vector2I position)
 	{
 		public TileData tileData = tileData;
@@ -386,18 +406,18 @@ public partial class Cogito : CharacterBody2D
 		public Vector2I position = position;
 	}
 
-	// keep track of the ground and obstacle tiles at the same position
+	/** <summary>Keep track of the ground and obstacle tiles at the same position</summary> */
 	public class LayeredCustomTileData(CustomTileData groundTile, CustomTileData obstacleTile)
 	{
 		public CustomTileData groundTile = groundTile,
 			obstacleTile = obstacleTile;
 	}
 
-	// only set the animation if its different to possibly avoid resetting the animation
+	/** <summary>Only set the animation if its different to possibly avoid resetting the animation</summary> */
 	public void SetSpriteAnimation(string animationName, float speed = 1)
 	{
 		// switch to the water variant of the animation if applicable
-		if (waterMovesLeft != totalWaterMoves)
+		if (waterMovesLeft != gameManager.totalWaterMoves)
 		{
 			switch (animationName)
 			{
@@ -416,7 +436,7 @@ public partial class Cogito : CharacterBody2D
 		}
 	}
 
-	// get the direction the tile is facing (from alternate tiles)
+	/** <summary>Get the direction the tile is facing (from alternate tiles)</summary> */
 	public static Vector2 GetTileDirection(TileData tileData)
 	{
 		if (tileData == null)
@@ -446,7 +466,7 @@ public partial class Cogito : CharacterBody2D
 		return direction;
 	}
 
-	// get the tile types at the specified position
+	/** <summary>Get the tile types at the specified position</summary> */
 	public static LayeredCustomTileData GetTileCustomType(Vector2I tilePos, TileMapLayer groundLayer, TileMapLayer obstacleLayer)
 	{
 		CustomTileData groundData = new(groundLayer.GetCellTileData(tilePos), tilePos);
@@ -456,17 +476,16 @@ public partial class Cogito : CharacterBody2D
 		return new(groundData, obstacleData);
 	}
 	
-
-	// return true if successfully moved
+	/** <summary>Return true if successfully moved</summary> */
 	private bool AttemptMove(Vector2 newPosition, bool teleport = false, bool dryRun = false)
 	{
-		// where the tile is that cogito will move to
+		// where the tile is that Cogito will move to
 		Vector2I newTilePosition = PositionToAtlasIndex(
 			GetParent<Node2D>().ToGlobal(newPosition),
 			gameManager.obstacleLayer
 		);
 
-		// the type of tile cogito will move to
+		// the type of tile Cogito will move to
 		LayeredCustomTileData newTileData = GetTileCustomType(newTilePosition, gameManager.groundLayer,
 			gameManager.obstacleLayer);
 
@@ -490,12 +509,12 @@ public partial class Cogito : CharacterBody2D
 			}
 		}
 
-		// don't move if cogito will move to a blocking obstacle
+		// don't move if Cogito will move to a blocking obstacle
 		if (!blockingObstacles.Contains(newTileData.obstacleTile.customType) 
 			&& !(currentTileData.groundTile.customType == "Conveyor" && movementDirection == -1 * currentTileData.groundTile.direction)
 			&& newTilePosition.X >= 0 && newTilePosition.Y >= 0 && newTilePosition.X < screenTileDimensions.X && newTilePosition.Y < screenTileDimensions.Y)
 		{
-			// simply return true if a dry run to skip actually moving cogito
+			// simply return true if a dry run to skip actually moving Cogito
 			if (dryRun)
 				return true;
 
@@ -510,19 +529,20 @@ public partial class Cogito : CharacterBody2D
 		return false;
 	}
 
-	// toggle FlipH to make the sprite look the opposite way, called from animation player
+	/** <summary>Toggle FlipH to make the sprite look the opposite way, called from animation player</summary> */
 	public void ToggleSpriteFlipH()
 	{
 		animatedSprite.FlipH = !animatedSprite.FlipH;
 	}
 
-	// open the lose menu, called from animation player
+	/** <summary>Open the lose menu, called from animation player</summary> */
 	public void Lose()
 	{
 		Engine.TimeScale = 0;
 		loseMenu.Visible = true;
 	}
 
+	/** <summary>Get the direction of the input, not allowing for diagonal inputs</summary> */
 	public static Vector2 GetInputDirection()
 	{
 		if (Input.IsActionPressed("Left") ^ Input.IsActionPressed("Right")
@@ -537,28 +557,28 @@ public partial class Cogito : CharacterBody2D
 		return Vector2.Zero;
 	}
 
-	// called at the end of the paradigm shift animation
+	/** <summary>Called at the end of the paradigm shift animation</summary> */
 	public void EndParadigmShiftAnimation()
 	{
 		AttemptMove(Position);
 		SetCogitoState(CogitoState.idle);
 	}
 
-	// update the tile data cogito is on
+	/** <summary>Update the tile data Cogito is on</summary> */
 	public void UpdateCurrentTileData()
 	{
 		// convert position to tile positions
 		Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, gameManager.obstacleLayer);
 				
-		// identify what cogito is currently standing on
+		// identify what Cogito is currently standing on
 		currentTileData = GetTileCustomType(currentTilePosition, gameManager.groundLayer,
 				gameManager.obstacleLayer);
 	}
 
-	// run every frame to update movement and check what happens when cogito stops
+	/** <summary>Run every frame to update movement and check what happens when Cogito stops</summary> */
 	public bool UpdateMove()
 	{
-		// move cogito to target position
+		// move Cogito to target position
 		if (currentCogitoState == CogitoState.moving)
 		{
 			if (Input.IsActionJustPressed("Left") ^ Input.IsActionJustPressed("Right")
@@ -571,7 +591,7 @@ public partial class Cogito : CharacterBody2D
 
 			MoveAndSlide();
 
-			// skip checking movement inputs if cogito is too far from target destination
+			// skip checking movement inputs if Cogito is too far from target destination
 			if ((Position - targetPosition).Length() >= 2)
 			{
 				return false;
@@ -586,7 +606,7 @@ public partial class Cogito : CharacterBody2D
 		return true;
 	}
 
-	// runs every physics frame
+	/** <summary>Runs every physics frame</summary> */
 	public override void _PhysicsProcess(double delta)
 	{
 		// toggle pause menu only if no other menu is visible
@@ -625,14 +645,14 @@ public partial class Cogito : CharacterBody2D
 		if (inputDirection != Vector2.Zero && (holdToMove || (!holdToMove && (Input.IsActionJustPressed("Left") 
 			|| Input.IsActionJustPressed("Right") || Input.IsActionJustPressed("Up") || Input.IsActionJustPressed("Down")))))
 		{
-			// where cogito will move
+			// where Cogito will move
 			Vector2 newPosition = Position + inputDirection * movementDistance;
 
 			AttemptMove(newPosition);
 		}
 		else if (bufferedInput != Vector2.Zero)
 		{
-			// where cogito will move
+			// where Cogito will move
 			Vector2 newPosition = Position + bufferedInput * movementDistance;
 
 			AttemptMove(newPosition);
@@ -659,7 +679,7 @@ public partial class Cogito : CharacterBody2D
 		}
 	}
 
-	// returns true if successfully teleported, dry run merely checks if its possible to teleport but doesn't actually teleport
+	/** <summary>Returns true if successfully teleported, dry run merely checks if its possible to teleport but doesn't actually teleport</summary> */
 	public bool Teleport(bool dryRun = false)
 	{
 		// check the atlas positions to see if its the same exact teleporter type
@@ -671,7 +691,7 @@ public partial class Cogito : CharacterBody2D
 
 		foreach (Vector2I teleporterPosition in teleporters)
 		{
-			// teleport if its not the teleporter cogito is currently on and cogito didn't just come from a teleporter
+			// teleport if its not the teleporter Cogito is currently on and Cogito didn't just come from a teleporter
 			if (teleporterPosition != currentTileData.groundTile.position && !(teleporterAtlasPosition == previousTileAtlasPosition && teleported))
 			{
 				Vector2 teleporterPositionDifference = (Vector2)(teleporterPosition - currentTileData.groundTile.position) * movementDistance;
@@ -693,6 +713,7 @@ public partial class Cogito : CharacterBody2D
 		return false;
 	}
 
+	/** <summary>Activate the paradigm shift ability which shifts the correct crystals and levers</summary> */
 	public void ParadigmShift()
 	{
 		// convert position to tile positions
@@ -807,10 +828,10 @@ public partial class Cogito : CharacterBody2D
 		}
 	}
 
-	// set all levers to the specified direction but doesn't adjust conveyors
+	/** <summary>Set all levers to the specified direction but doesn't adjust conveyors</summary> */
 	public void SetLevers(bool leversAreLeft)
 	{
-		this.leversAreLeft = leversAreLeft;
+		this.leversAreFacingLeft = leversAreLeft;
 
 		// get all levers
 		var levers = gameManager.obstacleLayer.GetUsedCellsById(1, new(6, 1));
@@ -829,11 +850,11 @@ public partial class Cogito : CharacterBody2D
 		}
 	}
 
-	// toggle all levers, switching all conveyors
+	/** <summary>Toggle all levers, switching all conveyors</summary> */
 	public void ToggleLevers()
 	{
 		// set levers to the opposite direction
-		SetLevers(!leversAreLeft);
+		SetLevers(!leversAreFacingLeft);
 
 		// get all conveyors
 		var conveyors = gameManager.groundLayer.GetUsedCellsById(1, new (0, 2));
@@ -858,7 +879,7 @@ public partial class Cogito : CharacterBody2D
 		}
 	}
 
-	// undo the last saved move
+	/** <summary>Undo the last saved move</summary> */
 	public void Undo()
 	{
 		if (previousMoves.Count < 1)
@@ -922,7 +943,7 @@ public partial class Cogito : CharacterBody2D
 
 		waterMovesLeft = previousMove.waterMovesLeft;
 
-		// update the tile data cogito is currently on after restoring everything
+		// update the tile data Cogito is currently on after restoring everything
 		UpdateCurrentTileData();
 
 		SetCogitoState(CogitoState.idle);

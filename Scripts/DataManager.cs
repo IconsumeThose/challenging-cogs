@@ -13,7 +13,7 @@ public partial class DataManager : Node
 
 	public static DataManager instance;
 
-	// get the path of the next level
+	/** <summary>Get the path of the next level</summary> */
 	public static string NextLevelPath()
 	{
 		if (ResourceLoader.Exists($"res://Scenes/Levels/world{DataManager.currentWorld}/level{DataManager.currentLevel + 1}.tscn"))
@@ -26,7 +26,7 @@ public partial class DataManager : Node
 		}
 	}
 
-	// get the path of the next world
+	/** <summary>Get the path of the next world</summary> */
 	public static string NextWorldPath()
 	{
 		// check if the next level even exists
@@ -40,7 +40,7 @@ public partial class DataManager : Node
 		}
 	}
 
-	// save data to file, currently saves level and world
+	/** <summary>Save data to file, currently saves level and world</summary> */
 	public static void SaveGame(bool bypassCheck = false)
 	{
 		if (!bypassCheck && !((currentWorld == savedWorld && currentLevel == savedLevel + 1) 
@@ -64,7 +64,7 @@ public partial class DataManager : Node
 		saveFile.Close();
 	}
 
-	// order MATTERS
+	/** <summary>Order MATTERS</summary> */
 	private enum SaveTypes
 	{
 		currentWorld,
@@ -104,7 +104,7 @@ public partial class DataManager : Node
 		// GD.Print("loaded world " + currentWorld);
 	}
 
-	// reset the save file
+	/** <summary>Reset the save file</summary> */
 	public static void ResetSave()
 	{
 		currentLevel = 0;
@@ -113,7 +113,7 @@ public partial class DataManager : Node
 		LoadNextLevel();
 	}
 
-	// load data from file
+	/** <summary>Load data from file</summary> */
 	public static void LoadGame()
 	{
 		if (!FileAccess.FileExists($"user://{saveFileName}"))
@@ -180,7 +180,7 @@ public partial class DataManager : Node
 	}
 
 
-	// Called when the node enters the scene tree for the first time.
+	/** <summary>Called when the node enters the scene tree for the first time.</summary> */
 	public override void _Ready()
 	{
 		instance = this;

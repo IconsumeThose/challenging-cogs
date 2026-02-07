@@ -16,7 +16,7 @@ public partial class Menu : Control
 		}
 	}
 
-	// restart the level
+	/** <summary>Restart the level</summary> */
 	public void OnRestartClicked()
 	{
 		Engine.TimeScale = 1;
@@ -24,25 +24,25 @@ public partial class Menu : Control
 		SongMixer.PlaySong((SongMixer.Song)DataManager.currentWorld);
 	}
 
-	// take you to the next level, win menu only or dev key pressed (=)
+	/** <summary>Take you to the next level, win menu only or dev key pressed (=)</summary> */
 	public void OnNextLevelClicked()
 	{
 		DataManager.LoadNextLevel();
 	}
 
-	// dev key only to skip world
+	/** <summary>Dev key only to skip world</summary> */
 	public void OnNextWorldClicked()
 	{
 		DataManager.LoadNextWorld();
 	}
 
-	// closes the game
+	/** <summary>Closes the game</summary> */
 	public void OnCloseClicked()
 	{
 		GetTree().Quit();
 	}
 
-	// specifically for the pause menu to unpause the game
+	/** <summary>Specifically for the pause menu to unpause the game</summary> */
 	public void OnContinuePressed()
 	{
 		Visible = false;
@@ -57,7 +57,7 @@ public partial class Menu : Control
 		cogito.Undo();
 	}
 
-	// take you back to the main menu
+	/** <summary>Take you back to the main menu</summary> */
 	public void OnMainMenuPressed()
 	{
 		Engine.TimeScale = 1;

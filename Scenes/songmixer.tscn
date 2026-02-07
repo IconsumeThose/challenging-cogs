@@ -6,8 +6,9 @@
 [ext_resource type="AudioStream" uid="uid://cgm3n4q8i1m1u" path="res://Assets/Music/Johann Sebastian Bach (1685 - 1750) - Prelude I.mp3" id="4_4631e"]
 [ext_resource type="AudioStream" uid="uid://c4i3oxg7bqjbs" path="res://Assets/Music/gloomyglacier.ogg" id="4_wemeu"]
 
-[node name="World1Song" type="AudioStreamPlayer" unique_id=327098985]
+[node name="SongMixer" type="AudioStreamPlayer" unique_id=327098985]
 autoplay = true
+bus = &"Music"
 script = ExtResource("2_4631e")
 world1 = ExtResource("1_uqrw6")
 world2 = ExtResource("2_wxc3n")
