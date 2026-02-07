@@ -1,16 +1,16 @@
 using Godot;
 using System;
 // hi aaron
-
-public partial class Songmixer : AudioStreamPlayer
+// hi sammy
+public partial class SongMixer : AudioStreamPlayer
 {
 	public static int currentSong = 0;
 	public enum Song
 	{
-		world1, world2, world3, world4, world5, world6, world7, world8, mainmenu
+		world1, world2, world3, world4, world5, world6, world7, world8, mainMenu
 	}
-	private static Songmixer instance;
-	[Export] private AudioStream world1, world2, world3, world4, world5, world6, world7, world8, mainmenu; // now THIS makes it so you file drop in rogot
+	private static SongMixer instance;
+	[Export] private AudioStream world1, world2, world3, world4, world5, world6, world7, world8, mainMenu; // now THIS makes it so you file drop in rogot
 	public static void SetBusVolume(string bus, float volume) // adding this to settings sometime
 	{
 		int busIndex = AudioServer.GetBusIndex(bus);
@@ -54,7 +54,7 @@ public partial class Songmixer : AudioStreamPlayer
 				instance.Stream = instance.world8;
 				break;
 			case 9:
-				instance.Stream = instance.mainmenu;
+				instance.Stream = instance.mainMenu;
 				break;
 		}
 		currentSong = songToPlay;

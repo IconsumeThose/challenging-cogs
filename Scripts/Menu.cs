@@ -7,40 +7,20 @@ public partial class Menu : Control
 	public void OnRestartClicked()
 	{
 		Engine.TimeScale = 1;
-		GetTree().ChangeSceneToFile($"res://Scenes/Levels/world{GameManager.currentWorld}/level{GameManager.currentLevel}.tscn");
-		Songmixer.PlaySong(GameManager.currentWorld);
+		GetTree().ChangeSceneToFile($"res://Scenes/Levels/world{DataManager.currentWorld}/level{DataManager.currentLevel}.tscn");
+		SongMixer.PlaySong(DataManager.currentWorld);
 	}
 
 	// take you to the next level, win menu only or dev key pressed (=)
 	public void OnNextLevelClicked()
 	{
-		// check if the next level even exists
-		if (ResourceLoader.Exists($"res://Scenes/Levels/world{GameManager.currentWorld}/level{GameManager.currentLevel + 1}.tscn"))
-		{
-			Engine.TimeScale = 1;
-			GameManager.currentLevel++;
-
-			GetTree().ChangeSceneToFile($"res://Scenes/Levels/world{GameManager.currentWorld}/level{GameManager.currentLevel}.tscn");
-			Songmixer.PlaySong(GameManager.currentWorld);
-		}
-		else
-		{
-			OnNextWorldClicked();
-		}
+		DataManager.LoadNextLevel();
 	}
 
+	// dev key only to skip world
 	public void OnNextWorldClicked()
 	{
-		// check if the next level even exists
-		if (ResourceLoader.Exists($"res://Scenes/Levels/world{GameManager.currentWorld + 1}/level{1}.tscn"))
-		{
-			Engine.TimeScale = 1;
-			GameManager.currentWorld++;
-			GameManager.currentLevel = 1;
-
-			GetTree().ChangeSceneToFile($"res://Scenes/Levels/world{GameManager.currentWorld}/level{GameManager.currentLevel}.tscn");
-			Songmixer.PlaySong(GameManager.currentWorld);
-		}
+		DataManager.LoadNextWorld();
 	}
 
 	// closes the game
@@ -69,6 +49,6 @@ public partial class Menu : Control
 	{
 		Engine.TimeScale = 1;
 		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
-		Songmixer.PlaySong(9);
+		SongMixer.PlaySong(9);
 	}
 }

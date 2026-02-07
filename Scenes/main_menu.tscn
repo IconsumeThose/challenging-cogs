@@ -36,7 +36,7 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Developed by SammyROG, RandalHandal, and IconsumeThose"
 
-[node name="RestartButton" type="Button" parent="VBoxContainer" unique_id=996710918]
+[node name="PlayButton" type="Button" parent="VBoxContainer" unique_id=996710918]
 layout_mode = 2
 text = "Play
 "
@@ -45,5 +45,5 @@ text = "Play
 layout_mode = 2
 text = "Close"
 
-[connection signal="pressed" from="VBoxContainer/RestartButton" to="." method="OnRestartClicked"]
+[connection signal="pressed" from="VBoxContainer/PlayButton" to="." method="OnNextLevelClicked"]
 [connection signal="pressed" from="VBoxContainer/CloseButton" to="." method="OnCloseClicked"]

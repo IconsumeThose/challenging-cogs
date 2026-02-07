@@ -215,7 +215,7 @@ public partial class Cogito : CharacterBody2D
 		}
 
 		// properly update counter if on water
-		if (targetTileDifferenceVector.Length() > 0)
+		if (targetTileDifferenceVector.Length() > 0 || (previousMoves.Count == 0 && waterMovesLeft == totalWaterMoves))
 		{
 			if (currentTileData.groundTile.customType == "Water")
 			{
@@ -240,6 +240,8 @@ public partial class Cogito : CharacterBody2D
 		{
 			Engine.TimeScale = 0;
 			winMenu.Visible = true;
+
+			DataManager.SaveGame();
 		}
 		// if tile is void or null then make cogito fall
 		else if ((currentTileData.groundTile.customType ?? "Void") == "Void")
@@ -583,18 +585,6 @@ public partial class Cogito : CharacterBody2D
 	// runs every physics frame
 	public override void _PhysicsProcess(double delta)
 	{
-		// for debugging allow skipping a level with the = key
-		if (Input.IsActionJustPressed("SkipLevel"))
-		{
-			winMenu.OnNextLevelClicked();
-		}
-
-		// for debugging allow skipping a world with the - key
-		if (Input.IsActionJustPressed("SkipWorld"))
-		{
-			winMenu.OnNextWorldClicked();
-		}
-
 		// toggle pause menu only if no other menu is visible
 		if (Input.IsActionJustPressed("Pause") && !winMenu.Visible && !loseMenu.Visible)
 		{

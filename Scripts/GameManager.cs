@@ -3,9 +3,7 @@ using System;
 
 public partial class GameManager : Node2D
 {
-	public static int currentWorld = 1;
-	public static int currentLevel = 1;
-	
+
 	[Export]
 	public int maxParadigmShifts = 1;
 
@@ -51,12 +49,12 @@ public partial class GameManager : Node2D
 		int worldNumberDigits = scenePath[26] == '/' ? 1 : 2;
 
 		// get the current world for testing when launching scene directly from godot editor (f6)
-		currentWorld = scenePath.Substring(25, worldNumberDigits).ToInt();
+		DataManager.currentWorld = scenePath.Substring(25, worldNumberDigits).ToInt();
 
 		int levelNumberDigits = scenePath[32 + worldNumberDigits] == '.' ? 1 : 2;
 
 		// get the current level for testing when launching scene directly from godot editor (f6)
-		currentLevel = scenePath.Substring(31 + worldNumberDigits, levelNumberDigits).ToInt();
+		DataManager.currentLevel = scenePath.Substring(31 + worldNumberDigits, levelNumberDigits).ToInt();
 
 		// set shifts remaining to the max that was set
 		paradigmShiftsRemaining = maxParadigmShifts;

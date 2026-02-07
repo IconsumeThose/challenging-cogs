@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://b2pqav0teuakt"]
 
 [ext_resource type="AudioStream" uid="uid://deghn2s1bw2cr" path="res://Assets/Music/bananabeach.ogg" id="1_uqrw6"]
-[ext_resource type="Script" uid="uid://bg08qpsm4kw8h" path="res://Scripts/Songmixer.cs" id="2_4631e"]
+[ext_resource type="Script" uid="uid://bg08qpsm4kw8h" path="res://Scripts/SongMixer.cs" id="2_4631e"]
 [ext_resource type="AudioStream" uid="uid://bf1epqo5ara87" path="res://Assets/Music/mechanicalmachinery.ogg" id="2_wxc3n"]
 [ext_resource type="AudioStream" uid="uid://cgm3n4q8i1m1u" path="res://Assets/Music/Johann Sebastian Bach (1685 - 1750) - Prelude I.mp3" id="4_4631e"]
 [ext_resource type="AudioStream" uid="uid://c4i3oxg7bqjbs" path="res://Assets/Music/gloomyglacier.ogg" id="4_wemeu"]
@@ -17,4 +17,4 @@ world5 = ExtResource("4_4631e")
 world6 = ExtResource("4_4631e")
 world7 = ExtResource("4_4631e")
 world8 = ExtResource("4_4631e")
-mainmenu = ExtResource("4_4631e")
+mainMenu = ExtResource("4_4631e")

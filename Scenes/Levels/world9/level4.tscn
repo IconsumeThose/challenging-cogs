@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://dj8vu6t4xi3je" path="res://Scenes/pause_menu.tscn" id="8_85ft6"]
 [ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="9_gbihm"]
 
-[node name="Level" type="Node2D" unique_id=1015827580]
+[node name="Level2" type="Node2D" unique_id=1015827580]
 
 [node name="ScalingParent" type="Node2D" parent="." unique_id=1030117494]
 scale = Vector2(3, 3)
@@ -27,7 +27,7 @@ tile_map_data = PackedByteArray("AAABAAIAAQAGAAEAAAAMAAUAAQAHAAEAAAAMAAMAAQAGAAE
 tile_set = ExtResource("2_mhgdk")
 
 [node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_bxfb2")]
-position = Vector2(208, 208)
+position = Vector2(304, 112)
 gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
