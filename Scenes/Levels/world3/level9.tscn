@@ -34,7 +34,6 @@ tile_set = ExtResource("2_vn6g2")
 
 [node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_1x2st")]
 position = Vector2(528, 144)
-totalWaterMoves = 4
 gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
@@ -51,6 +50,7 @@ gameManager = NodePath("../GameManager")
 
 [node name="GameManager" parent="." unique_id=1933725455 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("6_dkm0n")]
 maxParadigmShifts = 5
+totalWaterMoves = 4
 levelName = "Telewaters"
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
