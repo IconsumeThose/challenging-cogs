@@ -201,7 +201,7 @@ public partial class Cogito : CharacterBody2D
 				}
 
 				// use previous data with added direction
-				PreviousMove currentMove = new(stamina: gameManager.currentStamina, movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
+				PreviousMove currentMove = new(stamina: previousMove.stamina, movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
 					fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates,
 					shiftedCogCrystals: previousMove.shiftedCogCrystals, shiftedReinforcedCogCrystals: previousMove.shiftedReinforcedCogCrystals,
 					shiftedDeinforcedCogCrystals: previousMove.shiftedDeinforcedCogCrystals,
