@@ -9,12 +9,16 @@ public partial class Ui : Control
 		paradigmShiftCountLabel,
 		levelInfoLabel;
 
+	[Export] public Vector2I staminaSegmentSize = new(471, 471);
+	[Export] public Sprite2D staminaBar;
+
 	[Export] public GameManager gameManager;
 
 	public override void _Ready()
 	{
 		UpdateCogCountLabel(0);
 		UpdateParadigmShiftCountLabel(gameManager.maxParadigmShifts);
+		UpdateStaminaBar(gameManager.maxStamina);
 
 		gameManager.CalculateCurrentWorldAndLevel();
 		levelInfoLabel.Text = $"World {DataManager.currentWorld}-{DataManager.currentLevel} \"{gameManager.levelName}\"";
@@ -29,5 +33,10 @@ public partial class Ui : Control
 	public void UpdateParadigmShiftCountLabel(int newCount)
 	{
 		paradigmShiftCountLabel.Text = $"Paradigm Shifts Left: {newCount} / {gameManager.maxParadigmShifts}";
+	}
+
+	public void UpdateStaminaBar(int newCount)
+	{
+		staminaBar.RegionRect = new Rect2(0, 0, staminaSegmentSize.Y * newCount, staminaSegmentSize.Y);
 	}
 }

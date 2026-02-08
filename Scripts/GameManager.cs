@@ -6,7 +6,7 @@ public partial class GameManager : Node2D
 
 	[Export]
 	public int maxParadigmShifts = 1,
-		totalWaterMoves = 3;
+		maxStamina = 0;
 	[Export] public string levelName = "Name this level yo!";
 	
 	/** <summary>Do not use this variable, use TotalNumberOfCogs</summary> */
@@ -35,7 +35,10 @@ public partial class GameManager : Node2D
 	}
 
 	public int paradigmShiftsRemaining = 0,
-		cogsChallenged = 0;
+		cogsChallenged = 0,
+
+		/** <summary>The amount of water moves Cogito current has left</summary> */
+		currentStamina;
 
 	[Export]
 	public TileMapLayer obstacleLayer,
@@ -136,5 +139,21 @@ public partial class GameManager : Node2D
 		{
 			groundLayer.SetCell(goalCoordinates, 1, new(2, 1));
 		}
+	}
+
+	/** <summary>Update the stamina count and ui</summary> */
+	public void StaminaChanged(int change, Cogito cogito)
+	{
+		currentStamina -= change;
+
+		currentStamina = Math.Min(currentStamina, maxStamina);
+
+		if (currentStamina == 0 && maxStamina > 0)
+		{
+			cogito.SetCogitoState(Cogito.CogitoState.animating);
+			cogito.animationPlayer.Play("Drown");
+		}
+
+		ui.UpdateStaminaBar(currentStamina);
 	}
 }

@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://dtikvtpb7bla6"]
+[gd_scene format=4 uid="uid://beovmsg5wn751"]
 
 [ext_resource type="Texture2D" uid="uid://cdxfful3ufp27" path="res://Assets/Backgrounds/gloomyglacier.png" id="1_c0wt4"]
 [ext_resource type="TileSet" uid="uid://1u282qhp7y1b" path="res://TileSets/gloomy_ground.tres" id="1_dunqt"]
@@ -50,7 +50,7 @@ gameManager = NodePath("../GameManager")
 
 [node name="GameManager" parent="." unique_id=1933725455 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("6_f55a6")]
 maxParadigmShifts = 11
-totalWaterMoves = 4
+maxStamina = 4
 levelName = "Jigsaw"
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")

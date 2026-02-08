@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://dj8vu6t4xi3je" path="res://Scenes/pause_menu.tscn" id="8_w7kpa"]
 [ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="9_e2fcp"]
 
-[node name="Level" type="Node2D" unique_id=1015827580]
+[node name="Level2" type="Node2D" unique_id=1015827580]
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1292440591]
 offset_right = 1920.0
@@ -50,7 +50,7 @@ gameManager = NodePath("../GameManager")
 
 [node name="GameManager" parent="." unique_id=1933725455 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("6_dkm0n")]
 maxParadigmShifts = 5
-totalWaterMoves = 4
+maxStamina = 4
 levelName = "Telewaters"
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")

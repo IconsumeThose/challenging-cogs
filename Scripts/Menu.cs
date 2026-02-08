@@ -11,7 +11,6 @@ public partial class Menu : Control
 		}
 		else
 		{
-			GD.Print(DataManager.currentWorld);
 			SongMixer.PlaySong((SongMixer.Song)DataManager.currentWorld);
 		}
 	}

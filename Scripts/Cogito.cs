@@ -7,7 +7,7 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>
 		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
 		</summary> */
-	public class PreviousMove( int waterMovesLeft, Vector2? movementDirection = null, List<Vector2I> shiftedCogCrystals = null, List<Vector2I> shiftedReinforcedCogCrystals = null, 
+	public class PreviousMove(int stamina, Vector2? movementDirection = null, List<Vector2I> shiftedCogCrystals = null, List<Vector2I> shiftedReinforcedCogCrystals = null, 
 		List<Vector2I> shiftedDeinforcedCogCrystals = null,	Vector2I? fallenSandPosition = null, List<Vector2I> challengedCogPositions = null, bool usedParadigmShift = false, 
 		bool leversToggled = false)
 	{
@@ -22,7 +22,7 @@ public partial class Cogito : CharacterBody2D
 		public List<Vector2I> challengedCogCoordinates = challengedCogPositions ?? [];
 		public bool usedParadigmShift = usedParadigmShift;
 		public bool leversToggled = leversToggled;
-		public int waterMovesLeft = waterMovesLeft;
+		public int stamina = stamina;
 	}
 
 	/** <summary>stack of all previous moves so that they can be undone in correct order(LIFO)</summary> */
@@ -104,9 +104,6 @@ public partial class Cogito : CharacterBody2D
 
 	/** <summary>Distance Cogito moves to get to the next tile</summary> */
 	private float movementDistance = 0;
-
-	/** <summary>The amount of water moves Cogito current has left</summary> */
-	private int waterMovesLeft;
 
 	/** <summary> The state that Cogito is currently in</summary> */
 	public CogitoState currentCogitoState = CogitoState.idle;
@@ -204,7 +201,7 @@ public partial class Cogito : CharacterBody2D
 				}
 
 				// use previous data with added direction
-				PreviousMove currentMove = new(waterMovesLeft, movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
+				PreviousMove currentMove = new(stamina: gameManager.currentStamina, movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
 					fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates,
 					shiftedCogCrystals: previousMove.shiftedCogCrystals, shiftedReinforcedCogCrystals: previousMove.shiftedReinforcedCogCrystals,
 					shiftedDeinforcedCogCrystals: previousMove.shiftedDeinforcedCogCrystals,
@@ -223,27 +220,21 @@ public partial class Cogito : CharacterBody2D
 				challengedCogs.Add(challengedCogPosition);
 			}
 
-			PreviousMove currentMove = new(waterMovesLeft, movementDirection: targetTileDifferenceVector, fallenSandPosition: fallenSandPosition,
+			PreviousMove currentMove = new(gameManager.currentStamina, movementDirection: targetTileDifferenceVector, fallenSandPosition: fallenSandPosition,
 				challengedCogPositions: challengedCogs);
 			previousMoves.Push(currentMove);
 		}
 
 		// properly update counter if on water
-		if (targetTileDifferenceVector.Length() > 0 || (previousMoves.Count == 0 && waterMovesLeft == gameManager.totalWaterMoves))
+		if (targetTileDifferenceVector.Length() > 0 || (previousMoves.Count == 0 && gameManager.currentStamina == gameManager.maxStamina))
 		{
 			if (currentTileData.groundTile.customType == "Water")
 			{
-				waterMovesLeft--;
-
-				if (waterMovesLeft == 0)
-				{
-					SetCogitoState(CogitoState.animating);
-					animationPlayer.Play("Drown");
-				}
+				gameManager.StaminaChanged(1, this);
 			}
 			else
 			{
-				waterMovesLeft = gameManager.totalWaterMoves;
+				gameManager.StaminaChanged(-99999999, this);
 			}
 		}
 
@@ -376,7 +367,7 @@ public partial class Cogito : CharacterBody2D
 	{
 		movementDistance = tileSize;
 
-		waterMovesLeft = gameManager.totalWaterMoves;
+		gameManager.currentStamina = gameManager.maxStamina;
 
 		// convert position to tile positions
 		Vector2I currentTilePosition = PositionToAtlasIndex(GlobalPosition, gameManager.obstacleLayer);
@@ -417,7 +408,7 @@ public partial class Cogito : CharacterBody2D
 	public void SetSpriteAnimation(string animationName, float speed = 1)
 	{
 		// switch to the water variant of the animation if applicable
-		if (waterMovesLeft != gameManager.totalWaterMoves)
+		if (gameManager.currentStamina != gameManager.maxStamina)
 		{
 			switch (animationName)
 			{
@@ -668,7 +659,7 @@ public partial class Cogito : CharacterBody2D
 			// game manager updates the remaining count
 			gameManager.ParadigmShifted(1);
 
-			PreviousMove currentMove = new(waterMovesLeft, shiftedCogCrystals: [], shiftedReinforcedCogCrystals: [],
+			PreviousMove currentMove = new(gameManager.currentStamina, shiftedCogCrystals: [], shiftedReinforcedCogCrystals: [],
 				shiftedDeinforcedCogCrystals: [], usedParadigmShift: true);
 			previousMoves.Push(currentMove);
 		}
@@ -810,7 +801,7 @@ public partial class Cogito : CharacterBody2D
 		previousMoves.Pop();
 		
 		// save paradigm shift data to be undone
-		PreviousMove currentMove = new(waterMovesLeft, shiftedCogCrystals: shiftedCogCrystals, shiftedReinforcedCogCrystals: shiftedReinforcedCogCrystals,
+		PreviousMove currentMove = new(gameManager.currentStamina, shiftedCogCrystals: shiftedCogCrystals, shiftedReinforcedCogCrystals: shiftedReinforcedCogCrystals,
 			shiftedDeinforcedCogCrystals: shiftedDeinforcedCogCrystals,	usedParadigmShift: true, leversToggled: leversJustToggled);
 		previousMoves.Push(currentMove);
 
@@ -941,7 +932,7 @@ public partial class Cogito : CharacterBody2D
 		if (previousMove.leversToggled)
 			ToggleLevers();
 
-		waterMovesLeft = previousMove.waterMovesLeft;
+		gameManager.StaminaChanged(gameManager.currentStamina - previousMove.stamina, this);
 
 		// update the tile data Cogito is currently on after restoring everything
 		UpdateCurrentTileData();

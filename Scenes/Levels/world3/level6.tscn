@@ -50,7 +50,7 @@ gameManager = NodePath("../GameManager")
 
 [node name="GameManager" parent="." unique_id=1933725455 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("6_klhvp")]
 maxParadigmShifts = 4
-totalWaterMoves = 5
+maxStamina = 5
 levelName = "Sink or Swim"
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
