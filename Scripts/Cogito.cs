@@ -348,12 +348,6 @@ public partial class Cogito : CharacterBody2D
 			fallingSand.Position = targetPosition - ((Vector2)targetTileDifferenceVector).Normalized() * movementDistance;
 			fallingSand.GetNode<AnimationPlayer>("AnimationPlayer").Play("Fall");
 		}
-
-		// instantly tp to destination if teleporting
-		if (teleported)
-		{
-			Position = targetPosition;
-		}
 	}
 
 	/** <summary>Enter the animation state</summary> */
@@ -511,7 +505,9 @@ public partial class Cogito : CharacterBody2D
 
 			teleported = teleport;
 			targetPosition = newPosition;
-			SetCogitoState(CogitoState.moving);
+
+			if (!teleported)
+				SetCogitoState(CogitoState.moving);
 			
 			return true;
 		}
@@ -590,7 +586,7 @@ public partial class Cogito : CharacterBody2D
 			// stop moving when close enough to target position
 			else
 			{
-				SetCogitoState(CogitoState.idle);			
+				SetCogitoState(CogitoState.idle);
 			}
 		}
 		
@@ -695,7 +691,8 @@ public partial class Cogito : CharacterBody2D
 				// only actually move and return true if successfully teleported
 				if (mergeNextMove)
 				{
-					UpdateMove();
+					// instantly tp to destination if teleporting
+					Position = targetPosition;
 					return true;	
 				}
 			}

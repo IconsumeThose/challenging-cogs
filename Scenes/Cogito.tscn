@@ -458,7 +458,7 @@ tracks/0/keys = {
 "args": [false],
 "method": &"Teleport"
 }, {
-"args": [0, null],
+"args": [0],
 "method": &"SetCogitoState"
 }]
 }
