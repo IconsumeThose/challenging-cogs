@@ -7,22 +7,25 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>
 		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
 		</summary> */
-	public class PreviousMove(int stamina, Vector2? movementDirection = null, List<Vector2I> shiftedCogCrystals = null, List<Vector2I> shiftedReinforcedCogCrystals = null, 
-		List<Vector2I> shiftedDeinforcedCogCrystals = null,	Vector2I? fallenSandPosition = null, List<Vector2I> challengedCogPositions = null, bool usedParadigmShift = false, 
-		bool leversToggled = false)
+	public class PreviousMove(int stamina, int candiesEaten, Vector2? movementDirection = null, List<Vector2I> shiftedCogCrystals = null, List<Vector2I> shiftedReinforcedCogCrystals = null, 
+		List<Vector2I> shiftedDeinforcedCogCrystals = null, List<Vector2I> demolishedRocks = null, Vector2I? fallenSandPosition = null, List<Vector2I> challengedCogPositions = null, 
+		List<Vector2I> candyCoordinates = null, bool usedParadigmShift = false, bool leversToggled = false)
 	{
 		/** <summary> The direction that Cogito moved</summary> */
 		public Vector2? movementDirection = movementDirection ?? Vector2.Zero;
 		public readonly List<Vector2I> shiftedCogCrystals = shiftedCogCrystals ?? [];
 		public readonly List<Vector2I> shiftedReinforcedCogCrystals = shiftedReinforcedCogCrystals ?? [];
 		public readonly List<Vector2I> shiftedDeinforcedCogCrystals = shiftedDeinforcedCogCrystals ?? [];
+		public readonly List<Vector2I> demolishedRocks = demolishedRocks ?? [];
 		public Vector2I? fallenSandPosition = fallenSandPosition ?? Vector2I.Up;
 		
 		/** <summary>A list of all cogs collected in this move. Needed as multiple cogs can be collected in one move from sliding on ice</summary> */
 		public List<Vector2I> challengedCogCoordinates = challengedCogPositions ?? [];
+		public List<Vector2I> candyCoordinates = candyCoordinates ?? [];
 		public bool usedParadigmShift = usedParadigmShift;
 		public bool leversToggled = leversToggled;
 		public int stamina = stamina;
+		public int candiesEaten = candiesEaten;
 	}
 
 	/** <summary>stack of all previous moves so that they can be undone in correct order(LIFO)</summary> */
@@ -105,6 +108,8 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>Distance Cogito moves to get to the next tile</summary> */
 	private float movementDistance = 0;
 
+	private int candiesEaten = 0;
+
 	/** <summary> The state that Cogito is currently in</summary> */
 	public CogitoState currentCogitoState = CogitoState.idle;
 
@@ -169,7 +174,8 @@ public partial class Cogito : CharacterBody2D
 		Vector2I? fallenSandPosition = null;
 
 		// position of any cogs that were challenged, needed to be tracked for undo and is the down vector by default (impossible normally)
-		Vector2I challengedCogPosition = Vector2I.Up;
+		Vector2I challengedCogPosition = Vector2I.Up,
+			eatenCandyPosition = Vector2I.Up;
 
 		// set sand position if found from previous tile (current tile has yet to be updated)
 		if (this.currentTileData.groundTile.customType == "Sand")
@@ -184,6 +190,11 @@ public partial class Cogito : CharacterBody2D
 		{
 			challengedCogPosition = currentTileData.obstacleTile.position;
 		}
+		// set candy position if found
+		else if (currentTileData.obstacleTile.customType == "Candy")
+		{
+			eatenCandyPosition = currentTileData.obstacleTile.position;
+		}
 
 		// if the previous move was forced (ice, conveyor, etc...) then merge the previous moves data with the current one
 		if (mergeNextMove)
@@ -194,17 +205,22 @@ public partial class Cogito : CharacterBody2D
 				// get the previous data
 				PreviousMove previousMove = previousMoves.Pop();
 
-				// append cog position to list if one was found
+				// append cog position to list if a cog was found
 				if (challengedCogPosition != Vector2I.Up)
 				{
 					previousMove.challengedCogCoordinates.Add(challengedCogPosition);
 				}
+				// append candy to list if a candy was found
+				else if (eatenCandyPosition != Vector2I.Up)
+				{
+					previousMove.candyCoordinates.Add(eatenCandyPosition);
+				}
 
 				// use previous data with added direction
-				PreviousMove currentMove = new(stamina: previousMove.stamina, movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
-					fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates,
+				PreviousMove currentMove = new(gameManager.currentStamina, candiesEaten, movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
+					fallenSandPosition: previousMove.fallenSandPosition, challengedCogPositions: previousMove.challengedCogCoordinates, candyCoordinates: previousMove.candyCoordinates,
 					shiftedCogCrystals: previousMove.shiftedCogCrystals, shiftedReinforcedCogCrystals: previousMove.shiftedReinforcedCogCrystals,
-					shiftedDeinforcedCogCrystals: previousMove.shiftedDeinforcedCogCrystals,
+					shiftedDeinforcedCogCrystals: previousMove.shiftedDeinforcedCogCrystals, demolishedRocks: previousMove.demolishedRocks,
 					usedParadigmShift: previousMove.usedParadigmShift, leversToggled: previousMove.leversToggled);
 
 				previousMoves.Push(currentMove);
@@ -213,15 +229,20 @@ public partial class Cogito : CharacterBody2D
 		else if (targetTileDifferenceVector.Length() > 0)
 		{
 			// save move information for undo normally
-			List<Vector2I> challengedCogs = [];
+			List<Vector2I> challengedCogs = [],
+				candyCoordinates = [];
 
 			if (challengedCogPosition != Vector2I.Up)
 			{
 				challengedCogs.Add(challengedCogPosition);
 			}
+			else if (eatenCandyPosition != Vector2I.Up)
+			{
+				candyCoordinates.Add(eatenCandyPosition);
+			}
 
-			PreviousMove currentMove = new(gameManager.currentStamina, movementDirection: targetTileDifferenceVector, fallenSandPosition: fallenSandPosition,
-				challengedCogPositions: challengedCogs);
+			PreviousMove currentMove = new(gameManager.currentStamina, candiesEaten, movementDirection: targetTileDifferenceVector, fallenSandPosition: fallenSandPosition,
+				challengedCogPositions: challengedCogs, candyCoordinates: candyCoordinates);
 			previousMoves.Push(currentMove);
 		}
 
@@ -280,6 +301,11 @@ public partial class Cogito : CharacterBody2D
 		if (currentTileData.obstacleTile.customType == "Cog")
 		{
 			gameManager.CogChallenged(1);
+			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
+		}
+		else if (currentTileData.obstacleTile.customType == "Candy")
+		{
+			candiesEaten++;
 			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
 		}
 	}
@@ -596,6 +622,8 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>Runs every physics frame</summary> */
 	public override void _PhysicsProcess(double delta)
 	{
+		GD.Print(candiesEaten);
+
 		// toggle pause menu only if no other menu is visible
 		if (Input.IsActionJustPressed("Pause") && !winMenu.Visible && !loseMenu.Visible)
 		{
@@ -655,8 +683,8 @@ public partial class Cogito : CharacterBody2D
 			// game manager updates the remaining count
 			gameManager.ParadigmShifted(1);
 
-			PreviousMove currentMove = new(gameManager.currentStamina, shiftedCogCrystals: [], shiftedReinforcedCogCrystals: [],
-				shiftedDeinforcedCogCrystals: [], usedParadigmShift: true);
+			PreviousMove currentMove = new(gameManager.currentStamina, candiesEaten, shiftedCogCrystals: [],
+				shiftedReinforcedCogCrystals: [], shiftedDeinforcedCogCrystals: [], usedParadigmShift: true);
 			previousMoves.Push(currentMove);
 		}
 		else if (Input.IsActionJustPressed("Undo"))
@@ -729,7 +757,8 @@ public partial class Cogito : CharacterBody2D
 		List<Vector2I> shiftedCogCrystals = [],
 			shiftedReinforcedCogCrystals = [],
 			shiftedDeinforcedCogCrystals = [],
-			shiftedLevers = [];
+			shiftedLevers = [],
+			demolishedRocks = [];
 
 		// replace both CogCrystals and ReinforcedCogCrystals with a cog for adjacent tiles
 		foreach (Vector2I adjacentCoordinate in adjacentCoordinates)
@@ -748,6 +777,9 @@ public partial class Cogito : CharacterBody2D
 				case "LeverLeft":
 				case "LeverRight":
 					shiftedLevers.Add(adjacentCoordinate);
+					break;
+				case "Rock":
+					demolishedRocks.Add(adjacentCoordinate);
 					break;
 			}
 		}
@@ -794,12 +826,24 @@ public partial class Cogito : CharacterBody2D
 			ToggleLevers();
 		}
 
+		// remove all adjacent rocks if candy has been eaten
+		if (candiesEaten > 0 && demolishedRocks.Count > 0)
+		{
+			candiesEaten--;
+
+			foreach (Vector2I rockPosition in demolishedRocks)
+			{
+				gameManager.obstacleLayer.SetCell(rockPosition);
+			}
+		}
+
 		// previous move was just lowering paradigm shift count but this will merge with the crystals removed to allow undoing mid animation
-		previousMoves.Pop();
+		PreviousMove previousMove = previousMoves.Pop();
 		
 		// save paradigm shift data to be undone
-		PreviousMove currentMove = new(gameManager.currentStamina, shiftedCogCrystals: shiftedCogCrystals, shiftedReinforcedCogCrystals: shiftedReinforcedCogCrystals,
-			shiftedDeinforcedCogCrystals: shiftedDeinforcedCogCrystals,	usedParadigmShift: true, leversToggled: leversJustToggled);
+		PreviousMove currentMove = new(gameManager.currentStamina, previousMove.candiesEaten, shiftedCogCrystals: shiftedCogCrystals, 
+			shiftedReinforcedCogCrystals: shiftedReinforcedCogCrystals, shiftedDeinforcedCogCrystals: shiftedDeinforcedCogCrystals, demolishedRocks: demolishedRocks, 
+			usedParadigmShift: true, leversToggled: leversJustToggled);
 		previousMoves.Push(currentMove);
 
 		// check if any un-shifted crystals remain and when out of shifts and if so, show fail menu
@@ -902,6 +946,20 @@ public partial class Cogito : CharacterBody2D
 
 			// adjust counter
 			gameManager.CogChallenged(-1);
+		}
+
+		// restore eaten candy
+		foreach (Vector2I candyPosition in previousMove.candyCoordinates)
+		{
+			gameManager.obstacleLayer.SetCell(candyPosition, 1, new(7, 2));
+		}
+
+		candiesEaten = previousMove.candiesEaten;
+
+		// restore demolished rocks
+		foreach (Vector2I rockPosition in previousMove.demolishedRocks)
+		{
+			gameManager.obstacleLayer.SetCell(rockPosition, 1, new(1, 0));
 		}
 
 		// un-shift crystals 
