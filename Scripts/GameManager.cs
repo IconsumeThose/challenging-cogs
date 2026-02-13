@@ -146,9 +146,9 @@ public partial class GameManager : Node2D
 	{
 		currentStamina -= change;
 
-		currentStamina = Math.Min(currentStamina, maxStamina);
+		currentStamina = Math.Clamp(currentStamina, 0, maxStamina);
 
-		if (currentStamina == 0 && maxStamina > 0)
+		if (currentStamina == 0 && maxStamina > 0 )
 		{
 			cogito.SetCogitoState(Cogito.CogitoState.animating);
 			cogito.animationPlayer.Play("Drown");
