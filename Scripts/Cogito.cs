@@ -7,12 +7,12 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>
 		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
 		</summary> */
-	public class PreviousMove(LayeredCustomTileData[,] changedTiles, int stamina, int candiesEaten,  bool balloonIsActive, Vector2? movementDirection = null, bool usedParadigmShift = false, bool leversToggled = false)
+	public class PreviousMove(LayeredCustomTileData[,] changedTiles, int stamina, int candiesEaten,  bool balloonIsActive, Vector2I? movementDirection = null, bool usedParadigmShift = false, bool leversToggled = false)
 	{
 		public readonly LayeredCustomTileData[,] changedTiles = changedTiles ?? new LayeredCustomTileData[20, 12];
 
 		/** <summary> The direction that Cogito moved</summary> */
-		public Vector2? movementDirection = movementDirection ?? Vector2.Zero;
+		public Vector2I? movementDirection = movementDirection ?? Vector2I.Zero;
 		public bool usedParadigmShift = usedParadigmShift;
 		public bool leversToggled = leversToggled;
 		public int stamina = stamina;
@@ -30,6 +30,8 @@ public partial class Cogito : CharacterBody2D
 		animating,
 		idle
 	}
+
+	private Node2D fallingSand = null;
 
 	/** <summary>The distance Cogito moves every time  </summary> */
 	[Export] public int tileSize = 32;
@@ -159,9 +161,21 @@ public partial class Cogito : CharacterBody2D
 
 	/** <summary>Exit moving state, handles stopping on a tile and checking what further actions are needed</summary> */
 	public void ExitMoving()
-	{
-		// set position exactly to target
-		Position = targetPosition;
+	{	
+		// if a move was stopped prematurely (undoing) set the position backwards based on direction and target
+		if ((Position - targetPosition).Length() >= 2)
+		{
+			Position = targetPosition - (targetTileDifferenceVector * tileSize);
+			
+			// reset to zero to avoid interactions like sliding on ice
+			targetTileDifferenceVector = Vector2I.Zero;
+		}
+		else
+		{
+			// set position exactly to target
+			Position = targetPosition;
+		}
+
 
 		PreviousMove previousMove = null;
 
@@ -172,12 +186,6 @@ public partial class Cogito : CharacterBody2D
 		}
 
 		LayeredCustomTileData[,] changedTiles = previousMove != null ? previousMove.changedTiles : new LayeredCustomTileData[20, 12];
-
-		// set sand position if found from previous tile (current tile has yet to be updated)
-		if (currentTileData.groundTile.customType == "Sand")
-		{
-			changedTiles[currentTileData.groundTile.position.X, currentTileData.groundTile.position.Y] = currentTileData;
-		}
 
 		UpdateCurrentTileData();
 
@@ -193,7 +201,7 @@ public partial class Cogito : CharacterBody2D
 		{
 			// use previous data with added direction
 			PreviousMove currentMove = new(changedTiles, previousMove.stamina, previousMove.candiesEaten, previousMove.balloonIsActive,
-				movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
+				movementDirection: previousMove.movementDirection,
 				usedParadigmShift: previousMove.usedParadigmShift, leversToggled: previousMove.leversToggled);
 			previousMoves.Push(currentMove);
 		}
@@ -327,15 +335,47 @@ public partial class Cogito : CharacterBody2D
 			SetSpriteAnimation("Move");
 		}
 
+			PreviousMove previousMove = null;
+
+			if (mergeNextMove && previousMoves.Count > 0)
+			{
+				// get the previous data
+				previousMove = previousMoves.Pop();
+			}
+
+			LayeredCustomTileData[,] changedTiles = previousMove != null ? previousMove.changedTiles : new LayeredCustomTileData[20, 12];
+
+
 		if (currentTileData.groundTile.customType == "Sand" && targetTileDifferenceVector.Length() > 0)
 		{
+			changedTiles[currentTileData.groundTile.position.X, currentTileData.groundTile.position.Y] = currentTileData;
+
 			// make sand fall after walking off that tile
 			gameManager.groundLayer.SetCell(currentTileData.groundTile.position, 1, new(2, 0));
 
-			Node2D fallingSand = fallingSandScene.Instantiate<Node2D>();
+			fallingSand = fallingSandScene.Instantiate<Node2D>();
 			GetParent().AddChild(fallingSand);
 			fallingSand.Position = targetPosition - ((Vector2)targetTileDifferenceVector).Normalized() * movementDistance;
 			fallingSand.GetNode<AnimationPlayer>("AnimationPlayer").Play("Fall");
+		}
+
+		// since this is the start of the move merge the event with the end of the move
+		mergeNextMove = true;
+
+		// if the previous move was forced (ice, conveyor, etc...) then merge the previous moves data with the current one
+		if (previousMove != null)
+		{
+			// use previous data with added direction
+			PreviousMove currentMove = new(changedTiles, previousMove.stamina, previousMove.candiesEaten, previousMove.balloonIsActive,
+				movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
+				usedParadigmShift: previousMove.usedParadigmShift, leversToggled: previousMove.leversToggled);
+			previousMoves.Push(currentMove);
+		}
+		else if (targetTileDifferenceVector.Length() > 0)
+		{
+			PreviousMove currentMove = new(changedTiles, gameManager.currentStamina, candiesEaten, balloonIsActive,
+				movementDirection: targetTileDifferenceVector);
+			previousMoves.Push(currentMove);
 		}
 	}
 
@@ -595,6 +635,15 @@ public partial class Cogito : CharacterBody2D
 			Engine.TimeScale = Math.Abs(Engine.TimeScale - 1);
 		}
 
+		// allow undoing on lose menu
+		if (Input.IsActionJustPressed("Undo") && Engine.TimeScale == 0 && loseMenu.Visible)
+		{
+			loseMenu.Visible = false;
+			Engine.TimeScale = 1;
+			mergeNextMove = false;
+			Undo();
+		}
+
 		// don't allow controlling character while game is paused
 		if (Engine.TimeScale == 0)
 			return;
@@ -603,6 +652,11 @@ public partial class Cogito : CharacterBody2D
 		if (Input.IsActionJustPressed("Reset"))
 		{
 			winMenu.OnRestartClicked();
+		}
+		else if (Input.IsActionJustPressed("Undo"))
+		{
+			mergeNextMove = false;
+			Undo();
 		}
 
 		// don't allow controlling character while dying but allow resetting
@@ -649,11 +703,6 @@ public partial class Cogito : CharacterBody2D
 			PreviousMove currentMove = new(new LayeredCustomTileData[20,12], gameManager.currentStamina, candiesEaten, balloonIsActive,
 				usedParadigmShift: true);
 			previousMoves.Push(currentMove);
-		}
-		else if (Input.IsActionJustPressed("Undo"))
-		{
-			mergeNextMove = false;
-			Undo();
 		}
 	}
 
@@ -911,9 +960,16 @@ public partial class Cogito : CharacterBody2D
 		// get the latest move's data
 		PreviousMove previousMove = previousMoves.Pop();
 
+		// delete any falling sand if it exists
+		if (IsInstanceValid(fallingSand))
+			fallingSand.QueueFree();
+
 		// move the canine to the previous position
-		if (previousMove.movementDirection != Vector2.Zero)
+		if (previousMove.movementDirection != Vector2I.Zero)
+		{
 			Position -= (Vector2)previousMove.movementDirection * movementDistance;
+		}
+		
 
 		foreach (LayeredCustomTileData tileData in previousMove.changedTiles)
 		{
@@ -957,6 +1013,9 @@ public partial class Cogito : CharacterBody2D
 
 		// update the tile data Cogito is currently on after restoring everything
 		UpdateCurrentTileData();
+
+		targetTileDifferenceVector = (Vector2I)previousMove.movementDirection;
+
 		SetCogitoState(CogitoState.idle);
 	}
 }
