@@ -59,7 +59,8 @@ public partial class Cogito : CharacterBody2D
 		loseMenu;
 
 	/** <summary>Reference to Cogito's main animated sprite 2D</summary> */
-	[Export] public AnimatedSprite2D animatedSprite;
+	[Export] public AnimatedSprite2D animatedSprite,
+		balloonSprite;
 
 	/** <summary>Reference to </summary> */
 	[Export] public AnimationPlayer animationPlayer;
@@ -236,7 +237,7 @@ public partial class Cogito : CharacterBody2D
 			DataManager.SaveGame();
 		}
 		// if tile is void or null then make Cogito fall
-		else if ((currentTileData.groundTile.customType ?? "Void") == "Void")
+		else if ((currentTileData.groundTile.customType ?? "Void") == "Void" && !balloonIsActive)
 		{
 			SetCogitoState(CogitoState.animating);
 			animationPlayer.Play("Fall", customSpeed: 0.5f);
@@ -274,10 +275,13 @@ public partial class Cogito : CharacterBody2D
 			candiesEaten++;
 			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
 		}
-		else if (currentTileData.obstacleTile.customType == "Balloon")
+		else if (currentTileData.obstacleTile.customType == "Balloon" && !balloonIsActive)
 		{
 			balloonIsActive = true;
+			balloonSprite.Visible = true;
+			balloonSprite.Animation = "default";
 			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
+			SetSpriteAnimation("Float");
 		}
 
 		UpdateCurrentTileData();
@@ -377,6 +381,12 @@ public partial class Cogito : CharacterBody2D
 				movementDirection: targetTileDifferenceVector);
 			previousMoves.Push(currentMove);
 		}
+
+		if ((currentTileData.groundTile.customType ?? "Void") == "Void" && balloonIsActive)
+		{
+			balloonIsActive = false;
+			balloonSprite.Play("pop");
+		}
 	}
 
 	/** <summary>Enter the animation state</summary> */
@@ -443,6 +453,10 @@ public partial class Cogito : CharacterBody2D
 					animationName = "SwimParadigmShift";
 					break;
 			}
+		}
+		else if (balloonIsActive)
+		{
+			animationName = "Float";
 		}
 
 		if (animatedSprite.Animation != animationName)
@@ -998,6 +1012,16 @@ public partial class Cogito : CharacterBody2D
 
 		candiesEaten = previousMove.candiesEaten;
 		balloonIsActive = previousMove.balloonIsActive;
+
+		if (balloonIsActive)
+		{
+			balloonSprite.Visible = true;
+			balloonSprite.Play("default");
+		}
+		else
+		{
+			balloonSprite.Visible = false;
+		}
 
 		// un-shift crystals 
 		if (previousMove.usedParadigmShift)

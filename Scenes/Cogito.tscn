@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://ewiwb3dxscp2" path="res://Scenes/falling_sand_banana.tscn" id="2_e0kin"]
 [ext_resource type="Texture2D" uid="uid://dok1fu6yin71i" path="res://Assets/Sprites/cogitosheet.png" id="2_eoj5r"]
 [ext_resource type="Texture2D" uid="uid://ghh3pckjfw5t" path="res://Assets/Sprites/particlesheet.png" id="4_1ujft"]
+[ext_resource type="Texture2D" uid="uid://0xavswj54tt" path="res://Assets/Sprites/tastysheet.png" id="5_tr1jv"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7hp1u"]
 atlas = ExtResource("2_eoj5r")
@@ -24,6 +25,14 @@ region = Rect2(96, 64, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_2llrw"]
 atlas = ExtResource("2_eoj5r")
 region = Rect2(224, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ahwvr"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ygv81"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(32, 96, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e0kin"]
 atlas = ExtResource("2_eoj5r")
@@ -109,6 +118,17 @@ animations = [{
 }],
 "loop": false,
 "name": &"Drown",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ahwvr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ygv81")
+}],
+"loop": true,
+"name": &"Float",
 "speed": 3.0
 }, {
 "frames": [{
@@ -494,19 +514,62 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Cogito" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("animatedSprite", "animationPlayer")]
-z_index = 1
+[sub_resource type="AtlasTexture" id="AtlasTexture_o0ail"]
+atlas = ExtResource("5_tr1jv")
+region = Rect2(192, 128, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ixy7"]
+atlas = ExtResource("5_tr1jv")
+region = Rect2(192, 128, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pidn6"]
+atlas = ExtResource("5_tr1jv")
+region = Rect2(224, 128, 32, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_btpeo"]
+atlas = ExtResource("5_tr1jv")
+region = Rect2(224, 192, 32, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pidn6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o0ail")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ixy7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pidn6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_btpeo")
+}],
+"loop": false,
+"name": &"pop",
+"speed": 5.0
+}]
+
+[node name="Cogito" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("animatedSprite", "balloonSprite", "animationPlayer")]
+z_index = 2
 script = ExtResource("1_eoj5r")
 movementSpeed = 250.0
 holdToMove = false
 animatedSprite = NodePath("AnimatedSprite2D")
+balloonSprite = NodePath("Balloon")
 animationPlayer = NodePath("AnimationPlayer")
 fallingSandScene = ExtResource("2_e0kin")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1841223617]
 sprite_frames = SubResource("SpriteFrames_e0kin")
-animation = &"Idle"
+animation = &"Float"
 autoplay = "Idle"
+frame_progress = 0.31857002
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1509439521]
 shape = SubResource("CircleShape2D_kihqq")
@@ -519,3 +582,9 @@ visible = false
 z_index = -1
 sprite_frames = SubResource("SpriteFrames_j8sqe")
 frame = 1
+
+[node name="Balloon" type="AnimatedSprite2D" parent="." unique_id=1919597749]
+visible = false
+z_index = -1
+position = Vector2(0, -16)
+sprite_frames = SubResource("SpriteFrames_pidn6")
