@@ -228,6 +228,26 @@ public partial class Cogito : CharacterBody2D
 
 		mergeNextMove = false;
 
+		// collect the cog if its on the same tile as Cogito
+		if (currentTileData.obstacleTile.customType == "Cog")
+		{
+			gameManager.CogChallenged(1);
+			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
+		}
+		else if (currentTileData.obstacleTile.customType == "Candy")
+		{
+			candiesEaten++;
+			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
+		}
+		else if (currentTileData.obstacleTile.customType == "Balloon" && !balloonIsActive)
+		{
+			balloonIsActive = true;
+			balloonSprite.Visible = true;
+			balloonSprite.Animation = "default";
+			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
+			SetSpriteAnimation("Float");
+		}
+
 		// win the game if on the goal while it is activated
 		if (currentTileData.groundTile.customType == "GoalOn")
 		{
@@ -260,30 +280,14 @@ public partial class Cogito : CharacterBody2D
 		else if (currentTileData.groundTile.customType == "Teleporter" && !(previousMoves.Count > 0
 			&& targetTileDifferenceVector == Vector2.Zero) && Teleport(true))
 		{
-			balloonIsActive = false;
-			balloonSprite.Play("pop");
+			if (balloonIsActive)
+			{
+				balloonIsActive = false;
+				balloonSprite.Play("pop");
+			}
+
 			animationPlayer.Play("Teleport");
 			SetCogitoState(CogitoState.animating);
-		}
-
-		// collect the cog if its on the same tile as Cogito
-		if (currentTileData.obstacleTile.customType == "Cog")
-		{
-			gameManager.CogChallenged(1);
-			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
-		}
-		else if (currentTileData.obstacleTile.customType == "Candy")
-		{
-			candiesEaten++;
-			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
-		}
-		else if (currentTileData.obstacleTile.customType == "Balloon" && !balloonIsActive)
-		{
-			balloonIsActive = true;
-			balloonSprite.Visible = true;
-			balloonSprite.Animation = "default";
-			gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
-			SetSpriteAnimation("Float");
 		}
 
 		UpdateCurrentTileData();
@@ -428,6 +432,7 @@ public partial class Cogito : CharacterBody2D
 	{
 		public TileData tileData = tileData;
 		public Vector2I atlasPosition = tileLayer.GetCellAtlasCoords(position);
+		public int alternative = tileLayer.GetCellAlternativeTile(position);
 		public string customType = (string)tileData?.GetCustomData("CustomType");
 		public Vector2 direction = GetTileDirection(tileData);
 		public Vector2I position = position;
@@ -1016,10 +1021,10 @@ public partial class Cogito : CharacterBody2D
 			}
 
 			gameManager.groundLayer.SetCell(tileData.groundTile.position, 1, 
-					tileData.groundTile.atlasPosition);
+					tileData.groundTile.atlasPosition, tileData.groundTile.alternative);
 			
 			gameManager.obstacleLayer.SetCell(tileData.obstacleTile.position, 1, 
-					tileData.obstacleTile.atlasPosition);
+					tileData.obstacleTile.atlasPosition, tileData.obstacleTile.alternative);
 		}
 
 		candiesEaten = previousMove.candiesEaten;
