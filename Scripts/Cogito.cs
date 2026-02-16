@@ -770,6 +770,9 @@ public partial class Cogito : CharacterBody2D
 						previousMoves.Push(currentMove);
 					}
 
+					balloonIsActive = false;
+					balloonSprite.Play("pop");
+
 					targetTileDifferenceVector = new(0, 0);
 
 					return true;
