@@ -145,7 +145,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"Float",
-"speed": 2.0
+"speed": 1.5
 }, {
 "frames": [{
 "duration": 1.0,
