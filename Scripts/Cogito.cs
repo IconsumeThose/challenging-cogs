@@ -382,7 +382,7 @@ public partial class Cogito : CharacterBody2D
 			previousMoves.Push(currentMove);
 		}
 
-		if ((currentTileData.groundTile.customType ?? "Void") == "Void" && balloonIsActive)
+		if ((currentTileData.groundTile.customType ?? "Void") == "Void" && balloonIsActive && targetTileDifferenceVector.Length() > 0)
 		{
 			balloonIsActive = false;
 			balloonSprite.Play("pop");
@@ -454,9 +454,19 @@ public partial class Cogito : CharacterBody2D
 					break;
 			}
 		}
-		else if (balloonIsActive)
+		// switch to float variant of the animation if applicable
+		else if (balloonIsActive && (currentTileData.groundTile.customType ?? "Void") == "Void")
 		{
-			animationName = "Float";
+			switch (animationName)
+			{
+				case "Move":
+				case "Idle":
+					animationName = "Float";
+					break;
+				case "ParadigmShift":
+					animationName = "FloatParadigmShift";
+					break;
+			}
 		}
 
 		if (animatedSprite.Animation != animationName)

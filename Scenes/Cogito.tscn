@@ -34,6 +34,22 @@ region = Rect2(0, 96, 32, 32)
 atlas = ExtResource("2_eoj5r")
 region = Rect2(32, 96, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_7rb06"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(128, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2tifk"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(160, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_344iw"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(192, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lui3q"]
+atlas = ExtResource("2_eoj5r")
+region = Rect2(224, 64, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_e0kin"]
 atlas = ExtResource("2_eoj5r")
 region = Rect2(0, 0, 32, 32)
@@ -129,7 +145,24 @@ animations = [{
 }],
 "loop": true,
 "name": &"Float",
-"speed": 3.0
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7rb06")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2tifk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_344iw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lui3q")
+}],
+"loop": true,
+"name": &"FloatParadigmShift",
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -569,7 +602,6 @@ fallingSandScene = ExtResource("2_e0kin")
 sprite_frames = SubResource("SpriteFrames_e0kin")
 animation = &"Float"
 autoplay = "Idle"
-frame_progress = 0.31857002
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1509439521]
 shape = SubResource("CircleShape2D_kihqq")
