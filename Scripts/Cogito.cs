@@ -260,6 +260,8 @@ public partial class Cogito : CharacterBody2D
 		else if (currentTileData.groundTile.customType == "Teleporter" && !(previousMoves.Count > 0
 			&& targetTileDifferenceVector == Vector2.Zero) && Teleport(true))
 		{
+			balloonIsActive = false;
+			balloonSprite.Play("pop");
 			animationPlayer.Play("Teleport");
 			SetCogitoState(CogitoState.animating);
 		}
@@ -769,9 +771,6 @@ public partial class Cogito : CharacterBody2D
 							usedParadigmShift: previousMove.usedParadigmShift, leversToggled: previousMove.leversToggled);
 						previousMoves.Push(currentMove);
 					}
-
-					balloonIsActive = false;
-					balloonSprite.Play("pop");
 
 					targetTileDifferenceVector = new(0, 0);
 
