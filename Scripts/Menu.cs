@@ -57,9 +57,11 @@ public partial class Menu : Control
 	}
 
 	/** <summary>Take you back to the main menu</summary> */
-	public void OnMainMenuPressed()
+	public void OnMainMenuPressed(bool fromWinMenu)
 	{
-		DataManager.currentLevel--;
+		if (!fromWinMenu)
+			DataManager.currentLevel--;
+		
 		Engine.TimeScale = 1;
 		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
 	}

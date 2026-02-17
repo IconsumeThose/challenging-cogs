@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://dj8vu6t4xi3je"]
+[gd_scene format=3 uid="uid://dj8vu6t4xi3je"]
 
 [ext_resource type="Script" uid="uid://dvtne63fb5yb0" path="res://Scripts/Menu.cs" id="1_emv3i"]
 [ext_resource type="LabelSettings" uid="uid://d3a7cu61kq4gy" path="res://Labels/menu.tres" id="2_k0w1u"]
 
-[node name="PauseMenu" type="Control"]
+[node name="PauseMenu" type="Control" unique_id=378544123]
 z_index = 2
 layout_mode = 3
 anchors_preset = 15
@@ -13,7 +13,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_emv3i")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=943029764]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -27,24 +27,24 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="VBoxContainer"]
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=280227673]
 layout_mode = 2
 text = "Pawsed :3"
 label_settings = ExtResource("2_k0w1u")
 horizontal_alignment = 1
 
-[node name="ContinueButton" type="Button" parent="VBoxContainer"]
+[node name="ContinueButton" type="Button" parent="VBoxContainer" unique_id=284766680]
 layout_mode = 2
 text = "Continue"
 
-[node name="RestartButton" type="Button" parent="VBoxContainer"]
+[node name="RestartButton" type="Button" parent="VBoxContainer" unique_id=1498941983]
 layout_mode = 2
 text = "Restart Level"
 
-[node name="MainMenuButton" type="Button" parent="VBoxContainer"]
+[node name="MainMenuButton" type="Button" parent="VBoxContainer" unique_id=2125696849]
 layout_mode = 2
 text = "Main Menu"
 
 [connection signal="pressed" from="VBoxContainer/ContinueButton" to="." method="OnContinuePressed"]
 [connection signal="pressed" from="VBoxContainer/RestartButton" to="." method="OnRestartClicked"]
-[connection signal="pressed" from="VBoxContainer/MainMenuButton" to="." method="OnMainMenuPressed"]
+[connection signal="pressed" from="VBoxContainer/MainMenuButton" to="." method="OnMainMenuPressed" binds= [false]]

@@ -51,4 +51,4 @@ text = "Main Menu"
 
 [connection signal="pressed" from="VBoxContainer/NextLevelButton" to="." method="OnNextLevelClicked"]
 [connection signal="pressed" from="VBoxContainer/RestartButton" to="." method="OnRestartClicked"]
-[connection signal="pressed" from="VBoxContainer/MainMenuButton" to="." method="OnMainMenuPressed"]
+[connection signal="pressed" from="VBoxContainer/MainMenuButton" to="." method="OnMainMenuPressed" binds= [true]]

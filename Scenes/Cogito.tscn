@@ -160,7 +160,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lui3q")
 }],
-"loop": true,
+"loop": false,
 "name": &"FloatParadigmShift",
 "speed": 10.0
 }, {
@@ -600,7 +600,7 @@ fallingSandScene = ExtResource("2_e0kin")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1841223617]
 sprite_frames = SubResource("SpriteFrames_e0kin")
-animation = &"Float"
+animation = &"FloatParadigmShift"
 autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1509439521]
