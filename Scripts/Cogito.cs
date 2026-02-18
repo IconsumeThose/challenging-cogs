@@ -700,6 +700,7 @@ public partial class Cogito : CharacterBody2D
 			return;
 		}
 
+
 		if (!UpdateMove() || currentCogitoState != CogitoState.idle)
 			return;
 
@@ -714,18 +715,17 @@ public partial class Cogito : CharacterBody2D
 
 			AttemptMove(newPosition);
 		}
-		else if (bufferedInput != Vector2.Zero)
+		else if (bufferedInput != Vector2.Zero && AttemptMove(Position + bufferedInput * movementDistance))
 		{
-			// where Cogito will move
-			Vector2 newPosition = Position + bufferedInput * movementDistance;
-
-			AttemptMove(newPosition);
+			// :bother:
 		}
 		// don't allow paradigm shifting if none are remaining
 		else if (Input.IsActionJustPressed("ParadigmShift") && gameManager.paradigmShiftsRemaining > 0)
 		{
+			bufferedInput = Vector2.Zero;
 			teleported = false;
 			mergeNextMove = false;
+
 			SetCogitoState(CogitoState.animating);
 			animationPlayer.Play("ParadigmShift", customSpeed: 1);
 
