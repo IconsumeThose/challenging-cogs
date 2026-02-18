@@ -270,7 +270,7 @@ public partial class Cogito : CharacterBody2D
 			mergeNextMove = AttemptMove(newPosition);
 		}
 		// if tile is conveyor, make Cogito move in the direction the conveyor is facing
-		else if (currentTileData.groundTile.customType == "Conveyor")
+		else if (currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor")
 		{
 			Vector2 newPosition = Position + currentTileData.groundTile.direction * movementDistance;
 			mergeNextMove = true;
@@ -321,7 +321,7 @@ public partial class Cogito : CharacterBody2D
 				gameManager.obstacleLayer);
 
 		// set animation accordingly to the current tile
-		if (currentTileData.groundTile.customType == "Conveyor" && mergeNextMove)
+		if ((currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor") && mergeNextMove)
 		{
 			SetSpriteAnimation("Idle");
 		}
@@ -541,9 +541,6 @@ public partial class Cogito : CharacterBody2D
 		{
 			teleported = false;
 
-			// reset buffered input value
-			bufferedInput = Vector2.Zero;
-
 			// flip sprite accordingly when moving horizontally
 			if (movementDirection.X > 0)
 			{
@@ -557,9 +554,13 @@ public partial class Cogito : CharacterBody2D
 
 		// don't move if Cogito will move to a blocking obstacle
 		if (!blockingObstacles.Contains(newTileData.obstacleTile.customType)
-			&& !(currentTileData.groundTile.customType == "Conveyor" && movementDirection == -1 * currentTileData.groundTile.direction)
+			&& !((currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor") 
+			&& movementDirection == -1 * currentTileData.groundTile.direction)
 			&& newTilePosition.X >= 0 && newTilePosition.Y >= 0 && newTilePosition.X < screenTileDimensions.X && newTilePosition.Y < screenTileDimensions.Y)
 		{
+			// reset buffered input value
+			bufferedInput = Vector2.Zero;
+
 			// simply return true if a dry run to skip actually moving Cogito
 			if (dryRun)
 				return true;
