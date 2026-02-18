@@ -1,6 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxbsqs4uy0ayb"]
+[gd_scene format=3 uid="uid://bxbsqs4uy0ayb"]
 
 [ext_resource type="Script" uid="uid://d0ln4ipbn4qnf" path="res://Scripts/GameManager.cs" id="1_m2tc1"]
+[ext_resource type="AudioStream" uid="uid://vjeqcdufkd5o" path="res://Assets/Sounds/challengedcog.ogg" id="2_7cxpe"]
+[ext_resource type="AudioStream" uid="uid://bju7mdmlhyfi8" path="res://Assets/Sounds/challengedlastcog.ogg" id="3_b7dir"]
 
-[node name="GameManager" type="Node2D"]
+[node name="GameManager" type="Node2D" unique_id=1529311522 node_paths=PackedStringArray("challengedCogSFX", "challengedLastCogSFX")]
 script = ExtResource("1_m2tc1")
+challengedCogSFX = NodePath("Challengedcog")
+challengedLastCogSFX = NodePath("Challengedlastcog")
+
+[node name="Challengedcog" type="AudioStreamPlayer" parent="." unique_id=2147168073]
+stream = ExtResource("2_7cxpe")
+bus = &"SFX"
+
+[node name="Challengedlastcog" type="AudioStreamPlayer" parent="." unique_id=354684916]
+stream = ExtResource("3_b7dir")
+bus = &"SFX"

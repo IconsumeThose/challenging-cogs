@@ -8,6 +8,7 @@ public partial class Menu : Control
 		if (Name == "MainMenu")
 		{
 			SongMixer.PlaySong(SongMixer.Song.mainMenu);
+			GetNode<Button>("VBoxContainer/PlayButton").GrabFocus();
 		}
 		else
 		{

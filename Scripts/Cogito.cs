@@ -253,6 +253,7 @@ public partial class Cogito : CharacterBody2D
 		{
 			Engine.TimeScale = 0;
 			winMenu.Visible = true;
+			winMenu.GetNode<Button>("VBoxContainer/NextLevelButton").GrabFocus();
 
 			DataManager.SaveGame();
 		}
@@ -590,6 +591,7 @@ public partial class Cogito : CharacterBody2D
 	{
 		Engine.TimeScale = 0;
 		loseMenu.Visible = true;
+		loseMenu.GetNode<Button>("VBoxContainer/UndoButton").GrabFocus();
 	}
 
 	/** <summary>Get the direction of the input, not allowing for diagonal inputs</summary> */
@@ -663,6 +665,8 @@ public partial class Cogito : CharacterBody2D
 		if (Input.IsActionJustPressed("Pause") && !winMenu.Visible && !loseMenu.Visible)
 		{
 			pauseMenu.Visible = !pauseMenu.Visible;
+
+			pauseMenu.GetNode<Button>("VBoxContainer/ContinueButton").GrabFocus();
 
 			Engine.TimeScale = Math.Abs(Engine.TimeScale - 1);
 		}

@@ -12,6 +12,9 @@ public partial class GameManager : Node2D
 	/** <summary>Do not use this variable, use TotalNumberOfCogs</summary> */
 	private int totalNumberOfCogs = -1;
 
+	[Export] public AudioStreamPlayer challengedCogSFX,
+		challengedLastCogSFX;
+
 	[Export] public Ui ui;
 
 	/** <summary>Don't allow setting the variable and calculate the correct value exactly once</summary> */
@@ -137,7 +140,12 @@ public partial class GameManager : Node2D
 		// if all cogs were challenged, turn the goal on
 		if (cogsChallenged == totalNumberOfCogs)
 		{
+			challengedLastCogSFX.Play();
 			groundLayer.SetCell(goalCoordinates, 1, new(2, 1));
+		}
+		else if (count > 0)
+		{
+			challengedCogSFX.Play();
 		}
 	}
 
