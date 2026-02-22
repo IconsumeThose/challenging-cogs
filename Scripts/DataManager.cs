@@ -26,6 +26,21 @@ public partial class DataManager : Node
 		}
 	}
 
+	/** <summary>Get the path of the next world</summary> */
+	public static string WorldPath(int world)
+	{
+		// check if the next level even exists
+		if (ResourceLoader.Exists($"res://Scenes/Levels/world{world}/level{1}.tscn"))
+		{
+			return $"res://Scenes/Levels/world{world}/level{1}.tscn";
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+
 	public static Vector2I ParsePathForWorldAndNumber(string scenePath)
 	{
 		// return value, x is world, y is level
@@ -43,20 +58,6 @@ public partial class DataManager : Node
 		return worldAndLevel;
 	}
 
-	/** <summary>Get the path of the next world</summary> */
-	public static string WorldPath(int world)
-	{
-		// check if the next level even exists
-		if (ResourceLoader.Exists($"res://Scenes/Levels/world{world + 1}/level{1}.tscn"))
-		{
-			return $"res://Scenes/Levels/world{world}/level{1}.tscn";
-		}
-		else
-		{
-			return null;
-		}
-	}
-
 	/** <summary>Save data to file, currently saves level and world</summary> */
 	public static void SaveGame(bool bypassCheck = false)
 	{
@@ -70,13 +71,17 @@ public partial class DataManager : Node
 		currentLevel++;
 
 		string nextLevelPath = LevelPath(currentWorld, currentLevel);
-		GD.Print(nextLevelPath);
+
 		if (nextLevelPath != null)
 		{
 			Vector2I worldAndLevel = ParsePathForWorldAndNumber(nextLevelPath);
 
 			currentWorld = worldAndLevel.X;
 			currentLevel = worldAndLevel.Y;
+		}
+		else
+		{
+			currentLevel = 1;
 		}
 
 		using var saveFile = FileAccess.Open($"user://{saveFileName}", FileAccess.ModeFlags.Write);
@@ -103,14 +108,14 @@ public partial class DataManager : Node
 	protected static int SaveCurrentLevel()
 	{
 		savedLevel = currentLevel;
-		// GD.Print("saved level " + currentLevel);
+
 		return currentLevel;
 	}
 
 	protected static int SaveCurrentWorld()
 	{
 		savedWorld = currentWorld;
-		// GD.Print("saved world " + currentWorld);
+
 		return currentWorld;
 	}
 
@@ -120,8 +125,6 @@ public partial class DataManager : Node
 
 		DataManager.currentLevel = currentLevel;
 		savedLevel = currentLevel;
-
-		// GD.Print("loaded level " + currentLevel);
 	}
 	protected static void LoadCurrentWorld(Variant currentWorldData)
 	{
@@ -129,8 +132,6 @@ public partial class DataManager : Node
 
 		DataManager.currentWorld = currentWorld;
 		savedWorld = currentWorld;
-
-		// GD.Print("loaded world " + currentWorld);
 	}
 
 	/** <summary>Reset the save file</summary> */
@@ -215,7 +216,7 @@ public partial class DataManager : Node
 	public static void LoadWorld(int world)
 	{
 		string nextWorldPath = WorldPath(world);
-		
+
 		// check if the next level even exists
 		if (nextWorldPath != null)
 		{
@@ -228,7 +229,6 @@ public partial class DataManager : Node
 			SongMixer.PlaySong((SongMixer.Song)currentWorld);
 		}
 	}
-
 
 	/** <summary>Called when the node enters the scene tree for the first time.</summary> */
 	public override void _Ready()
