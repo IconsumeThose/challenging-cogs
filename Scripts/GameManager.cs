@@ -49,28 +49,39 @@ public partial class GameManager : Node2D
 
 	public Vector2I goalCoordinates;
 
+	/** <summary>Checks if the level is loaded in the level select</summary> */
+	public bool IsLevelSelect()
+	{
+		isLevelSelect = GetTree().CurrentScene.Name == "LevelSelect";
+		return isLevelSelect;
+	}
+
 	public void CalculateCurrentWorldAndLevel()
 	{
+		// don't do anything if in level select
+		if (IsLevelSelect())
+			return;
+
 		string scenePath = GetTree().CurrentScene.SceneFilePath;
-
-
-		int worldNumberDigits = scenePath[26] == '/' ? 1 : 2;
-
-		// get the current world for testing when launching scene directly from godot editor (f6)
-		DataManager.currentWorld = scenePath.Substring(25, worldNumberDigits).ToInt();
-
-		int levelNumberDigits = scenePath[32 + worldNumberDigits] == '.' ? 1 : 2;
-
-		// get the current level for testing when launching scene directly from godot editor (f6)
-		DataManager.currentLevel = scenePath.Substring(31 + worldNumberDigits, levelNumberDigits).ToInt();
+		Vector2I worldAndLevel = DataManager.ParsePathForWorldAndNumber(scenePath);
+		DataManager.currentWorld = worldAndLevel.X;
+		DataManager.currentLevel = worldAndLevel.Y;
 
 		// set shifts remaining to the max that was set
 		paradigmShiftsRemaining = maxParadigmShifts;
 	}
 
+	public static bool isLevelSelect = false;
 	/** <summary>Initialize the game manager</summary> */
 	public override void _Ready()
 	{
+		if (IsLevelSelect())
+		{
+			// disable the visible of the BACKGROUND which is called TextureRect because sammy never renamed it when first setting it up
+			GetParent().GetNode<TextureRect>("TextureRect").Visible = false;
+			return;
+		}
+			
 		CalculateCurrentWorldAndLevel();
 
 		// find all goals

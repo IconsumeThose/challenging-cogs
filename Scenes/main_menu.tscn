@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dvtne63fb5yb0" path="res://Scripts/Menu.cs" id="1_28flt"]
 [ext_resource type="LabelSettings" uid="uid://d3a7cu61kq4gy" path="res://Labels/menu.tres" id="2_48xlc"]
 
-[node name="MainMenu" type="Control" unique_id=1945617877]
+[node name="MainMenu" type="Control" unique_id=1945617877 node_paths=PackedStringArray("modulatableMenuItem")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,8 +11,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_28flt")
+modulatableMenuItem = [NodePath("MainMenuVBox/PlayButton"), NodePath("MainMenuVBox/CloseButton")]
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1938338000]
+[node name="MainMenuVBox" type="VBoxContainer" parent="." unique_id=1938338000]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -26,24 +27,24 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Title" type="Label" parent="VBoxContainer" unique_id=213040204]
+[node name="Title" type="Label" parent="MainMenuVBox" unique_id=213040204]
 layout_mode = 2
 text = "Challenging Cogs"
 label_settings = ExtResource("2_48xlc")
 horizontal_alignment = 1
 
-[node name="Credits" type="Label" parent="VBoxContainer" unique_id=1069203167]
+[node name="Credits" type="Label" parent="MainMenuVBox" unique_id=1069203167]
 layout_mode = 2
 text = "Developed by SammyROG, RandalHandal, and IconsumeThose"
 
-[node name="PlayButton" type="Button" parent="VBoxContainer" unique_id=996710918]
+[node name="PlayButton" type="Button" parent="MainMenuVBox" unique_id=996710918]
 layout_mode = 2
 text = "Play
 "
 
-[node name="CloseButton" type="Button" parent="VBoxContainer" unique_id=1897577371]
+[node name="CloseButton" type="Button" parent="MainMenuVBox" unique_id=1897577371]
 layout_mode = 2
 text = "Close"
 
-[connection signal="pressed" from="VBoxContainer/PlayButton" to="." method="OnNextLevelClicked"]
-[connection signal="pressed" from="VBoxContainer/CloseButton" to="." method="OnCloseClicked"]
+[connection signal="pressed" from="MainMenuVBox/PlayButton" to="." method="OnPlayPressed"]
+[connection signal="pressed" from="MainMenuVBox/CloseButton" to="." method="OnClosePressed"]

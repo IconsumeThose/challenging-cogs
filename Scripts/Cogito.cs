@@ -405,6 +405,10 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>Ran during start up</summary> */
 	public override void _Ready()
 	{
+		// don't do anything if in level select
+		if (gameManager.IsLevelSelect())
+			return;
+
 		movementDistance = tileSize;
 
 		gameManager.currentStamina = gameManager.maxStamina;
@@ -661,6 +665,9 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>Runs every physics frame</summary> */
 	public override void _PhysicsProcess(double delta)
 	{
+		if (gameManager.IsLevelSelect())
+			return;
+
 		// toggle pause menu only if no other menu is visible
 		if (Input.IsActionJustPressed("Pause") && !winMenu.Visible && !loseMenu.Visible)
 		{
@@ -687,7 +694,7 @@ public partial class Cogito : CharacterBody2D
 		// reset the level when reset button is pressed
 		if (Input.IsActionJustPressed("Reset"))
 		{
-			winMenu.OnRestartClicked();
+			winMenu.OnRestartPressed();
 		}
 		else if (Input.IsActionJustPressed("Undo"))
 		{

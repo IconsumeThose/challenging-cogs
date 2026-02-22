@@ -6,33 +6,50 @@ public partial class DataManager : Node
 	public static string saveFileName = "";
 	[Export(PropertyHint.GlobalSaveFile)] protected string saveFileNameInstance = "save.sav";
 
-	public static int currentLevel = 0,
+	public static int currentLevel = 1,
 		currentWorld = 1,
-		savedLevel = 0,
+		savedLevel = 1,
 		savedWorld = 1;
 
 	public static DataManager instance;
 
 	/** <summary>Get the path of the next level</summary> */
-	public static string NextLevelPath()
+	public static string LevelPath(int world, int level)
 	{
-		if (ResourceLoader.Exists($"res://Scenes/Levels/world{DataManager.currentWorld}/level{DataManager.currentLevel + 1}.tscn"))
+		if (ResourceLoader.Exists($"res://Scenes/Levels/world{world}/level{level}.tscn"))
 		{
-			return $"res://Scenes/Levels/world{DataManager.currentWorld}/level{DataManager.currentLevel + 1}.tscn";
+			return $"res://Scenes/Levels/world{world}/level{level}.tscn";
 		}
 		else
 		{
-			return NextWorldPath();
+			return WorldPath(world + 1);
 		}
 	}
 
+	public static Vector2I ParsePathForWorldAndNumber(string scenePath)
+	{
+		// return value, x is world, y is level
+		Vector2I worldAndLevel = new(-1, -1);
+		int worldNumberDigits = scenePath[26] == '/' ? 1 : 2;
+
+		// get the current world for testing when launching scene directly from godot editor (f6)
+		worldAndLevel.X = scenePath.Substring(25, worldNumberDigits).ToInt();
+
+		int levelNumberDigits = scenePath[32 + worldNumberDigits] == '.' ? 1 : 2;
+
+		// get the current level for testing when launching scene directly from godot editor (f6)
+		worldAndLevel.Y = scenePath.Substring(31 + worldNumberDigits, levelNumberDigits).ToInt();
+
+		return worldAndLevel;
+	}
+
 	/** <summary>Get the path of the next world</summary> */
-	public static string NextWorldPath()
+	public static string WorldPath(int world)
 	{
 		// check if the next level even exists
-		if (ResourceLoader.Exists($"res://Scenes/Levels/world{DataManager.currentWorld + 1}/level{1}.tscn"))
+		if (ResourceLoader.Exists($"res://Scenes/Levels/world{world + 1}/level{1}.tscn"))
 		{
-			return $"res://Scenes/Levels/world{DataManager.currentWorld + 1}/level{1}.tscn";
+			return $"res://Scenes/Levels/world{world}/level{1}.tscn";
 		}
 		else
 		{
@@ -43,13 +60,25 @@ public partial class DataManager : Node
 	/** <summary>Save data to file, currently saves level and world</summary> */
 	public static void SaveGame(bool bypassCheck = false)
 	{
-		if (!bypassCheck && !((currentWorld == savedWorld && currentLevel == savedLevel + 1) 
+		if (!bypassCheck && !((currentWorld == savedWorld && currentLevel == savedLevel) 
 			|| (currentWorld == savedWorld + 1 && currentLevel == 1))
 		)
 		{
 			return;	
 		}
-	
+
+		currentLevel++;
+
+		string nextLevelPath = LevelPath(currentWorld, currentLevel);
+		GD.Print(nextLevelPath);
+		if (nextLevelPath != null)
+		{
+			Vector2I worldAndLevel = ParsePathForWorldAndNumber(nextLevelPath);
+
+			currentWorld = worldAndLevel.X;
+			currentLevel = worldAndLevel.Y;
+		}
+
 		using var saveFile = FileAccess.Open($"user://{saveFileName}", FileAccess.ModeFlags.Write);
 
 		if (saveFile == null)
@@ -73,14 +102,14 @@ public partial class DataManager : Node
 
 	protected static int SaveCurrentLevel()
 	{
-		DataManager.savedLevel = currentLevel;
+		savedLevel = currentLevel;
 		// GD.Print("saved level " + currentLevel);
 		return currentLevel;
 	}
 
 	protected static int SaveCurrentWorld()
 	{
-		DataManager.savedWorld = currentWorld;
+		savedWorld = currentWorld;
 		// GD.Print("saved world " + currentWorld);
 		return currentWorld;
 	}
@@ -90,7 +119,7 @@ public partial class DataManager : Node
 		int currentLevel = currentLevelData.AsInt32();
 
 		DataManager.currentLevel = currentLevel;
-		DataManager.savedLevel = currentLevel;
+		savedLevel = currentLevel;
 
 		// GD.Print("loaded level " + currentLevel);
 	}
@@ -99,7 +128,7 @@ public partial class DataManager : Node
 		int currentWorld = currentWorldData.AsInt32();
 
 		DataManager.currentWorld = currentWorld;
-		DataManager.savedWorld = currentWorld;
+		savedWorld = currentWorld;
 
 		// GD.Print("loaded world " + currentWorld);
 	}
@@ -110,7 +139,7 @@ public partial class DataManager : Node
 		currentLevel = 0;
 		currentWorld = 1;
 		SaveGame(true);
-		LoadNextLevel();
+		LoadLevel(1, 1);
 	}
 
 	/** <summary>Load data from file</summary> */
@@ -145,34 +174,55 @@ public partial class DataManager : Node
 		saveFile.Close();
 	}
 
-	public static void LoadNextLevel()
+	/** <summary>load the specified level or the next level by default</summary> */
+	public static void LoadLevel(int world = -1, int level = -1)
 	{
-		string nextLevelPath = NextLevelPath();
-		// check if the next level even exists
+		// set default values
+		if (world == -1)
+			world = currentWorld;
+
+		if (level == -1)
+			level = currentLevel + 1;
+
+		// safety checks to avoid logical errors of going 2 levels forward and bypassing current save
+		if (currentWorld == savedWorld && level > savedLevel)
+		{
+			currentLevel = level = savedLevel;
+		}
+		else if (world > savedWorld)
+		{
+			currentWorld = world = savedWorld;
+
+			currentLevel = level = savedLevel;
+		}
+
+		string nextLevelPath = LevelPath(world, level);
+
 		if (nextLevelPath != null)
 		{
 			Engine.TimeScale = 1;
-			DataManager.currentLevel++;
+			currentLevel = level;
 
 			instance.GetTree().ChangeSceneToFile(nextLevelPath);
 			SongMixer.PlaySong((SongMixer.Song)currentWorld);
 		}
 		else
 		{
-			LoadNextWorld();
+			LoadWorld(currentWorld + 1);
 		}
 	}
 
-	public static void LoadNextWorld()
+	public static void LoadWorld(int world)
 	{
-		string nextWorldPath = DataManager.NextWorldPath();
+		string nextWorldPath = WorldPath(world);
 		
 		// check if the next level even exists
 		if (nextWorldPath != null)
 		{
 			Engine.TimeScale = 1;
-			DataManager.currentWorld++;
-			DataManager.currentLevel = 1;
+			Vector2I worldAndLevel = ParsePathForWorldAndNumber(nextWorldPath);
+			currentWorld = worldAndLevel.X;
+			currentLevel = 1;
 
 			instance.GetTree().ChangeSceneToFile(nextWorldPath);
 			SongMixer.PlaySong((SongMixer.Song)currentWorld);
@@ -193,17 +243,16 @@ public partial class DataManager : Node
 		// for debugging allow skipping a level with the = key
 		if (Input.IsActionJustPressed("SkipLevel"))
 		{
-			LoadNextLevel();
-			currentLevel--;
 			SaveGame(true);
+			LoadLevel();
 		}
 
 		// for debugging allow skipping a world with the - key
 		if (Input.IsActionJustPressed("SkipWorld"))
 		{
-			LoadNextWorld();
-			currentLevel--;
+			currentLevel = 15;
 			SaveGame(true);
+			LoadWorld(currentWorld);
 		}
 
 		// for debugging allow quick deleting save file

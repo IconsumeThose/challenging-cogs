@@ -1,5 +1,6 @@
 [gd_scene format=4 uid="uid://b4yhnm5xg6a4l"]
 
+[ext_resource type="Texture2D" uid="uid://cyf7plaoqhrjg" path="res://Assets/Sludge/jimmydog.webp" id="1_na61s"]
 [ext_resource type="TileSet" uid="uid://dwh2tr6x3yg4e" path="res://TileSets/mechanical_ground.tres" id="1_xeygf"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="2_i36j2"]
 [ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_xeygf"]
@@ -11,6 +12,13 @@
 [ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="7_8r8ce"]
 
 [node name="Level" type="Node2D" unique_id=402987917]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=113581788]
+offset_right = 1929.0
+offset_bottom = 1080.0
+texture = ExtResource("1_na61s")
+expand_mode = 3
+stretch_mode = 4
 
 [node name="ScalingParent" type="Node2D" parent="." unique_id=118929906]
 scale = Vector2(3, 3)

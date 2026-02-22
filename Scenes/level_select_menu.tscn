@@ -1,0 +1,527 @@
+[gd_scene format=3 uid="uid://c41isjoyc8ese"]
+
+[ext_resource type="Script" uid="uid://dvtne63fb5yb0" path="res://Scripts/Menu.cs" id="1_52mtt"]
+[ext_resource type="Texture2D" uid="uid://xwbn8rpvyxqu" path="res://Assets/Sprites/uisheet.png" id="1_271b8"]
+[ext_resource type="Texture2D" uid="uid://cyf7plaoqhrjg" path="res://Assets/Sludge/jimmydog.webp" id="2_yts2j"]
+[ext_resource type="Texture2D" uid="uid://c5o4hm5530gna" path="res://Assets/Backgrounds/mechanicalmachinery.png" id="3_16w6l"]
+[ext_resource type="Texture2D" uid="uid://bdd86i8d18wa0" path="res://Assets/Backgrounds/bananabeach.png" id="4_aljgx"]
+[ext_resource type="Texture2D" uid="uid://cdxfful3ufp27" path="res://Assets/Backgrounds/gloomyglacier.png" id="4_phdj3"]
+[ext_resource type="LabelSettings" uid="uid://0787nyjk01au" path="res://Labels/Level Select Level Label.tres" id="4_vowso"]
+[ext_resource type="Texture2D" uid="uid://d1n35g6fqq15i" path="res://Assets/Backgrounds/tastytreats.jpg" id="5_ki5rc"]
+[ext_resource type="Texture2D" uid="uid://bc8foeg722sf8" path="res://Assets/Backgrounds/fungusforest.jpeg" id="6_phdj3"]
+[ext_resource type="Texture2D" uid="uid://c2wwrr2fyisom" path="res://Assets/Backgrounds/abandonedamphibious.webp" id="7_ki5rc"]
+[ext_resource type="Texture2D" uid="uid://b37gr8ssk8csg" path="res://Assets/Backgrounds/urbanunderground.webp" id="8_461nm"]
+[ext_resource type="Texture2D" uid="uid://b4w7l5r4xl5g3" path="res://Assets/Backgrounds/chaoscosmos.jpeg" id="9_ube50"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_52mtt"]
+atlas = ExtResource("1_271b8")
+region = Rect2(7, 1, 50, 30)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3g6d4"]
+atlas = ExtResource("1_271b8")
+region = Rect2(64, 0, 64, 32)
+
+[node name="LevelSelect" type="Control" unique_id=18553124 node_paths=PackedStringArray("modulatableMenuItem", "background", "nextWorldButton", "previousWorldButton")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_52mtt")
+modulatableMenuItem = [NodePath("BackButton"), NodePath("PreviousWorld"), NodePath("NextWorld")]
+worldBackgrounds = Array[CompressedTexture2D]([ExtResource("2_yts2j"), ExtResource("4_aljgx"), ExtResource("3_16w6l"), ExtResource("4_phdj3"), ExtResource("5_ki5rc"), ExtResource("6_phdj3"), ExtResource("7_ki5rc"), ExtResource("8_461nm"), ExtResource("9_ube50")])
+menuItemLightenAmount = 0.8
+background = NodePath("Background")
+nextWorldButton = NodePath("NextWorld")
+previousWorldButton = NodePath("PreviousWorld")
+
+[node name="BackButton" type="TextureButton" parent="." unique_id=465946545]
+self_modulate = Color(1, 0.2784314, 1, 1)
+layout_mode = 1
+offset_left = 80.0
+offset_top = 60.0
+offset_right = 130.0
+offset_bottom = 90.0
+scale = Vector2(3, 3)
+texture_normal = SubResource("AtlasTexture_52mtt")
+
+[node name="Sprite2D" type="Sprite2D" parent="BackButton" unique_id=1584597704]
+position = Vector2(25, 15)
+texture = SubResource("AtlasTexture_3g6d4")
+
+[node name="PreviousWorld" type="Button" parent="." unique_id=282120577]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 80.0
+offset_top = -170.0
+offset_right = 320.0
+offset_bottom = -60.0
+grow_vertical = 0
+text = "<"
+
+[node name="NextWorld" type="Button" parent="." unique_id=449615557]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -170.0
+offset_right = -80.0
+offset_bottom = -60.0
+grow_horizontal = 0
+grow_vertical = 0
+text = ">"
+
+[node name="LevelPreview1" type="Node2D" parent="." unique_id=1304970288]
+position = Vector2(80, 220)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview1" unique_id=1782733292]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview1/SubViewportContainer" unique_id=1743629596]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview1" unique_id=1895582607]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview1" unique_id=1692949023]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview2" type="Node2D" parent="." unique_id=1761363893]
+position = Vector2(440, 220)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview2" unique_id=1498506025]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview2/SubViewportContainer" unique_id=952590961]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview2" unique_id=1104089600]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview2" unique_id=1166529617]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview3" type="Node2D" parent="." unique_id=1165837197]
+position = Vector2(800, 220)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview3" unique_id=106218515]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview3/SubViewportContainer" unique_id=327460134]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview3" unique_id=1793287453]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview3" unique_id=1703582295]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview4" type="Node2D" parent="." unique_id=1003954544]
+position = Vector2(1160, 220)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview4" unique_id=356810894]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview4/SubViewportContainer" unique_id=440766892]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview4" unique_id=215024926]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview4" unique_id=1139203662]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview5" type="Node2D" parent="." unique_id=708920509]
+position = Vector2(1520, 220)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview5" unique_id=585014473]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview5/SubViewportContainer" unique_id=133024999]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview5" unique_id=704258083]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview5" unique_id=710304241]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview6" type="Node2D" parent="." unique_id=415747729]
+position = Vector2(80, 440)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview6" unique_id=1204371347]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview6/SubViewportContainer" unique_id=1526670914]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview6" unique_id=1811397586]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview6" unique_id=1854261567]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview7" type="Node2D" parent="." unique_id=987645295]
+position = Vector2(440, 440)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview7" unique_id=2033036168]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview7/SubViewportContainer" unique_id=1185180838]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview7" unique_id=1085077982]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview7" unique_id=673672977]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview8" type="Node2D" parent="." unique_id=1559445976]
+position = Vector2(800, 440)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview8" unique_id=325133295]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview8/SubViewportContainer" unique_id=1850995796]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview8" unique_id=344831031]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview8" unique_id=825565452]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview9" type="Node2D" parent="." unique_id=1774831116]
+position = Vector2(1160, 440)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview9" unique_id=1515633497]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview9/SubViewportContainer" unique_id=1001203478]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview9" unique_id=1883127312]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview9" unique_id=1570179372]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview10" type="Node2D" parent="." unique_id=652634836]
+position = Vector2(1520, 440)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview10" unique_id=1720940757]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview10/SubViewportContainer" unique_id=941079047]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview10" unique_id=1079284354]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview10" unique_id=1268596916]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview11" type="Node2D" parent="." unique_id=1513667040]
+position = Vector2(80, 660)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview11" unique_id=1076089879]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview11/SubViewportContainer" unique_id=814142044]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview11" unique_id=248425540]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview11" unique_id=1726600248]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview12" type="Node2D" parent="." unique_id=1360765836]
+position = Vector2(440, 660)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview12" unique_id=109385421]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview12/SubViewportContainer" unique_id=613276752]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview12" unique_id=1195421386]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview12" unique_id=879884067]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview13" type="Node2D" parent="." unique_id=1706721348]
+position = Vector2(800, 660)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview13" unique_id=1841980665]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview13/SubViewportContainer" unique_id=1300517023]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview13" unique_id=408315677]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview13" unique_id=52347930]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview14" type="Node2D" parent="." unique_id=77798047]
+position = Vector2(1160, 660)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview14" unique_id=1785743227]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview14/SubViewportContainer" unique_id=377862207]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview14" unique_id=981910166]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview14" unique_id=1773709363]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="LevelPreview15" type="Node2D" parent="." unique_id=955614562]
+position = Vector2(1520, 660)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="LevelPreview15" unique_id=1734242144]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="LevelPreview15/SubViewportContainer" unique_id=1529805337]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="Label" type="Label" parent="LevelPreview15" unique_id=287474616]
+offset_right = 320.0
+offset_bottom = 180.0
+size_flags_horizontal = 4
+text = "1"
+label_settings = ExtResource("4_vowso")
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureButton" type="TextureButton" parent="LevelPreview15" unique_id=2055507176]
+offset_right = 320.0
+offset_bottom = 180.0
+metadata/_edit_use_anchors_ = true
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1353502524]
+z_index = -1
+position = Vector2(960, 540)
+scale = Vector2(3, 3)
+texture = ExtResource("4_aljgx")
+
+[connection signal="focus_entered" from="BackButton" to="." method="OnMouseEntered" binds= [NodePath("BackButton")]]
+[connection signal="focus_exited" from="BackButton" to="." method="OnMouseExited" binds= [NodePath("BackButton")]]
+[connection signal="mouse_entered" from="BackButton" to="." method="OnMouseEntered" binds= [NodePath("BackButton")]]
+[connection signal="mouse_exited" from="BackButton" to="." method="OnMouseExited" binds= [NodePath("BackButton")]]
+[connection signal="pressed" from="BackButton" to="." method="OnMainMenuPressed"]
+[connection signal="pressed" from="PreviousWorld" to="." method="OnPreviousWorldPressed"]
+[connection signal="pressed" from="NextWorld" to="." method="OnNextWorldPressed"]
