@@ -29,7 +29,7 @@ tile_map_data = PackedByteArray("AAAIAAMAAQAAAAAAAAAIAAQAAQAAAAAAAAAIAAUAAQAAAAA
 tile_set = ExtResource("1_e6kyj")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=1753428060]
-tile_map_data = PackedByteArray("AAALAAIAAQABAAAAAAAKAAEAAQADAAEAAAAKAAUAAQADAAEAAAAKAAcAAQADAAEAAAAJAAYAAQADAAEAAAAJAAQAAQADAAEAAAALAAQAAQADAAEAAAAKAAMAAQADAAEAAAAKAAIAAQADAAEAAAALAAcAAQADAAEAAAAIAAEAAQABAAAAAAAHAAEAAQABAAAAAAAHAAIAAQABAAAAAAAHAAcAAQABAAAAAAAMAAcAAQABAAAAAAA=")
+tile_map_data = PackedByteArray("AAALAAIAAQABAAAAAAAKAAEAAQADAAEAAAAKAAcAAQADAAEAAAAJAAYAAQADAAEAAAAKAAMAAQADAAEAAAAKAAIAAQADAAEAAAALAAcAAQADAAEAAAAIAAEAAQABAAAAAAAHAAEAAQABAAAAAAAHAAIAAQABAAAAAAAHAAcAAQABAAAAAAAMAAcAAQABAAAAAAAIAAQAAQADAAEAAAAJAAUAAQADAAEAAAAKAAQAAQADAAEAAAA=")
 tile_set = ExtResource("2_877ot")
 
 [node name="Cogito" parent="ScalingParent" unique_id=1022237886 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_vpax4")]
@@ -43,7 +43,6 @@ loseMenu = NodePath("../../LoseMenu")
 position = Vector2(960, 540)
 
 [node name="UI" parent="." unique_id=1460122634 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_30y6s")]
-visible = false
 offset_right = 1920.0
 offset_bottom = 1080.0
 gameManager = NodePath("../GameManager")

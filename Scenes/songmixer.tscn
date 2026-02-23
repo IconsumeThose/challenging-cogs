@@ -5,6 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://bf1epqo5ara87" path="res://Assets/Music/mechanicalmachinery.ogg" id="2_wxc3n"]
 [ext_resource type="AudioStream" uid="uid://cgm3n4q8i1m1u" path="res://Assets/Music/Johann Sebastian Bach (1685 - 1750) - Prelude I.mp3" id="4_4631e"]
 [ext_resource type="AudioStream" uid="uid://c4i3oxg7bqjbs" path="res://Assets/Music/gloomyglacier.ogg" id="4_wemeu"]
+[ext_resource type="AudioStream" uid="uid://bp58ys5s2bvr" path="res://Assets/Music/tastytreats.ogg" id="5_rgx0q"]
 
 [node name="SongMixer" type="AudioStreamPlayer" unique_id=327098985]
 autoplay = true
@@ -13,7 +14,7 @@ script = ExtResource("2_4631e")
 world1 = ExtResource("1_uqrw6")
 world2 = ExtResource("2_wxc3n")
 world3 = ExtResource("4_wemeu")
-world4 = ExtResource("4_4631e")
+world4 = ExtResource("5_rgx0q")
 world5 = ExtResource("4_4631e")
 world6 = ExtResource("4_4631e")
 world7 = ExtResource("4_4631e")
