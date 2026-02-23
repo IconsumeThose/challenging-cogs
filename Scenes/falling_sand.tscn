@@ -1,16 +1,16 @@
-[gd_scene format=3 uid="uid://0fxxa70shknt"]
+[gd_scene format=3 uid="uid://deyp5g1n4w7pg"]
 
-[ext_resource type="Texture2D" uid="uid://0xavswj54tt" path="res://Assets/Sprites/tastysheet.png" id="1_6q8p5"]
+[ext_resource type="Texture2D" uid="uid://ewg0a22brnvg" path="res://Assets/Sprites/bananasheet.png" id="1_fehf8"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_jbx43"]
-atlas = ExtResource("1_6q8p5")
+[sub_resource type="AtlasTexture" id="AtlasTexture_tgnj0"]
+atlas = ExtResource("1_fehf8")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ftjqx"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_jbx43")
+"texture": SubResource("AtlasTexture_tgnj0")
 }],
 "loop": true,
 "name": &"default",
@@ -68,8 +68,10 @@ _data = {
 &"RESET": SubResource("Animation_s3nin")
 }
 
-[node name="FallingSand" type="AnimatedSprite2D" unique_id=1835629433]
+[node name="FallingSand" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_ftjqx")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1281547666]
-libraries/ = SubResource("AnimationLibrary_8hwxi")
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_8hwxi")
+}

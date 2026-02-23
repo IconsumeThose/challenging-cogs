@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://c5o4hm5530gna" path="res://Assets/Backgrounds/mechanicalmachinery.png" id="1_u6s8b"]
 [ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_u6s8b"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_cgiay"]
-[ext_resource type="PackedScene" uid="uid://c0w7gpuy6o8qj" path="res://Scenes/falling_sand_mechanical.tscn" id="4_nlx5q"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_3igsm"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_c5jwn"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_6cso2"]
@@ -37,7 +36,6 @@ gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
-fallingSandScene = ExtResource("4_nlx5q")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=540320114]
 position = Vector2(960, 540)

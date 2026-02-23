@@ -7,7 +7,7 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>
 		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
 		</summary> */
-	public class PreviousMove(LayeredCustomTileData[,] changedTiles, int stamina, int candiesEaten,  bool balloonIsActive, Vector2I? movementDirection = null, bool usedParadigmShift = false, bool leversToggled = false)
+	public class PreviousMove(LayeredCustomTileData[,] changedTiles, int stamina, int candiesEaten, bool balloonIsActive, Vector2I? movementDirection = null, bool usedParadigmShift = false, bool leversToggled = false)
 	{
 		public readonly LayeredCustomTileData[,] changedTiles = changedTiles ?? new LayeredCustomTileData[20, 12];
 
@@ -59,14 +59,16 @@ public partial class Cogito : CharacterBody2D
 		loseMenu;
 
 	/** <summary>Reference to Cogito's main animated sprite 2D</summary> */
-	[Export] public AnimatedSprite2D animatedSprite,
-		balloonSprite;
+	[Export]
+	public AnimatedSprite2D animatedSprite,
+		balloonSprite,
+		fallingSandSprite;
 
 	/** <summary>Reference to </summary> */
 	[Export] public AnimationPlayer animationPlayer;
 
 	/** <summary>Used for the falling sand animation</summary> */
-	[Export] public PackedScene fallingSandScene;
+	public PackedScene fallingSandScene = new();
 
 	/** <summary>True when levers are facing left</summary> */
 	public bool leversAreFacingLeft = true,
@@ -162,12 +164,12 @@ public partial class Cogito : CharacterBody2D
 
 	/** <summary>Exit moving state, handles stopping on a tile and checking what further actions are needed</summary> */
 	public void ExitMoving()
-	{	
+	{
 		// if a move was stopped prematurely (undoing) set the position backwards based on direction and target
 		if ((Position - targetPosition).Length() >= 2)
 		{
 			Position = targetPosition - (targetTileDifferenceVector * tileSize);
-			
+
 			// reset to zero to avoid interactions like sliding on ice
 			targetTileDifferenceVector = Vector2I.Zero;
 		}
@@ -346,15 +348,15 @@ public partial class Cogito : CharacterBody2D
 			SetSpriteAnimation("Move");
 		}
 
-			PreviousMove previousMove = null;
+		PreviousMove previousMove = null;
 
-			if (mergeNextMove && previousMoves.Count > 0)
-			{
-				// get the previous data
-				previousMove = previousMoves.Pop();
-			}
+		if (mergeNextMove && previousMoves.Count > 0)
+		{
+			// get the previous data
+			previousMove = previousMoves.Pop();
+		}
 
-			LayeredCustomTileData[,] changedTiles = previousMove != null ? previousMove.changedTiles : new LayeredCustomTileData[20, 12];
+		LayeredCustomTileData[,] changedTiles = previousMove != null ? previousMove.changedTiles : new LayeredCustomTileData[20, 12];
 
 
 		if (currentTileData.groundTile.customType == "Sand" && targetTileDifferenceVector.Length() > 0)
@@ -424,6 +426,53 @@ public partial class Cogito : CharacterBody2D
 
 		// sync all levers
 		SetLevers(true);
+
+		SpriteFrames fallingSandFrames = fallingSandSprite.SpriteFrames,
+			balloonFrames = balloonSprite.SpriteFrames;
+
+		fallingSandFrames.Clear("default");
+
+		// get the current sprite sheet source for the level
+		TileSetSource source = gameManager.groundLayer.TileSet.GetSource(1);
+
+		// instantiate new atlas textures to create world specific animations
+		AtlasTexture fallingSandTexture = new(),
+			balloonTexture = new(),
+			balloonPoppedTexture = new(),
+			emptyTexture = new();
+
+		if (source is TileSetAtlasSource atlasSource)
+		{
+			// get full atlas texture
+			Texture2D fullTexture = atlasSource.Texture;
+
+			// set atlas texture for all animation frames to sprite sheet
+			fallingSandTexture.Atlas = balloonTexture.Atlas = balloonPoppedTexture.Atlas = emptyTexture.Atlas = fullTexture;
+
+			// set texture regions to where the associated tiles are
+			fallingSandTexture.Region = new(new(0, 0), tileSize * new Vector2(1, 1));
+			balloonTexture.Region = new(tileSize * new Vector2(6, 4), tileSize * new Vector2(1, 2));
+			balloonPoppedTexture.Region = new(tileSize * new Vector2(7, 4), tileSize * new Vector2(1, 2));
+			emptyTexture.Region = new(tileSize * new Vector2(8, 8), new(1, 1));
+		}
+
+		// add all the frames to the associated animations
+		fallingSandFrames.AddFrame("default", fallingSandTexture);
+
+		balloonFrames.Clear("default");
+		balloonFrames.AddFrame("default", balloonTexture);
+
+		balloonFrames.Clear("pop");
+		balloonFrames.AddFrame("pop", balloonTexture);
+		balloonFrames.AddFrame("pop", balloonPoppedTexture);
+		balloonFrames.AddFrame("pop", emptyTexture);
+
+		// build and pack the falling sand sprite so it can be instantiated
+		fallingSandSprite.Visible = true;
+		fallingSandScene.Pack(fallingSandSprite);
+
+		// delete the current instance of falling sand as its no longer needed
+		fallingSandSprite.QueueFree();
 	}
 
 	/** <summary>Convert global position to the tile position at the specified tile map</summary> */
@@ -559,7 +608,7 @@ public partial class Cogito : CharacterBody2D
 
 		// don't move if Cogito will move to a blocking obstacle
 		if (!blockingObstacles.Contains(newTileData.obstacleTile.customType)
-			&& !((currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor") 
+			&& !((currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor")
 			&& movementDirection == -1 * currentTileData.groundTile.direction)
 			&& newTilePosition.X >= 0 && newTilePosition.Y >= 0 && newTilePosition.X < screenTileDimensions.X && newTilePosition.Y < screenTileDimensions.Y)
 		{
@@ -743,7 +792,7 @@ public partial class Cogito : CharacterBody2D
 			// game manager updates the remaining count
 			gameManager.ParadigmShifted(1);
 
-			PreviousMove currentMove = new(new LayeredCustomTileData[20,12], gameManager.currentStamina, candiesEaten, balloonIsActive,
+			PreviousMove currentMove = new(new LayeredCustomTileData[20, 12], gameManager.currentStamina, candiesEaten, balloonIsActive,
 				usedParadigmShift: true);
 			previousMoves.Push(currentMove);
 		}
@@ -784,7 +833,7 @@ public partial class Cogito : CharacterBody2D
 
 						// use previous data with added direction
 						PreviousMove currentMove = new(previousMove.changedTiles, gameManager.currentStamina, candiesEaten, previousMove.balloonIsActive,
-							movementDirection: previousMove.movementDirection + targetTileDifferenceVector, 
+							movementDirection: previousMove.movementDirection + targetTileDifferenceVector,
 							usedParadigmShift: previousMove.usedParadigmShift, leversToggled: previousMove.leversToggled);
 						previousMoves.Push(currentMove);
 					}
@@ -833,7 +882,7 @@ public partial class Cogito : CharacterBody2D
 		// replace both CogCrystals and ReinforcedCogCrystals with a cog for adjacent tiles
 		foreach (Vector2I adjacentCoordinate in adjacentCoordinates)
 		{
-			CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(adjacentCoordinate), adjacentCoordinate, 
+			CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(adjacentCoordinate), adjacentCoordinate,
 				gameManager.obstacleLayer);
 
 			switch (obstacleData.customType)
@@ -858,7 +907,7 @@ public partial class Cogito : CharacterBody2D
 		// replace only normal CogCrystals with a cog for diagonal tiles
 		foreach (Vector2I diagonalCoordinate in diagonalCoordinates)
 		{
-			CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(diagonalCoordinate), diagonalCoordinate, 
+			CustomTileData obstacleData = new(gameManager.obstacleLayer.GetCellTileData(diagonalCoordinate), diagonalCoordinate,
 				gameManager.obstacleLayer);
 
 			switch (obstacleData.customType)
@@ -882,12 +931,12 @@ public partial class Cogito : CharacterBody2D
 		totalShiftedCogCrystals.AddRange(shiftedReinforcedCogCrystals);
 		totalShiftedCogCrystals.AddRange(shiftedDeinforcedCogCrystals);
 
-		LayeredCustomTileData[,] changedTiles = new LayeredCustomTileData[20,12];
+		LayeredCustomTileData[,] changedTiles = new LayeredCustomTileData[20, 12];
 
 		// convert all crystals shifted to cogs
 		foreach (Vector2I crystalPosition in totalShiftedCogCrystals)
 		{
-			changedTiles[crystalPosition.X, crystalPosition.Y] = GetTileCustomType(crystalPosition, 
+			changedTiles[crystalPosition.X, crystalPosition.Y] = GetTileCustomType(crystalPosition,
 				gameManager.groundLayer, gameManager.obstacleLayer);
 			gameManager.obstacleLayer.SetCell(crystalPosition, 1, new(5, 1));
 		}
@@ -909,7 +958,7 @@ public partial class Cogito : CharacterBody2D
 
 			foreach (Vector2I rockPosition in demolishedRocks)
 			{
-				changedTiles[rockPosition.X, rockPosition.Y] = GetTileCustomType(rockPosition, 
+				changedTiles[rockPosition.X, rockPosition.Y] = GetTileCustomType(rockPosition,
 					gameManager.groundLayer, gameManager.obstacleLayer);
 				gameManager.obstacleLayer.SetCell(rockPosition);
 			}
@@ -1012,7 +1061,7 @@ public partial class Cogito : CharacterBody2D
 		{
 			Position -= (Vector2)previousMove.movementDirection * movementDistance;
 		}
-		
+
 
 		foreach (LayeredCustomTileData tileData in previousMove.changedTiles)
 		{
@@ -1029,13 +1078,13 @@ public partial class Cogito : CharacterBody2D
 				}
 
 				// adjust counter
-				gameManager.CogChallenged(-1);	
+				gameManager.CogChallenged(-1);
 			}
 
-			gameManager.groundLayer.SetCell(tileData.groundTile.position, 1, 
+			gameManager.groundLayer.SetCell(tileData.groundTile.position, 1,
 					tileData.groundTile.atlasPosition, tileData.groundTile.alternative);
-			
-			gameManager.obstacleLayer.SetCell(tileData.obstacleTile.position, 1, 
+
+			gameManager.obstacleLayer.SetCell(tileData.obstacleTile.position, 1,
 					tileData.obstacleTile.atlasPosition, tileData.obstacleTile.alternative);
 		}
 

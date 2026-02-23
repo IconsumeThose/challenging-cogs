@@ -7,7 +7,8 @@ public partial class Menu : Control
 	[Export] public Godot.Collections.Array<CanvasItem> modulatableMenuItem = [];
 
 	/** <summary>colors used for each world for UI, usually derived from cog color</summary> */
-	[Export] public Godot.Collections.Array<Color> worldColors = [
+	[Export]
+	public Godot.Collections.Array<Color> worldColors = [
 		new("000000"),
 		new("2e3996"),
 		new("cc1818"),
@@ -23,11 +24,12 @@ public partial class Menu : Control
 	/** <summary>background images for each world</summary> */
 	[Export] public Godot.Collections.Array<CompressedTexture2D> worldBackgrounds = [];
 
-	[Export] public float menuItemLightenAmount = 0.3f; 
+	[Export] public float menuItemLightenAmount = 0.3f;
 	[Export] public Sprite2D background;
-	[Export] public Button nextWorldButton,
+	[Export]
+	public Button nextWorldButton,
 		previousWorldButton;
-		
+
 	public override void _Ready()
 	{
 		foreach (CanvasItem menuItem in modulatableMenuItem)
@@ -54,23 +56,33 @@ public partial class Menu : Control
 				// referring to i directly is bad because its a reference and fails to bind pressed correctly
 				int currentLevel = i;
 
-				// first check if the level actually exists
-				if (ResourceLoader.Exists($"res://Scenes/Levels/world{DataManager.currentWorld}/level{currentLevel}.tscn"))
+				// find all the necessary sub-components to work with
+				SubViewportContainer subViewportContainer = GetNode<SubViewportContainer>($"LevelPreview{currentLevel}/SubViewportContainer");
+				TextureButton button = subViewportContainer.GetParent().GetNode<TextureButton>("TextureButton");
+				Label levelLabel = subViewportContainer.GetParent().GetNode<Label>("Label");
+
+
+				// check if the level actually exists
+				bool levelExists = ResourceLoader.Exists($"res://Scenes/Levels/world{DataManager.currentWorld}/level{currentLevel}.tscn");
+
+				if (!levelExists)
 				{
-					// find all the necessary sub-components to work with
-					SubViewportContainer subViewportContainer = GetNode<SubViewportContainer>($"LevelPreview{currentLevel}/SubViewportContainer");
-					TextureButton button = subViewportContainer.GetParent().GetNode<TextureButton>("TextureButton");
-					Label levelLabel = subViewportContainer.GetParent().GetNode<Label>("Label");
-
-					// don't load locked levels
-					if (DataManager.currentWorld > DataManager.savedWorld || (DataManager.currentWorld == DataManager.savedWorld && currentLevel > DataManager.savedLevel))
-					{
-						subViewportContainer.SelfModulate = new("22222222");
-						levelLabel.Text = "🔒";
-						button.FocusMode = FocusModeEnum.None;
-						continue;
-					}
-
+					button.FocusMode = FocusModeEnum.None;
+					levelLabel.Text = "";
+				}
+				// don't load locked levels
+				else if (DataManager.currentWorld > DataManager.savedWorld || (DataManager.currentWorld == DataManager.savedWorld && currentLevel > DataManager.savedLevel))
+				{
+					subViewportContainer.SelfModulate = new("22222222");
+					
+					levelLabel.Text = "🔒";
+					
+					button.FocusMode = FocusModeEnum.None;
+					continue;
+				}
+		
+				if (levelExists)
+				{
 					// bind all the necessary actions for the custom buttons
 					button.Pressed += () => OnLevelButtonPressed(currentLevel);
 					button.MouseEntered += () => OnMouseEntered(subViewportContainer.GetPath());
@@ -95,7 +107,7 @@ public partial class Menu : Control
 
 					levelLabel.Text = $"{currentLevel}";
 
-					levelScene.Scale = new(1f/6f, 1f/6f);
+					levelScene.Scale = new(1f / 6f, 1f / 6f);
 				}
 			}
 
@@ -138,7 +150,7 @@ public partial class Menu : Control
 	{
 		CanvasItem menuItem = GetNode<CanvasItem>(nodePath);
 
-		menuItem.SelfModulate *= 1/menuItemLightenAmount;
+		menuItem.SelfModulate *= 1 / menuItemLightenAmount;
 	}
 
 	public void OnMouseExited(NodePath nodePath)

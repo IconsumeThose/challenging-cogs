@@ -4,7 +4,6 @@
 [ext_resource type="TileSet" uid="uid://dd0fa00l4pcs1" path="res://TileSets/tasty_ground.tres" id="2_e8cpa"]
 [ext_resource type="TileSet" uid="uid://d38agm057x4qg" path="res://TileSets/tasty_obstacles.tres" id="3_jovbp"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="4_icple"]
-[ext_resource type="PackedScene" uid="uid://0fxxa70shknt" path="res://Scenes/falling_sand_tasty.tscn" id="5_q8lml"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="6_qpjel"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="7_8rnt5"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="8_y4brn"]
@@ -37,7 +36,6 @@ gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
-fallingSandScene = ExtResource("5_q8lml")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

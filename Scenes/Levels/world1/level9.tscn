@@ -10,65 +10,65 @@
 [ext_resource type="PackedScene" uid="uid://dj8vu6t4xi3je" path="res://Scenes/pause_menu.tscn" id="7_q43bc"]
 [ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="8_j3ve6"]
 
-[node name="Level" type="Node2D"]
+[node name="Level" type="Node2D" unique_id=2028452561]
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1161961463]
 offset_right = 1929.0
 offset_bottom = 1080.0
 texture = ExtResource("1_fykfi")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="ScalingParent" type="Node2D" parent="."]
+[node name="ScalingParent" type="Node2D" parent="." unique_id=708618735]
 scale = Vector2(3, 3)
 
-[node name="TileMaps" type="Node2D" parent="ScalingParent"]
+[node name="TileMaps" type="Node2D" parent="ScalingParent" unique_id=1329121506]
 
-[node name="Ground" type="TileMapLayer" parent="ScalingParent/TileMaps"]
+[node name="Ground" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=237966]
 tile_map_data = PackedByteArray("AAADAAMAAQAAAAEAAAADAAQAAQAAAAAAAAADAAUAAQAAAAAAAAADAAYAAQAAAAAAAAADAAcAAQAAAAAAAAADAAgAAQAAAAAAAAAEAAMAAQAAAAEAAAAEAAQAAQAAAAEAAAAEAAUAAQAAAAEAAAAEAAYAAQAAAAAAAAAEAAcAAQAAAAAAAAAEAAgAAQAAAAAAAAAFAAMAAQAAAAAAAAAFAAQAAQAAAAAAAAAFAAUAAQAAAAEAAAAFAAYAAQAAAAAAAAAFAAcAAQAAAAAAAAAFAAgAAQAAAAAAAAAGAAMAAQAAAAAAAAAGAAQAAQAAAAEAAAAGAAUAAQAAAAEAAAAGAAYAAQAAAAAAAAAGAAcAAQAAAAAAAAAGAAgAAQAAAAEAAAAHAAMAAQAAAAAAAAAHAAQAAQAAAAEAAAAHAAUAAQAAAAAAAAAHAAYAAQAAAAAAAAAHAAcAAQAAAAEAAAAHAAgAAQAAAAAAAAAIAAQAAQAAAAEAAAAIAAUAAQAAAAEAAAAIAAYAAQAAAAEAAAAIAAcAAQAAAAEAAAAIAAgAAQAAAAAAAAAJAAUAAQAAAAEAAAAJAAYAAQAAAAEAAAAJAAcAAQAAAAEAAAAKAAQAAQAAAAEAAAAKAAUAAQAAAAEAAAAKAAYAAQAAAAEAAAALAAMAAQAAAAAAAAALAAQAAQAAAAEAAAALAAUAAQAAAAEAAAALAAYAAQAAAAEAAAALAAcAAQAAAAAAAAAMAAMAAQAAAAAAAAAMAAQAAQAAAAAAAAAMAAUAAQAAAAAAAAAMAAcAAQAAAAEAAAAMAAgAAQAAAAEAAAANAAMAAQAAAAEAAAANAAQAAQAAAAAAAAANAAUAAQAAAAAAAAANAAgAAQAAAAEAAAAOAAMAAQAAAAEAAAAOAAQAAQAAAAAAAAAOAAUAAQAAAAAAAAAOAAYAAQAAAAAAAAAOAAcAAQABAAEAAAAOAAgAAQAAAAEAAAAPAAMAAQAAAAEAAAAPAAQAAQAAAAAAAAAPAAUAAQAAAAAAAAAPAAYAAQAAAAAAAAAPAAcAAQAAAAAAAAAPAAgAAQAAAAAAAAAQAAMAAQAAAAEAAAAQAAQAAQAAAAAAAAAQAAUAAQAAAAAAAAAQAAYAAQAAAAAAAAAQAAcAAQAAAAAAAAAQAAgAAQAAAAAAAAACAAMAAQAAAAEAAAACAAQAAQAAAAEAAAACAAUAAQAAAAAAAAACAAYAAQAAAAAAAAACAAcAAQAAAAAAAAACAAgAAQAAAAEAAAABAAgAAQAAAAAAAAABAAcAAQAAAAAAAAABAAYAAQAAAAAAAAABAAUAAQAAAAAAAAABAAQAAQAAAAAAAAARAAMAAQAAAAEAAAARAAQAAQAAAAAAAAARAAUAAQAAAAAAAAARAAYAAQAAAAAAAAARAAgAAQAAAAAAAAASAAcAAQAAAAAAAAASAAYAAQAAAAAAAAASAAUAAQAAAAAAAAASAAQAAQAAAAAAAAASAAMAAQAAAAAAAAARAAcAAQAAAAAAAAANAAIAAQAAAAAAAAARAAIAAQAAAAAAAAAQAAIAAQAAAAAAAAAPAAIAAQAAAAAAAAAOAAIAAQAAAAAAAAACAAkAAQAAAAAAAAADAAkAAQAAAAAAAAAEAAkAAQAAAAAAAAAFAAkAAQAAAAAAAAAGAAkAAQAAAAAAAAAMAAYAAQAAAAAAAAANAAYAAQAAAAAAAAANAAcAAQAAAAAAAAAJAAQAAQAAAAEAAAAKAAcAAQAAAAEAAAA=")
 tile_set = ExtResource("1_tvrv7")
 
-[node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps"]
+[node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=152601364]
 tile_map_data = PackedByteArray("AAAHAAYAAQABAAAAAAAGAAYAAQABAAAAAAAFAAcAAQABAAAAAAAMAAUAAQABAAAAAAANAAUAAQABAAAAAAAOAAQAAQABAAAAAAAJAAcAAQADAAEAAAAKAAQAAQADAAEAAAAPAAQAAQABAAAAAAAQAAQAAQABAAAAAAARAAQAAQABAAAAAAASAAQAAQABAAAAAAAEAAcAAQABAAAAAAADAAcAAQABAAAAAAACAAcAAQABAAAAAAABAAcAAQABAAAAAAABAAgAAQADAAEAAAARAAIAAQADAAEAAAAOAAIAAQABAAAAAAAQAAIAAQABAAAAAAAPAAIAAQADAAEAAAANAAYAAQABAAAAAAANAAcAAQABAAAAAAALAAcAAQADAAEAAAAOAAUAAQADAAEAAAASAAYAAQADAAEAAAARAAYAAQADAAEAAAAHAAUAAQABAAAAAAAFAAMAAQABAAAAAAAFAAQAAQABAAAAAAADAAYAAQABAAAAAAADAAUAAQABAAAAAAADAAQAAQABAAAAAAABAAYAAQADAAEAAAAEAAYAAQADAAEAAAAFAAYAAQADAAEAAAAGAAcAAQADAAEAAAARAAgAAQABAAAAAAASAAMAAQADAAEAAAACAAYAAQADAAEAAAAIAAQAAQADAAEAAAA=")
 tile_set = ExtResource("2_gg8tk")
 
-[node name="Cogito" parent="ScalingParent" node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_0q3fn")]
+[node name="Cogito" parent="ScalingParent" unique_id=2069256040 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_0q3fn")]
 position = Vector2(462, 240)
 gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=794453805]
 position = Vector2(960, 540)
 
-[node name="UI" parent="." node_paths=PackedStringArray("gameManager") instance=ExtResource("4_lmavu")]
+[node name="UI" parent="." unique_id=1826140845 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_lmavu")]
 offset_right = 1920.0
 offset_bottom = 1080.0
 gameManager = NodePath("../GameManager")
 
-[node name="GameManager" parent="." node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("5_kfid7")]
+[node name="GameManager" parent="." unique_id=321070367 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("5_kfid7")]
 maxParadigmShifts = 10
 levelName = "Quadrants"
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
 groundLayer = NodePath("../ScalingParent/TileMaps/Ground")
 
-[node name="WinMenu" parent="." instance=ExtResource("6_mblgx")]
+[node name="WinMenu" parent="." unique_id=1106054198 instance=ExtResource("6_mblgx")]
 visible = false
 offset_left = 960.0
 offset_top = 540.0
 offset_right = 960.0
 offset_bottom = 540.0
 
-[node name="PauseMenu" parent="." instance=ExtResource("7_q43bc")]
+[node name="PauseMenu" parent="." unique_id=1146618183 instance=ExtResource("7_q43bc")]
 visible = false
 offset_left = 960.0
 offset_top = 540.0
 offset_right = 960.0
 offset_bottom = 540.0
 
-[node name="LoseMenu" parent="." instance=ExtResource("8_j3ve6")]
+[node name="LoseMenu" parent="." unique_id=368452160 instance=ExtResource("8_j3ve6")]
 visible = false
 offset_left = 960.0
 offset_top = 540.0

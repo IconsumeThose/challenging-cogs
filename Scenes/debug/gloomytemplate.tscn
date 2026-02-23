@@ -3,7 +3,6 @@
 [ext_resource type="TileSet" uid="uid://1u282qhp7y1b" path="res://TileSets/gloomy_ground.tres" id="1_bbabk"]
 [ext_resource type="TileSet" uid="uid://c81cx7647ulg3" path="res://TileSets/gloomy_obstacles.tres" id="2_bbabk"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_yu1qp"]
-[ext_resource type="PackedScene" uid="uid://crw0aj4h2h0ss" path="res://Scenes/falling_sand_gloomy.tscn" id="4_bbabk"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_mifr2"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_q41jb"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_euok6"]
@@ -30,7 +29,6 @@ gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
-fallingSandScene = ExtResource("4_bbabk")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)
