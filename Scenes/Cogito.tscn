@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://2jx57nk5tsbj"]
 
 [ext_resource type="Script" uid="uid://ddif0qkv78ffm" path="res://Scripts/Cogito.cs" id="1_eoj5r"]
-[ext_resource type="PackedScene" uid="uid://ewiwb3dxscp2" path="res://Scenes/falling_sand_banana.tscn" id="2_e0kin"]
 [ext_resource type="Texture2D" uid="uid://dok1fu6yin71i" path="res://Assets/Sprites/cogitosheet.png" id="2_eoj5r"]
 [ext_resource type="Texture2D" uid="uid://ghh3pckjfw5t" path="res://Assets/Sprites/particlesheet.png" id="4_1ujft"]
 [ext_resource type="Texture2D" uid="uid://0xavswj54tt" path="res://Assets/Sprites/tastysheet.png" id="5_tr1jv"]
+[ext_resource type="PackedScene" uid="uid://deyp5g1n4w7pg" path="res://Scenes/falling_sand.tscn" id="6_ceshj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7hp1u"]
 atlas = ExtResource("2_eoj5r")
@@ -588,15 +588,18 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Cogito" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("animatedSprite", "balloonSprite", "animationPlayer")]
+[node name="Cogito" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("animatedSprite", "balloonSprite", "fallingSandSprite", "animationPlayer")]
 z_index = 2
 script = ExtResource("1_eoj5r")
 movementSpeed = 250.0
 holdToMove = false
 animatedSprite = NodePath("AnimatedSprite2D")
 balloonSprite = NodePath("Balloon")
+fallingSandSprite = NodePath("FallingSand")
 animationPlayer = NodePath("AnimationPlayer")
-fallingSandScene = ExtResource("2_e0kin")
+
+[node name="FallingSand" parent="." unique_id=243377807 instance=ExtResource("6_ceshj")]
+visible = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1841223617]
 sprite_frames = SubResource("SpriteFrames_e0kin")
@@ -620,3 +623,4 @@ visible = false
 z_index = -1
 position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_pidn6")
+animation = &"pop"
