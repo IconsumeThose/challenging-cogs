@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://dl5wr0f55yta"]
 
-[ext_resource type="Texture2D" uid="uid://d1n35g6fqq15i" path="res://Assets/Backgrounds/tastytreats.jpg" id="1_a7iv5"]
+[ext_resource type="Texture2D" uid="uid://dvb1i8shnusa5" path="res://Assets/Backgrounds/tastytreats.png" id="1_mag0s"]
 [ext_resource type="TileSet" uid="uid://dd0fa00l4pcs1" path="res://TileSets/tasty_ground.tres" id="2_ko1v1"]
 [ext_resource type="TileSet" uid="uid://d38agm057x4qg" path="res://TileSets/tasty_obstacles.tres" id="3_vfbmw"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="4_h7fyx"]
@@ -15,7 +15,7 @@
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1217908642]
 offset_right = 1921.0
 offset_bottom = 1081.0
-texture = ExtResource("1_a7iv5")
+texture = ExtResource("1_mag0s")
 
 [node name="ScalingParent" type="Node2D" parent="." unique_id=1030117494]
 scale = Vector2(3, 3)
