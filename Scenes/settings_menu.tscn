@@ -12,7 +12,7 @@ region = Rect2(7, 1, 50, 30)
 atlas = ExtResource("11_e33pr")
 region = Rect2(64, 0, 64, 32)
 
-[node name="SettingsMenu" type="Control" unique_id=18553124 node_paths=PackedStringArray("modulatableMenuItem", "confirmDeleteSave", "holdToMoveSwitch", "masterVolumeSlider", "musicVolumeSlider", "SFXVolumeSlider")]
+[node name="SettingsMenu" type="Control" unique_id=18553124 node_paths=PackedStringArray("modulatableMenuItem", "confirmDeleteSave", "holdToMoveSwitch", "holdToResetSwitch", "masterVolumeSlider", "musicVolumeSlider", "SFXVolumeSlider")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,9 +20,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_bh2oy")
-modulatableMenuItem = [NodePath("BackButton"), NodePath("VBoxContainer/MasterVolumeSlider"), NodePath("VBoxContainer/MusicVolumeSlider"), NodePath("VBoxContainer/SFXVolumeSlider"), NodePath("VBoxContainer/holdToMove"), NodePath("VBoxContainer/DeleteSave"), NodePath("VBoxContainer/ConfirmSaveDelete")]
+modulatableMenuItem = [NodePath("BackButton"), NodePath("VBoxContainer/MasterVolumeSlider"), NodePath("VBoxContainer/MusicVolumeSlider"), NodePath("VBoxContainer/SFXVolumeSlider"), NodePath("VBoxContainer/holdToMove"), NodePath("VBoxContainer/DeleteSave"), NodePath("VBoxContainer/ConfirmSaveDelete"), NodePath("VBoxContainer/holdToReset")]
 confirmDeleteSave = NodePath("VBoxContainer/ConfirmSaveDelete")
 holdToMoveSwitch = NodePath("VBoxContainer/holdToMove")
+holdToResetSwitch = NodePath("VBoxContainer/holdToReset")
 masterVolumeSlider = NodePath("VBoxContainer/MasterVolumeSlider")
 musicVolumeSlider = NodePath("VBoxContainer/MusicVolumeSlider")
 SFXVolumeSlider = NodePath("VBoxContainer/SFXVolumeSlider")
@@ -90,6 +91,11 @@ value = 100.0
 layout_mode = 2
 text = "Hold to Move"
 
+[node name="holdToReset" type="CheckButton" parent="VBoxContainer" unique_id=496422812]
+layout_mode = 2
+text = "Hold to Reset
+"
+
 [node name="DeleteSave" type="Button" parent="VBoxContainer" unique_id=1063790499]
 layout_mode = 2
 text = "Delete Save"
@@ -108,5 +114,6 @@ text = "Confirm Deletion"
 [connection signal="value_changed" from="VBoxContainer/MusicVolumeSlider" to="." method="OnSliderChanged" binds= [1]]
 [connection signal="value_changed" from="VBoxContainer/SFXVolumeSlider" to="." method="OnSliderChanged" binds= [2]]
 [connection signal="toggled" from="VBoxContainer/holdToMove" to="." method="OnHoldToMoveToggled"]
+[connection signal="toggled" from="VBoxContainer/holdToReset" to="." method="OnHoldToResetToggled"]
 [connection signal="pressed" from="VBoxContainer/DeleteSave" to="." method="OnDeleteSavePressed"]
 [connection signal="toggled" from="VBoxContainer/ConfirmSaveDelete" to="." method="OnDeleteSaveConfirmed"]

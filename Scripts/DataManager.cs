@@ -12,7 +12,9 @@ public partial class DataManager : Node
 		savedWorld = 1;
 
 	/** <summary>Setting to allow holding down a direction to keep moving in that direction</summary> */
-	public static bool holdToMove = false;
+	public static bool holdToMove = false,
+		holdToReset = true;
+
 	public static DataManager instance;
 
 	/** <summary>Get the path of the next level</summary> */
@@ -102,6 +104,7 @@ public partial class DataManager : Node
 		saveFile.StoreVar(SaveBusVolume("Master"));
 		saveFile.StoreVar(SaveBusVolume("Music"));
 		saveFile.StoreVar(SaveBusVolume("SFX"));
+		saveFile.StoreVar(SaveHoldToReset());
 
 		saveFile.Close();
 	}
@@ -114,7 +117,8 @@ public partial class DataManager : Node
 		holdToMove,
 		masterVolume,
 		musicVolume,
-		SFXVolume
+		SFXVolume,
+		holdToReset
 	}
 
 	protected static int SaveCurrentLevel()
@@ -139,6 +143,11 @@ public partial class DataManager : Node
 	protected static double SaveBusVolume(string busName)
 	{
 		return AudioServer.GetBusVolumeLinear(AudioServer.GetBusIndex(busName));
+	}
+
+	protected static bool SaveHoldToReset()
+	{
+		return holdToReset;
 	}
 
 	protected static void LoadCurrentLevel(Variant currentLevelData)
@@ -187,6 +196,13 @@ public partial class DataManager : Node
 		AudioServer.SetBusVolumeLinear(AudioServer.GetBusIndex(busName), volume);	
 	}
 	
+	protected static void LoadHoldToReset(Variant holdToResetData)
+	{
+		bool holdToReset = holdToResetData.AsBool();
+
+		DataManager.holdToReset = holdToReset;
+	}
+
 	/** <summary>Reset the save file</summary> */
 	public static void ResetSave()
 	{
@@ -196,6 +212,7 @@ public partial class DataManager : Node
 		LoadBusVolume(1, SaveTypes.masterVolume);
 		LoadBusVolume(1, SaveTypes.musicVolume);
 		LoadBusVolume(1, SaveTypes.SFXVolume);
+		holdToReset = true;
 		SaveGame(true, false);
 		LoadGame();
 	}
@@ -231,6 +248,9 @@ public partial class DataManager : Node
 				case SaveTypes.musicVolume:
 				case SaveTypes.SFXVolume:
 					LoadBusVolume(nextData, currentType);
+					break;
+				case SaveTypes.holdToReset:
+					LoadHoldToReset(nextData);
 					break;
 			}
 

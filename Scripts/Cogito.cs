@@ -41,7 +41,7 @@ public partial class Cogito : CharacterBody2D
 
 	/** <summary>The speed in which Cogito moves</summary> */
 	[Export] public float movementSpeed = 150;
-
+	[Export] public double resetHoldTime = 0.5;
 	/** <summary>Reference to the game manager in the current scene</summary> */
 	[Export] GameManager gameManager;
 
@@ -70,6 +70,8 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>True when levers are facing left</summary> */
 	public bool leversAreFacingLeft = true,
 		balloonIsActive = false;
+	
+	private double resetHeldTime = 0;
 
 	/** <summary>List of all obstacles that block movement</summary> */
 	private readonly List<string> blockingObstacles =
@@ -738,14 +740,28 @@ public partial class Cogito : CharacterBody2D
 			return;
 
 		// reset the level when reset button is pressed
-		if (Input.IsActionJustPressed("Reset"))
+		if (Input.IsActionJustPressed("Reset") && !DataManager.holdToReset)
 		{
 			winMenu.OnRestartPressed();
 		}
-		else if (Input.IsActionJustPressed("Undo"))
+		// update reset button hold time if its pressed and hold to reset is enabled
+		else if (Input.IsActionPressed("Reset") && DataManager.holdToReset)
 		{
-			mergeNextMove = false;
-			Undo();
+			resetHeldTime += delta;
+			
+			if (resetHeldTime >= resetHoldTime)
+			{
+				winMenu.OnRestartPressed();
+			}
+		}
+		else
+		{
+			resetHeldTime = 0;
+			if (Input.IsActionJustPressed("Undo"))
+			{
+				mergeNextMove = false;
+				Undo();
+			}
 		}
 
 		// don't allow controlling character while dying but allow resetting
@@ -923,6 +939,16 @@ public partial class Cogito : CharacterBody2D
 			}
 		}
 
+		// keep track if levers were toggled to save for undo information
+		bool leversJustToggled = false;
+
+		// toggle levers if at least one was shifted
+		if (shiftedLevers.Count >= 1)
+		{
+			leversJustToggled = true;
+			ToggleLevers();
+		}
+
 		// create a list that contains normal and reinforced cog crystals
 		List<Vector2I> totalShiftedCogCrystals = [.. shiftedCogCrystals];
 		totalShiftedCogCrystals.AddRange(shiftedReinforcedCogCrystals);
@@ -936,16 +962,6 @@ public partial class Cogito : CharacterBody2D
 			changedTiles[crystalPosition.X, crystalPosition.Y] = GetTileCustomType(crystalPosition,
 				gameManager.groundLayer, gameManager.obstacleLayer);
 			gameManager.obstacleLayer.SetCell(crystalPosition, 1, new(5, 1));
-		}
-
-		// keep track if levers were toggled to save for undo information
-		bool leversJustToggled = false;
-
-		// toggle levers if at least one was shifted
-		if (shiftedLevers.Count >= 1)
-		{
-			leversJustToggled = true;
-			ToggleLevers();
 		}
 
 		// remove all adjacent rocks if candy has been eaten

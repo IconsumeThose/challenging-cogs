@@ -29,7 +29,8 @@ public partial class Menu : Control
 	
 	[Export] public CheckBox confirmDeleteSave; 
 
-	[Export] public CheckButton holdToMoveSwitch;
+	[Export] public CheckButton holdToMoveSwitch,
+		holdToResetSwitch;
 
 	[Export] public Slider masterVolumeSlider,
 		musicVolumeSlider,
@@ -138,6 +139,12 @@ public partial class Menu : Control
 			{
 				// set hold to move switch to on if the setting is on
 				holdToMoveSwitch.SetPressedNoSignal(true);
+			}
+
+			if (DataManager.holdToReset)
+			{
+				// set hold to move switch to on if the setting is on
+				holdToResetSwitch.SetPressedNoSignal(true);
 			}
 
 			// set all volume sliders to match their current volumes
@@ -259,6 +266,11 @@ public partial class Menu : Control
 	public void OnHoldToMoveToggled(bool toggledOn)
 	{
 		DataManager.holdToMove = toggledOn;
+	}
+
+	public void OnHoldToResetToggled(bool toggledOn)
+	{
+		DataManager.holdToReset = toggledOn;
 	}
 
 	/** <summary>Closes the game</summary> */
