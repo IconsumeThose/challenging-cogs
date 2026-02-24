@@ -11,7 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_28flt")
-modulatableMenuItem = [NodePath("MainMenuVBox/PlayButton"), NodePath("MainMenuVBox/CloseButton")]
+modulatableMenuItem = [NodePath("MainMenuVBox/PlayButton"), NodePath("MainMenuVBox/CloseButton"), NodePath("MainMenuVBox/SettingsButton")]
 
 [node name="MainMenuVBox" type="VBoxContainer" parent="." unique_id=1938338000]
 layout_mode = 1
@@ -42,9 +42,15 @@ layout_mode = 2
 text = "Play
 "
 
+[node name="SettingsButton" type="Button" parent="MainMenuVBox" unique_id=1731079300]
+layout_mode = 2
+text = "Settings
+"
+
 [node name="CloseButton" type="Button" parent="MainMenuVBox" unique_id=1897577371]
 layout_mode = 2
 text = "Close"
 
 [connection signal="pressed" from="MainMenuVBox/PlayButton" to="." method="OnPlayPressed"]
+[connection signal="pressed" from="MainMenuVBox/SettingsButton" to="." method="OnSettingsPressed"]
 [connection signal="pressed" from="MainMenuVBox/CloseButton" to="." method="OnClosePressed"]

@@ -11,6 +11,8 @@ public partial class DataManager : Node
 		savedLevel = 1,
 		savedWorld = 1;
 
+	/** <summary>Setting to allow holding down a direction to keep moving in that direction</summary> */
+	public static bool holdToMove = false;
 	public static DataManager instance;
 
 	/** <summary>Get the path of the next level</summary> */
@@ -40,7 +42,6 @@ public partial class DataManager : Node
 		}
 	}
 
-
 	public static Vector2I ParsePathForWorldAndNumber(string scenePath)
 	{
 		// return value, x is world, y is level
@@ -59,7 +60,7 @@ public partial class DataManager : Node
 	}
 
 	/** <summary>Save data to file, currently saves level and world</summary> */
-	public static void SaveGame(bool bypassCheck = false)
+	public static void SaveGame(bool bypassCheck = false, bool incrementLevel = true)
 	{
 		if (!bypassCheck && !((currentWorld == savedWorld && currentLevel == savedLevel) 
 			|| (currentWorld == savedWorld + 1 && currentLevel == 1))
@@ -67,21 +68,24 @@ public partial class DataManager : Node
 		{
 			return;	
 		}
-
-		currentLevel++;
-
-		string nextLevelPath = LevelPath(currentWorld, currentLevel);
-
-		if (nextLevelPath != null)
+		
+		if (incrementLevel)
 		{
-			Vector2I worldAndLevel = ParsePathForWorldAndNumber(nextLevelPath);
+			currentLevel++;
 
-			currentWorld = worldAndLevel.X;
-			currentLevel = worldAndLevel.Y;
-		}
-		else
-		{
-			currentLevel = 1;
+			string nextLevelPath = LevelPath(currentWorld, currentLevel);
+
+			if (nextLevelPath != null)
+			{
+				Vector2I worldAndLevel = ParsePathForWorldAndNumber(nextLevelPath);
+
+				currentWorld = worldAndLevel.X;
+				currentLevel = worldAndLevel.Y;
+			}
+			else
+			{
+				currentLevel = 1;
+			}
 		}
 
 		using var saveFile = FileAccess.Open($"user://{saveFileName}", FileAccess.ModeFlags.Write);
@@ -94,15 +98,23 @@ public partial class DataManager : Node
 		// order must match the order of the enum SaveType!
 		saveFile.StoreVar(SaveCurrentWorld());
 		saveFile.StoreVar(SaveCurrentLevel());
+		saveFile.StoreVar(SaveHoldToMove());
+		saveFile.StoreVar(SaveBusVolume("Master"));
+		saveFile.StoreVar(SaveBusVolume("Music"));
+		saveFile.StoreVar(SaveBusVolume("SFX"));
 
 		saveFile.Close();
 	}
 
 	/** <summary>Order MATTERS</summary> */
-	private enum SaveTypes
+	protected enum SaveTypes
 	{
 		currentWorld,
-		currentLevel
+		currentLevel,
+		holdToMove,
+		masterVolume,
+		musicVolume,
+		SFXVolume
 	}
 
 	protected static int SaveCurrentLevel()
@@ -119,6 +131,16 @@ public partial class DataManager : Node
 		return currentWorld;
 	}
 
+	protected static bool SaveHoldToMove()
+	{
+		return holdToMove;
+	}
+
+	protected static double SaveBusVolume(string busName)
+	{
+		return AudioServer.GetBusVolumeLinear(AudioServer.GetBusIndex(busName));
+	}
+
 	protected static void LoadCurrentLevel(Variant currentLevelData)
 	{
 		int currentLevel = currentLevelData.AsInt32();
@@ -126,6 +148,7 @@ public partial class DataManager : Node
 		DataManager.currentLevel = currentLevel;
 		savedLevel = currentLevel;
 	}
+
 	protected static void LoadCurrentWorld(Variant currentWorldData)
 	{
 		int currentWorld = currentWorldData.AsInt32();
@@ -134,13 +157,47 @@ public partial class DataManager : Node
 		savedWorld = currentWorld;
 	}
 
+	protected static void LoadHoldToMove(Variant holdToMoveData)
+	{
+		bool holdToMove = holdToMoveData.AsBool();
+
+		DataManager.holdToMove = holdToMove;
+	}
+
+	protected static void LoadBusVolume(Variant volumeData, SaveTypes saveType)
+	{
+		float volume = (float)volumeData.AsDouble();
+
+		string busName;
+
+		switch (saveType)
+		{
+			case SaveTypes.musicVolume:
+				busName = "Music";
+				break;
+			case SaveTypes.SFXVolume:
+				busName = "SFX";
+				break;
+			case SaveTypes.masterVolume:
+			default:
+				busName = "Master";
+				break;
+		}
+
+		AudioServer.SetBusVolumeLinear(AudioServer.GetBusIndex(busName), volume);	
+	}
+	
 	/** <summary>Reset the save file</summary> */
 	public static void ResetSave()
 	{
-		currentLevel = 0;
+		currentLevel = 1;
 		currentWorld = 1;
-		SaveGame(true);
-		LoadLevel(1, 1);
+		holdToMove = false;
+		LoadBusVolume(1, SaveTypes.masterVolume);
+		LoadBusVolume(1, SaveTypes.musicVolume);
+		LoadBusVolume(1, SaveTypes.SFXVolume);
+		SaveGame(true, false);
+		LoadGame();
 	}
 
 	/** <summary>Load data from file</summary> */
@@ -166,6 +223,14 @@ public partial class DataManager : Node
 					break;
 				case SaveTypes.currentLevel:
 					LoadCurrentLevel(nextData);
+					break;
+				case SaveTypes.holdToMove:
+					LoadHoldToMove(nextData);
+					break;
+				case SaveTypes.masterVolume:
+				case SaveTypes.musicVolume:
+				case SaveTypes.SFXVolume:
+					LoadBusVolume(nextData, currentType);
 					break;
 			}
 
@@ -253,12 +318,6 @@ public partial class DataManager : Node
 			currentLevel = 15;
 			SaveGame(true);
 			LoadWorld(currentWorld);
-		}
-
-		// for debugging allow quick deleting save file
-		if (Input.IsActionJustPressed("DeleteSave"))
-		{
-			ResetSave();
 		}
 	}
 }

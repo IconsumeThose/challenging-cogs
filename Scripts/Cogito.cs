@@ -42,9 +42,6 @@ public partial class Cogito : CharacterBody2D
 	/** <summary>The speed in which Cogito moves</summary> */
 	[Export] public float movementSpeed = 150;
 
-	/** <summary>Setting to allow holding down a direction to keep moving in that direction</summary> */
-	[Export] public bool holdToMove = true;
-
 	/** <summary>Reference to the game manager in the current scene</summary> */
 	[Export] GameManager gameManager;
 
@@ -767,7 +764,7 @@ public partial class Cogito : CharacterBody2D
 		Vector2 inputDirection = GetInputDirection();
 
 		// i'm sammyrog
-		if (inputDirection != Vector2.Zero && (holdToMove || (!holdToMove && (Input.IsActionJustPressed("Left")
+		if (inputDirection != Vector2.Zero && (DataManager.holdToMove || (!DataManager.holdToMove && (Input.IsActionJustPressed("Left")
 			|| Input.IsActionJustPressed("Right") || Input.IsActionJustPressed("Up") || Input.IsActionJustPressed("Down")))))
 		{
 			// where Cogito will move

@@ -24,8 +24,17 @@ public partial class Menu : Control
 	/** <summary>background images for each world</summary> */
 	[Export] public Godot.Collections.Array<CompressedTexture2D> worldBackgrounds = [];
 
-	[Export] public float menuItemLightenAmount = 0.3f;
+	[Export] public float menuItemLightenAmount = 0.8f;
 	[Export] public Sprite2D background;
+	
+	[Export] public CheckBox confirmDeleteSave; 
+
+	[Export] public CheckButton holdToMoveSwitch;
+
+	[Export] public Slider masterVolumeSlider,
+		musicVolumeSlider,
+		SFXVolumeSlider;
+
 	[Export]
 	public Button nextWorldButton,
 		previousWorldButton;
@@ -123,10 +132,77 @@ public partial class Menu : Control
 				previousWorldButton.Visible = false;
 			}
 		}
+		else if (Name == "SettingsMenu")
+		{
+			if (DataManager.holdToMove)
+			{
+				// set hold to move switch to on if the setting is on
+				holdToMoveSwitch.SetPressedNoSignal(true);
+			}
+
+			// set all volume sliders to match their current volumes
+			masterVolumeSlider.Value = AudioServer.GetBusVolumeLinear(AudioServer.GetBusIndex("Master")) * 100;
+			musicVolumeSlider.Value = AudioServer.GetBusVolumeLinear(AudioServer.GetBusIndex("Music")) * 100;
+			SFXVolumeSlider.Value = AudioServer.GetBusVolumeLinear(AudioServer.GetBusIndex("SFX")) * 100;
+
+			GetNode<Slider>("VBoxContainer/MasterVolumeSlider").GrabFocus();
+		}
 		else
 		{
 			SongMixer.PlaySong((SongMixer.Song)DataManager.currentWorld);
 		}
+	}
+
+	public enum SliderType
+	{
+		masterVolume = 0,
+		musicVolume = 1,
+		SFXVolume = 2
+	}
+
+	// update volume when the slider is moved
+	public void OnSliderChanged(float value, SliderType slider)
+	{
+		string busName = "";
+
+		switch (slider)
+		{
+			case SliderType.masterVolume:
+				busName = "Master";
+				break;
+			case SliderType.musicVolume:
+				busName = "Music";
+				break;
+			case SliderType.SFXVolume:
+				busName = "SFX";
+				break;
+		}
+
+		int busIndex = AudioServer.GetBusIndex(busName);
+
+		AudioServer.SetBusVolumeLinear(busIndex, value / 100);
+	}
+
+	// make the confirmation box visible
+	public void OnDeleteSavePressed()
+	{
+		confirmDeleteSave.Visible = true;
+	}
+
+	// delete the save if confirmed
+	public void OnDeleteSaveConfirmed(bool toggledOn)
+	{
+		if (toggledOn)
+		{
+			DataManager.ResetSave();
+			confirmDeleteSave.Text = "Save Deleted!";
+			OnSettingsPressed();
+		}
+	}
+
+	public void OnSettingsPressed()
+	{
+		GetTree().ChangeSceneToFile("res://Scenes/settings_menu.tscn");
 	}
 
 	public void OnPreviousWorldPressed()
@@ -180,6 +256,11 @@ public partial class Menu : Control
 		DataManager.LoadWorld(DataManager.currentWorld + 1);
 	}
 
+	public void OnHoldToMoveToggled(bool toggledOn)
+	{
+		DataManager.holdToMove = toggledOn;
+	}
+
 	/** <summary>Closes the game</summary> */
 	public void OnClosePressed()
 	{
@@ -209,6 +290,11 @@ public partial class Menu : Control
 	/** <summary>Take you back to the main menu</summary> */
 	public void OnMainMenuPressed()
 	{
+		if (Name == "SettingsMenu")
+		{
+			DataManager.SaveGame(true, false);
+		}
+
 		Engine.TimeScale = 1;
 		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
 	}
