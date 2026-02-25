@@ -96,8 +96,6 @@ public partial class DataManager : Node
 			{
 				savedLevel = 1;
 			}
-			GD.Print(savedLevel + "  " + savedWorld + " " + nextLevelPath);
-
 		}
 
 		using var saveFile = FileAccess.Open($"user://{saveFileName}", FileAccess.ModeFlags.Write);

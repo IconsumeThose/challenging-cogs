@@ -281,7 +281,7 @@ public partial class Menu : Control
 
 	public void OnPlayPressed()
 	{
-		OnLevelButtonPressed(DataManager.savedLevel);
+		DataManager.LoadLevel(DataManager.savedWorld, DataManager.savedLevel);
 	}
 
 	public void OnLevelSelectPressed()
