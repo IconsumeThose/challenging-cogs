@@ -215,13 +215,13 @@ public partial class Menu : Control
 	public void OnPreviousWorldPressed()
 	{
 		DataManager.currentWorld--;
-		OnPlayPressed();
+		OnLevelSelectPressed();
 	}
 
 	public void OnNextWorldPressed()
 	{
 		DataManager.currentWorld++;
-		OnPlayPressed();
+		OnLevelSelectPressed();
 	}
 
 	public void OnLevelButtonPressed(int level)
@@ -280,6 +280,11 @@ public partial class Menu : Control
 	}
 
 	public void OnPlayPressed()
+	{
+		OnLevelButtonPressed(DataManager.savedLevel);
+	}
+
+	public void OnLevelSelectPressed()
 	{
 		GetTree().ChangeSceneToFile("res://Scenes/level_select_menu.tscn");
 	}

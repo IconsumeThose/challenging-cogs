@@ -73,21 +73,31 @@ public partial class DataManager : Node
 		
 		if (incrementLevel)
 		{
-			currentLevel++;
+			if (!bypassCheck)
+			{
+				savedLevel++;
+			}
+			else
+			{
+				savedLevel = currentLevel + 1;
+				savedWorld = currentWorld;
+			}
 
-			string nextLevelPath = LevelPath(currentWorld, currentLevel);
+			string nextLevelPath = LevelPath(savedWorld, savedLevel);
 
 			if (nextLevelPath != null)
 			{
 				Vector2I worldAndLevel = ParsePathForWorldAndNumber(nextLevelPath);
 
-				currentWorld = worldAndLevel.X;
-				currentLevel = worldAndLevel.Y;
+				savedWorld = worldAndLevel.X;
+				savedLevel = worldAndLevel.Y;
 			}
 			else
 			{
-				currentLevel = 1;
+				savedLevel = 1;
 			}
+			GD.Print(savedLevel + "  " + savedWorld + " " + nextLevelPath);
+
 		}
 
 		using var saveFile = FileAccess.Open($"user://{saveFileName}", FileAccess.ModeFlags.Write);
@@ -123,16 +133,12 @@ public partial class DataManager : Node
 
 	protected static int SaveCurrentLevel()
 	{
-		savedLevel = currentLevel;
-
-		return currentLevel;
+		return savedLevel;
 	}
 
 	protected static int SaveCurrentWorld()
 	{
-		savedWorld = currentWorld;
-
-		return currentWorld;
+		return savedWorld;
 	}
 
 	protected static bool SaveHoldToMove()
@@ -206,8 +212,8 @@ public partial class DataManager : Node
 	/** <summary>Reset the save file</summary> */
 	public static void ResetSave()
 	{
-		currentLevel = 1;
-		currentWorld = 1;
+		savedLevel = 1;
+		savedWorld = 1;
 		holdToMove = false;
 		LoadBusVolume(1, SaveTypes.masterVolume);
 		LoadBusVolume(1, SaveTypes.musicVolume);
@@ -337,7 +343,7 @@ public partial class DataManager : Node
 		{
 			currentLevel = 15;
 			SaveGame(true);
-			LoadWorld(currentWorld);
+			LoadWorld(currentWorld + 1);
 		}
 	}
 }

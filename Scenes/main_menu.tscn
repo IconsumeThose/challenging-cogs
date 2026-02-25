@@ -11,7 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_28flt")
-modulatableMenuItem = [NodePath("MainMenuVBox/PlayButton"), NodePath("MainMenuVBox/CloseButton"), NodePath("MainMenuVBox/SettingsButton")]
+modulatableMenuItem = [NodePath("MainMenuVBox/LevelSelectButton"), NodePath("MainMenuVBox/CloseButton"), NodePath("MainMenuVBox/SettingsButton"), NodePath("MainMenuVBox/PlayButton")]
 
 [node name="MainMenuVBox" type="VBoxContainer" parent="." unique_id=1938338000]
 layout_mode = 1
@@ -37,10 +37,13 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Developed by SammyROG, RandalHandal, and IconsumeThose"
 
-[node name="PlayButton" type="Button" parent="MainMenuVBox" unique_id=996710918]
+[node name="PlayButton" type="Button" parent="MainMenuVBox" unique_id=559654519]
 layout_mode = 2
-text = "Play
-"
+text = "Play"
+
+[node name="LevelSelectButton" type="Button" parent="MainMenuVBox" unique_id=996710918]
+layout_mode = 2
+text = "Level Select"
 
 [node name="SettingsButton" type="Button" parent="MainMenuVBox" unique_id=1731079300]
 layout_mode = 2
@@ -52,5 +55,6 @@ layout_mode = 2
 text = "Close"
 
 [connection signal="pressed" from="MainMenuVBox/PlayButton" to="." method="OnPlayPressed"]
+[connection signal="pressed" from="MainMenuVBox/LevelSelectButton" to="." method="OnLevelSelectPressed"]
 [connection signal="pressed" from="MainMenuVBox/SettingsButton" to="." method="OnSettingsPressed"]
 [connection signal="pressed" from="MainMenuVBox/CloseButton" to="." method="OnClosePressed"]
