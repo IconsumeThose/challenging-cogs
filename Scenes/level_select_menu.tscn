@@ -7,11 +7,11 @@
 [ext_resource type="Texture2D" uid="uid://bdd86i8d18wa0" path="res://Assets/Backgrounds/bananabeach.png" id="4_aljgx"]
 [ext_resource type="Texture2D" uid="uid://cdxfful3ufp27" path="res://Assets/Backgrounds/gloomyglacier.png" id="4_phdj3"]
 [ext_resource type="LabelSettings" uid="uid://0787nyjk01au" path="res://Labels/Level Select Level Label.tres" id="4_vowso"]
-[ext_resource type="Texture2D" uid="uid://d1n35g6fqq15i" path="res://Assets/Backgrounds/tastytreats.jpg" id="5_ki5rc"]
-[ext_resource type="Texture2D" uid="uid://bc8foeg722sf8" path="res://Assets/Backgrounds/fungusforest.jpeg" id="6_phdj3"]
-[ext_resource type="Texture2D" uid="uid://c2wwrr2fyisom" path="res://Assets/Backgrounds/abandonedamphibious.webp" id="7_ki5rc"]
-[ext_resource type="Texture2D" uid="uid://b37gr8ssk8csg" path="res://Assets/Backgrounds/urbanunderground.webp" id="8_461nm"]
-[ext_resource type="Texture2D" uid="uid://b4w7l5r4xl5g3" path="res://Assets/Backgrounds/chaoscosmos.jpeg" id="9_ube50"]
+[ext_resource type="Texture2D" uid="uid://dvb1i8shnusa5" path="res://Assets/Backgrounds/tastytreats.png" id="6_yts2j"]
+[ext_resource type="Texture2D" uid="uid://47k3vhxg10a5" path="res://Assets/Backgrounds/fungusforest.png" id="7_era5x"]
+[ext_resource type="Texture2D" uid="uid://chc266erdxa1c" path="res://Assets/Backgrounds/abandonedamphitheater.png" id="8_1ekpb"]
+[ext_resource type="Texture2D" uid="uid://b0tadbytnllt6" path="res://Assets/Backgrounds/urbanunderground.png" id="9_0xcvp"]
+[ext_resource type="Texture2D" uid="uid://cq63io1jbkhn0" path="res://Assets/Backgrounds/chaoscosmos.png" id="10_mpqlx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_52mtt"]
 atlas = ExtResource("1_271b8")
@@ -20,6 +20,9 @@ region = Rect2(7, 1, 50, 30)
 [sub_resource type="AtlasTexture" id="AtlasTexture_3g6d4"]
 atlas = ExtResource("1_271b8")
 region = Rect2(64, 0, 64, 32)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_2pb1k"]
+load_path = "res://.godot/imported/bananabeach.png-7632886a2f237846416850ed2ae53aeb.ctex"
 
 [node name="LevelSelect" type="Control" unique_id=18553124 node_paths=PackedStringArray("modulatableMenuItem", "background", "nextWorldButton", "previousWorldButton")]
 layout_mode = 3
@@ -30,8 +33,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_52mtt")
 modulatableMenuItem = [NodePath("BackButton"), NodePath("PreviousWorld"), NodePath("NextWorld")]
-worldBackgrounds = Array[CompressedTexture2D]([ExtResource("2_yts2j"), ExtResource("4_aljgx"), ExtResource("3_16w6l"), ExtResource("4_phdj3"), ExtResource("5_ki5rc"), ExtResource("6_phdj3"), ExtResource("7_ki5rc"), ExtResource("8_461nm"), ExtResource("9_ube50")])
-menuItemLightenAmount = 0.8
+worldBackgrounds = Array[CompressedTexture2D]([ExtResource("2_yts2j"), ExtResource("4_aljgx"), ExtResource("3_16w6l"), ExtResource("4_phdj3"), ExtResource("6_yts2j"), ExtResource("7_era5x"), ExtResource("8_1ekpb"), ExtResource("9_0xcvp"), ExtResource("10_mpqlx")])
 background = NodePath("Background")
 nextWorldButton = NodePath("NextWorld")
 previousWorldButton = NodePath("PreviousWorld")
@@ -516,7 +518,7 @@ metadata/_edit_use_anchors_ = true
 z_index = -1
 position = Vector2(960, 540)
 scale = Vector2(3, 3)
-texture = ExtResource("4_aljgx")
+texture = SubResource("CompressedTexture2D_2pb1k")
 
 [connection signal="focus_entered" from="BackButton" to="." method="OnMouseEntered" binds= [NodePath("BackButton")]]
 [connection signal="focus_exited" from="BackButton" to="." method="OnMouseExited" binds= [NodePath("BackButton")]]
