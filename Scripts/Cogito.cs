@@ -727,7 +727,7 @@ public partial class Cogito : CharacterBody2D
 		}
 
 		// allow undoing on lose menu
-		if (Input.IsActionJustPressed("Undo") && Engine.TimeScale == 0 && loseMenu.Visible)
+		if (Input.IsActionJustPressed("Undo") && (Engine.TimeScale == 1 || (Engine.TimeScale == 0 && loseMenu.Visible)))
 		{
 			loseMenu.Visible = false;
 			Engine.TimeScale = 1;
@@ -757,11 +757,6 @@ public partial class Cogito : CharacterBody2D
 		else
 		{
 			resetHeldTime = 0;
-			if (Input.IsActionJustPressed("Undo"))
-			{
-				mergeNextMove = false;
-				Undo();
-			}
 		}
 
 		// don't allow controlling character while dying but allow resetting
