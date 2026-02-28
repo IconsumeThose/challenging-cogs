@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://chc266erdxa1c" path="res://Assets/Backgrounds/abandonedamphitheater.png" id="8_1ekpb"]
 [ext_resource type="Texture2D" uid="uid://b0tadbytnllt6" path="res://Assets/Backgrounds/urbanunderground.png" id="9_0xcvp"]
 [ext_resource type="Texture2D" uid="uid://cq63io1jbkhn0" path="res://Assets/Backgrounds/chaoscosmos.png" id="10_mpqlx"]
+[ext_resource type="LabelSettings" uid="uid://d3a7cu61kq4gy" path="res://Labels/menu.tres" id="13_era5x"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_52mtt"]
 atlas = ExtResource("1_271b8")
@@ -24,7 +25,7 @@ region = Rect2(64, 0, 64, 32)
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_2pb1k"]
 load_path = "res://.godot/imported/bananabeach.png-7632886a2f237846416850ed2ae53aeb.ctex"
 
-[node name="LevelSelect" type="Control" unique_id=18553124 node_paths=PackedStringArray("modulatableMenuItem", "background", "nextWorldButton", "previousWorldButton")]
+[node name="LevelSelect" type="Control" unique_id=18553124 node_paths=PackedStringArray("modulatableMenuItem", "background", "worldLabel", "nextWorldButton", "previousWorldButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -35,6 +36,7 @@ script = ExtResource("1_52mtt")
 modulatableMenuItem = [NodePath("BackButton"), NodePath("PreviousWorld"), NodePath("NextWorld")]
 worldBackgrounds = Array[CompressedTexture2D]([ExtResource("2_yts2j"), ExtResource("4_aljgx"), ExtResource("3_16w6l"), ExtResource("4_phdj3"), ExtResource("6_yts2j"), ExtResource("7_era5x"), ExtResource("8_1ekpb"), ExtResource("9_0xcvp"), ExtResource("10_mpqlx")])
 background = NodePath("Background")
+worldLabel = NodePath("WorldName")
 nextWorldButton = NodePath("NextWorld")
 previousWorldButton = NodePath("PreviousWorld")
 
@@ -519,6 +521,19 @@ z_index = -1
 position = Vector2(960, 540)
 scale = Vector2(3, 3)
 texture = SubResource("CompressedTexture2D_2pb1k")
+
+[node name="WorldName" type="Label" parent="." unique_id=2018521837]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -278.0
+offset_top = 60.0
+offset_right = 278.0
+offset_bottom = 138.0
+grow_horizontal = 2
+text = "World X: Yo Mamma"
+label_settings = ExtResource("13_era5x")
 
 [connection signal="focus_entered" from="BackButton" to="." method="OnMouseEntered" binds= [NodePath("BackButton")]]
 [connection signal="focus_exited" from="BackButton" to="." method="OnMouseExited" binds= [NodePath("BackButton")]]

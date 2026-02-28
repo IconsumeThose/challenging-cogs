@@ -21,6 +21,18 @@ public partial class Menu : Control
 		new("000000")
 	];
 
+	public Godot.Collections.Array<string> worldNames = [
+		"T",
+		"Banana Beach",
+		"Mechanical Machinery",
+		"Gloomy Glacier",
+		"Tasty Treats",
+		"Fungus Forest",
+		"Abandoned Amphitheater",
+		"Urban Underground",
+		"Chaos Cosmos"
+	];
+
 	/** <summary>background images for each world</summary> */
 	[Export] public Godot.Collections.Array<CompressedTexture2D> worldBackgrounds = [];
 
@@ -31,6 +43,8 @@ public partial class Menu : Control
 
 	[Export] public CheckButton holdToMoveSwitch,
 		holdToResetSwitch;
+	
+	[Export] public Label worldLabel;
 
 	[Export] public Slider masterVolumeSlider,
 		musicVolumeSlider,
@@ -59,7 +73,7 @@ public partial class Menu : Control
 
 			// set background to the worlds background
 			background.Texture = worldBackgrounds[DataManager.currentWorld];
-
+			worldLabel.Text = $"World {DataManager.currentWorld}: {worldNames[DataManager.currentWorld]}";
 			// fill all the level previews
 			for (int i = 1; i <= 15; i++)
 			{
