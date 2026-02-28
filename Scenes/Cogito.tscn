@@ -512,7 +512,7 @@ tracks/0/keys = {
 "method": &"Teleport"
 }, {
 "args": [0],
-"method": &"SetCogitoState"
+"method": &"SetCharacterState"
 }]
 }
 
@@ -588,14 +588,13 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Cogito" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("animatedSprite", "balloonSprite", "fallingSandSprite", "animationPlayer")]
+[node name="Cogito" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("fallingSandSprite", "balloonSprite", "animatedSprite", "animationPlayer")]
 z_index = 2
 script = ExtResource("1_eoj5r")
-movementSpeed = 250.0
-holdToMove = false
-animatedSprite = NodePath("AnimatedSprite2D")
-balloonSprite = NodePath("Balloon")
 fallingSandSprite = NodePath("FallingSand")
+balloonSprite = NodePath("Balloon")
+movementSpeed = 250.0
+animatedSprite = NodePath("AnimatedSprite2D")
 animationPlayer = NodePath("AnimationPlayer")
 
 [node name="FallingSand" parent="." unique_id=243377807 instance=ExtResource("6_ceshj")]

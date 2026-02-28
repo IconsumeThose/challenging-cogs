@@ -44,21 +44,19 @@ public partial class DataManager : Node
 		}
 	}
 
-	public static Vector2I ParsePathForWorldAndNumber(string scenePath)
+	public static (int world, int level) ParsePathForWorldAndNumber(string scenePath)
 	{
-		// return value, x is world, y is level
-		Vector2I worldAndLevel = new(-1, -1);
 		int worldNumberDigits = scenePath[26] == '/' ? 1 : 2;
 
 		// get the current world for testing when launching scene directly from godot editor (f6)
-		worldAndLevel.X = scenePath.Substring(25, worldNumberDigits).ToInt();
+		int world = scenePath.Substring(25, worldNumberDigits).ToInt();
 
 		int levelNumberDigits = scenePath[32 + worldNumberDigits] == '.' ? 1 : 2;
 
 		// get the current level for testing when launching scene directly from godot editor (f6)
-		worldAndLevel.Y = scenePath.Substring(31 + worldNumberDigits, levelNumberDigits).ToInt();
+		int level = scenePath.Substring(31 + worldNumberDigits, levelNumberDigits).ToInt();
 
-		return worldAndLevel;
+		return (world, level);
 	}
 
 	/** <summary>Save data to file, currently saves level and world</summary> */
@@ -87,10 +85,10 @@ public partial class DataManager : Node
 
 			if (nextLevelPath != null)
 			{
-				Vector2I worldAndLevel = ParsePathForWorldAndNumber(nextLevelPath);
+				(int world, int level) = ParsePathForWorldAndNumber(nextLevelPath);
 
-				savedWorld = worldAndLevel.X;
-				savedLevel = worldAndLevel.Y;
+				savedWorld = world;
+				savedLevel = level;
 			}
 			else
 			{
@@ -180,26 +178,15 @@ public partial class DataManager : Node
 	protected static void LoadBusVolume(Variant volumeData, SaveTypes saveType)
 	{
 		float volume = (float)volumeData.AsDouble();
-
-		string busName;
-
-		switch (saveType)
+		string busName = saveType switch
 		{
-			case SaveTypes.musicVolume:
-				busName = "Music";
-				break;
-			case SaveTypes.SFXVolume:
-				busName = "SFX";
-				break;
-			case SaveTypes.masterVolume:
-			default:
-				busName = "Master";
-				break;
-		}
-
-		AudioServer.SetBusVolumeLinear(AudioServer.GetBusIndex(busName), volume);	
+			SaveTypes.musicVolume => "Music",
+			SaveTypes.SFXVolume => "SFX",
+			_ => "Master",
+		};
+		AudioServer.SetBusVolumeLinear(AudioServer.GetBusIndex(busName), volume);
 	}
-	
+
 	protected static void LoadHoldToReset(Variant holdToResetData)
 	{
 		bool holdToReset = holdToResetData.AsBool();
@@ -302,16 +289,16 @@ public partial class DataManager : Node
 		}
 	}
 
-	public static void LoadWorld(int world)
+	public static void LoadWorld(int worldToLoad)
 	{
-		string nextWorldPath = WorldPath(world);
+		string nextWorldPath = WorldPath(worldToLoad);
 
 		// check if the next level even exists
 		if (nextWorldPath != null)
 		{
 			Engine.TimeScale = 1;
-			Vector2I worldAndLevel = ParsePathForWorldAndNumber(nextWorldPath);
-			currentWorld = worldAndLevel.X;
+			(int world, int _) = ParsePathForWorldAndNumber(nextWorldPath);
+			currentWorld = world;
 			currentLevel = 1;
 
 			instance.GetTree().ChangeSceneToFile(nextWorldPath);

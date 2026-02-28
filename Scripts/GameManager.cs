@@ -1,8 +1,81 @@
 using Godot;
 using System;
-
+using System.Collections.Generic;
 public partial class GameManager : Node2D
 {
+	/** <summary>Store all useful information about a tile</summary> */
+	public class CustomTileData(TileData tileData, Vector2I position, TileMapLayer tileLayer)
+	{
+		public TileData tileData = tileData;
+		public Vector2I atlasPosition = tileLayer.GetCellAtlasCoords(position);
+		public int alternative = tileLayer.GetCellAlternativeTile(position);
+		public string customType = (string)tileData?.GetCustomData("CustomType");
+		public Vector2 direction = GetTileDirection(tileData);
+		public Vector2I position = position;
+	}
+
+	/** <summary>Keep track of the ground and obstacle tiles at the same position</summary> */
+	public class LayeredCustomTileData(CustomTileData groundTile, CustomTileData obstacleTile)
+	{
+		public CustomTileData groundTile = groundTile,
+			obstacleTile = obstacleTile;
+	}
+
+	/** <summary>Get the direction the tile is facing (from alternate tiles)</summary> */
+	public static Vector2 GetTileDirection(TileData tileData)
+	{
+		if (tileData == null)
+			return Vector2.Right; ;
+
+		Vector2 direction;
+		if (tileData.Transpose)
+		{
+			if (tileData.FlipV)
+			{
+				direction = Vector2.Up;
+			}
+			else
+			{
+				direction = Vector2.Down;
+			}
+		}
+		else if (tileData.FlipH)
+		{
+			direction = Vector2.Left;
+		}
+		else
+		{
+			direction = Vector2.Right;
+		}
+
+		return direction;
+	}
+
+	/** <summary>
+		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
+		</summary> */
+	public class PreviousMove(int moveNumber, LayeredCustomTileData[,] changedTiles, int stamina, int candiesEaten, bool balloonIsActive = false, 
+		Dictionary<Character, Vector2I> movementDirections = null, bool usedParadigmShift = false, bool leversToggled = false)
+	{
+		public int moveNumber = moveNumber;
+		public readonly LayeredCustomTileData[,] changedTiles = changedTiles ?? new LayeredCustomTileData[20, 12];
+
+		/** <summary> The direction that Cogito moved</summary> */
+		public Dictionary<Character, Vector2I> movementDirections = movementDirections ?? [];
+		public bool usedParadigmShift = usedParadigmShift;
+		public bool leversToggled = leversToggled;
+		public int stamina = stamina;
+		public int candiesEaten = candiesEaten;
+		public bool balloonIsActive = balloonIsActive;
+	}
+
+	/** <summary>stack of all previous moves so that they can be undone in correct order(LIFO)</summary> */
+	public readonly Stack<PreviousMove> previousMoves = new();
+
+	public List<Character> characters = [];
+
+	public int currentMove = 0,
+		savedMove = 0;
 
 	[Export]
 	public int maxParadigmShifts = 1,
@@ -63,15 +136,32 @@ public partial class GameManager : Node2D
 			return;
 
 		string scenePath = GetTree().CurrentScene.SceneFilePath;
-		Vector2I worldAndLevel = DataManager.ParsePathForWorldAndNumber(scenePath);
-		DataManager.currentWorld = worldAndLevel.X;
-		DataManager.currentLevel = worldAndLevel.Y;
+		(int world, int level) = DataManager.ParsePathForWorldAndNumber(scenePath);
+		DataManager.currentWorld = world;
+		DataManager.currentLevel = level;
 
 		// set shifts remaining to the max that was set
 		paradigmShiftsRemaining = maxParadigmShifts;
 	}
 
 	public static bool isLevelSelect = false;
+
+	/** <summary>returns true if all characters are idle</summary> */
+	public bool AllCharactersIdle 
+	{
+		get
+		{
+			foreach (Character character in characters)
+			{
+				if (character.currentCharacterState != Character.CharacterState.idle)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
 	/** <summary>Initialize the game manager</summary> */
 	public override void _Ready()
 	{
@@ -81,7 +171,10 @@ public partial class GameManager : Node2D
 			GetParent().GetNode<TextureRect>("TextureRect").Visible = false;
 			return;
 		}
-			
+		
+		Cogito cogito = GetParent().FindChild("ScalingParent").FindChild("Cogito") as Cogito;
+		characters.Add(cogito);
+
 		CalculateCurrentWorldAndLevel();
 
 		// find all goals
@@ -161,7 +254,7 @@ public partial class GameManager : Node2D
 	}
 
 	/** <summary>Update the stamina count and ui</summary> */
-	public void StaminaChanged(int change, Cogito cogito)
+	public void StaminaChanged(int change, Character character)
 	{
 		currentStamina -= change;
 
@@ -169,8 +262,8 @@ public partial class GameManager : Node2D
 
 		if (currentStamina == 0 && maxStamina > 0 )
 		{
-			cogito.SetCogitoState(Cogito.CogitoState.animating);
-			cogito.animationPlayer.Play("Drown");
+			character.SetCharacterState(Character.CharacterState.animating);
+			character.animationPlayer.Play("Drown");
 		}
 
 		ui.UpdateStaminaBar(currentStamina);
