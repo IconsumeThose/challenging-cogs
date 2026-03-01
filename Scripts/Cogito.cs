@@ -196,12 +196,22 @@ public partial class Cogito : Character
 
 	public override Vector2 GetInputDirection()
 	{
-		if (Input.IsActionPressed("Left") ^ Input.IsActionPressed("Right")
-			^ Input.IsActionPressed("Up") ^ Input.IsActionPressed("Down"))
+		Vector2 inputDirection = Input.GetVector("Left", "Right", "Up", "Down");
+		
+		if (inputDirection.X == inputDirection.Y)
 		{
-			// read the inputs of the player
-			Vector2 inputDirection = Input.GetVector("Left", "Right", "Up", "Down");
+			// set input to zero if going diagonal
+			inputDirection = Vector2.Zero;
+		}
+		else
+		{
+			// choose the strongest axis for direction for joystick
+			inputDirection = Math.Abs(inputDirection.X) > Math.Abs(inputDirection.Y) ? new(inputDirection.X, 0) : new(0, inputDirection.Y);
+			inputDirection = inputDirection.Normalized(); 
+		}
 
+		if (inputDirection.Length() > 0)
+		{
 			return inputDirection;
 		}
 
@@ -210,8 +220,8 @@ public partial class Cogito : Character
 
 	protected override void SetBufferedInput()
 	{
-		if (Input.IsActionJustPressed("Left") ^ Input.IsActionJustPressed("Right")
-			^ Input.IsActionJustPressed("Up") ^ Input.IsActionJustPressed("Down"))
+		if (Input.IsActionJustPressed("Left") || Input.IsActionJustPressed("Right")
+			|| Input.IsActionJustPressed("Up") || Input.IsActionJustPressed("Down"))
 		{
 			bufferedInput = GetInputDirection();
 		}
