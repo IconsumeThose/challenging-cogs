@@ -5,7 +5,10 @@ using static GameManager;
 
 public partial class Cogito : Character
 {	
+	/** <summary>Time the reset button must be held to reset the game if setting is enabled</summary> */
 	[Export] public double resetHoldTime = 0.5;
+
+	/** <summary>Original sand node used to handle the falling animation. These will be instantiated and the sprite corrects to the world automatically</summary> */
 	[Export] public AnimatedSprite2D fallingSandSprite;
 
 	/** <summary>Used for the falling sand animation</summary> */
@@ -26,22 +29,30 @@ public partial class Cogito : Character
 	public AnimatedSprite2D balloonSprite;
 
 	/** <summary>True when levers are facing left</summary> */
-	public bool leversAreFacingLeft = true,
-		balloonIsActive = false;
+	public bool leversAreFacingLeft = true;
+
+	/** <summary>True when character has balloon, used for BalloonIsActive property only</summary> */
+	private bool balloonIsActive = false;
 	
+	/** <summary>The amount of time the reset button has been held down in seconds</summary> */
 	private double resetHeldTime = 0;
 
 	/** <summary>Store the input direction to be buffered</summary> */
 	private Vector2 bufferedInput = Vector2.Zero;
 
+	/** <summary>The amount of candies eaten</summary> */
 	private int candiesEaten = 0;
 
+	/** <summary>True right after an undo occurred; Checked to prevent unwanted behavior</summary> */
+	public bool undoHappened = false;
 
 	/** <summary>Ran during start up</summary> */
 	public override void _Ready()
 	{
 		base._Ready();
 		
+		gameManager.currentStamina = gameManager.maxStamina;
+
 		// sync all levers
 		SetLevers(true);
 
@@ -96,20 +107,85 @@ public partial class Cogito : Character
 	/** <summary>Runs every physics frame</summary> */
 	public override void _PhysicsProcess(double delta)
 	{
+		// enable hitbox at start of frame
+		Area2D hitbox = GetNode<Area2D>("Area2D");
+		hitbox.Monitoring = true;
+		
 		base._PhysicsProcess(delta);
 	}
 	
-	protected override void SaveNewMove(LayeredCustomTileData[,] changedTiles)
+	protected override void ExitIdle()
 	{
-		base.SaveNewMove(changedTiles);
-		PreviousMove move = gameManager.previousMoves.Pop();
+		base.ExitIdle();
 
-		move.balloonIsActive = balloonIsActive;
-		move.candiesEaten = candiesEaten;
-
-		gameManager.previousMoves.Push(move);
+		// tell the game manager that cogito's move ended
+		if (!undoHappened && targetCharacterState != CharacterState.animating)
+			gameManager.CogitoMoved();
 	}
 
+	/** <summary> Specifically handle colliding with a snake to die</summary> */
+	protected override void OnCharacterCollision(Node2D body)
+	{
+		// ensure the collision was a snake that is alive
+		if (body is not Snake snake || snake.currentCharacterState == CharacterState.dead || undoHappened)
+			return;
+
+		SetCharacterState(CharacterState.animating);
+		
+		stoppedMidMovement = true;
+	
+		// TODO: see if this code block actually ever comes to play
+		if (currentCharacterState == CharacterState.moving)
+		{
+			PreviousMove previousMove = gameManager.previousMoves.Pop();
+			previousMove.movementDirections[this].directionMoved = Vector2I.Zero;
+			UpdatePreviousMove(previousMove, previousMove.changedTiles, false);
+		}
+
+		StartDeath("Fall", .5f);
+
+		// stop the snake that was collided with too
+		snake.stoppedMidMovement = true;
+		snake.SetCharacterState(CharacterState.idle);
+	}
+	
+	/** <summary>Start a new movement log for undoing with support for logging Cogito-specific items</summary> */
+	protected override void SaveNewMove(LayeredCustomTileData[,] changedTiles)
+	{
+		gameManager.savedMove = gameManager.currentMove;
+	
+		PreviousMove currentMove = new(gameManager.currentMove, changedTiles, gameManager.currentStamina, candiesEaten,
+			balloonIsActive, movementDirections: new() { 
+				{ this, new(targetTileDifferenceVector) } 
+			}
+		);
+
+		gameManager.previousMoves.Push(currentMove);
+	}
+
+	/** <summary>Reset stamina when Cogito is out of water</summary> */
+	protected override void OutOfWaterInteraction()
+	{
+		base.OutOfWaterInteraction();
+		gameManager.StaminaChanged(-99999999, this);
+	}
+
+	/** <summary>Subtract one stamina when moving through water</summary> */
+	protected override void WaterInteraction()
+	{
+		base.WaterInteraction();
+		gameManager.StaminaChanged(1, this);
+	}
+
+	/** <summary>Collect the cog!</summary> */
+	protected override void CogInteraction()
+	{
+		base.CogInteraction();
+		gameManager.CogChallenged(1);
+		gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
+	}
+
+	/** <summary>Eat the candy!</summary> */
 	protected override void CandyInteraction()
 	{
 		base.CandyInteraction();
@@ -117,10 +193,12 @@ public partial class Cogito : Character
 		gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
 	}
 
+	/** <summary>Equip the balloon!</summary> */
 	protected override void BalloonInteraction()
 	{
 		base.BalloonInteraction();
 
+		// don't do anything if Cogito already has a balloon
 		if (!balloonIsActive)
 		{
 			balloonIsActive = true;
@@ -141,6 +219,7 @@ public partial class Cogito : Character
 		balloonSprite.Play("pop");
 	}
 
+	/** <summary>Pop the active balloon when teleporting</summary> */
 	protected override void TelePop()
 	{
 		base.TelePop();
@@ -151,6 +230,7 @@ public partial class Cogito : Character
 		}
 	}
 
+	/** <summary>Win when on an active goal</summary> */
 	protected override void GoalInteraction()
 	{
 		base.GoalInteraction();
@@ -162,6 +242,7 @@ public partial class Cogito : Character
 		DataManager.SaveGame();
 	}
 
+	/** <summary>For Cogito, sand falls when they walk off of that tile</summary> */
 	protected override void SandInteraction(LayeredCustomTileData[,] changedTiles)
 	{
 		base.SandInteraction(changedTiles);
@@ -173,7 +254,7 @@ public partial class Cogito : Character
 
 		fallingSand = fallingSandScene.Instantiate<Node2D>();
 		GetParent().AddChild(fallingSand);
-		fallingSand.Position = targetPosition - ((Vector2)targetTileDifferenceVector).Normalized() * movementDistance;
+		fallingSand.Position = TargetPosition - ((Vector2)targetTileDifferenceVector).Normalized() * movementDistance;
 		fallingSand.GetNode<AnimationPlayer>("AnimationPlayer").Play("Fall");
 	}
 
@@ -194,6 +275,7 @@ public partial class Cogito : Character
 		loseMenu.GetNode<Button>("VBoxContainer/UndoButton").GrabFocus();
 	}
 
+	/** <summary>Get the direction of the input, not allowing for diagonal inputs</summary> */
 	public override Vector2 GetInputDirection()
 	{
 		Vector2 inputDirection = Input.GetVector("Left", "Right", "Up", "Down");
@@ -227,7 +309,7 @@ public partial class Cogito : Character
 		}
 	}
 
-	protected override void ProcessBeforePauseCheck()
+	protected override void ProcessBeforePauseCheck(double delta)
 	{
 		// toggle pause menu only if no other menu is visible
 		if (Input.IsActionJustPressed("Pause") && !winMenu.Visible && !loseMenu.Visible)
@@ -239,35 +321,34 @@ public partial class Cogito : Character
 			Engine.TimeScale = Math.Abs(Engine.TimeScale - 1);
 		}
 
-		// allow undoing on lose menu
-		if (Input.IsActionJustPressed("Undo") && (Engine.TimeScale == 1 || (Engine.TimeScale == 0 && loseMenu.Visible)))
+		// allow undoing and resetting while game is running or on lose menu
+		if (Engine.TimeScale == 1 || (Engine.TimeScale == 0 && loseMenu.Visible))
 		{
-			loseMenu.Visible = false;
-			Engine.TimeScale = 1;
-			Undo();
-		}
-	}
-
-	protected override void ProcessAfterPauseCheck(double delta)
-	{
-		// reset the level when reset button is pressed
-		if (Input.IsActionJustPressed("Reset") && !DataManager.holdToReset)
-		{
-			winMenu.OnRestartPressed();
-		}
-		// update reset button hold time if its pressed and hold to reset is enabled
-		else if (Input.IsActionPressed("Reset") && DataManager.holdToReset)
-		{
-			resetHeldTime += delta;
-
-			if (resetHeldTime >= resetHoldTime)
+			if (Input.IsActionJustPressed("Undo"))
+			{
+				loseMenu.Visible = false;
+				Engine.TimeScale = 1;
+				Undo();
+			}
+			// reset the level when reset button is pressed, allow instantly resetting while on a menu screen
+			if (Input.IsActionJustPressed("Reset") && (!DataManager.holdToReset ^ Engine.TimeScale == 0))
 			{
 				winMenu.OnRestartPressed();
 			}
-		}
-		else
-		{
-			resetHeldTime = 0;
+			// update reset button hold time if its pressed and hold to reset is enabled
+			else if (Input.IsActionPressed("Reset") && DataManager.holdToReset)
+			{
+				resetHeldTime += delta;
+
+				if (resetHeldTime >= resetHoldTime)
+				{
+					winMenu.OnRestartPressed();
+				}
+			}
+			else
+			{
+				resetHeldTime = 0;
+			}
 		}
 	}
 
@@ -279,13 +360,14 @@ public partial class Cogito : Character
 			|| Input.IsActionJustPressed("Right") || Input.IsActionJustPressed("Up") || Input.IsActionJustPressed("Down")))); 
 	}
 
+	/** <summary>Paradigm shift when the input is pressed and there are enough shifts remaining</summary> */
 	protected override void CheckParadigmShiftInput()
 	{
 		if (Input.IsActionJustPressed("ParadigmShift") && gameManager.paradigmShiftsRemaining > 0)
 		{
 			bufferedInput = Vector2.Zero;
 			teleported = false;
-
+			
 			SetCharacterState(CharacterState.animating);
 			animationPlayer.Play("ParadigmShift", customSpeed: 1);
 
@@ -293,8 +375,12 @@ public partial class Cogito : Character
 			gameManager.ParadigmShifted(1);
 
 			gameManager.savedMove = gameManager.currentMove;
+			
 			PreviousMove currentMove = new(gameManager.currentMove, new LayeredCustomTileData[20, 12], gameManager.currentStamina, 
-				candiesEaten,	balloonIsActive, usedParadigmShift: true);
+				candiesEaten,	balloonIsActive, usedParadigmShift: true, 
+				movementDirections:  new() { 
+				{ this, new(Vector2I.Zero) } }
+			);
 			gameManager.previousMoves.Push(currentMove);
 		}
 	}
@@ -420,10 +506,10 @@ public partial class Cogito : Character
 
 		// save paradigm shift data to be undone
 		PreviousMove currentMove = new(gameManager.currentMove, changedTiles, gameManager.currentStamina, previousMove.candiesEaten, 
-			balloonIsActive, usedParadigmShift: true, leversToggled: leversJustToggled);
+			balloonIsActive, usedParadigmShift: true, leversToggled: leversJustToggled, movementDirections: previousMove.movementDirections);
 		gameManager.previousMoves.Push(currentMove);
 
-		// check if any un-shifted crystals remain and when out of shifts and if so, show fail menu
+		// check if any un-shifted crystals remain and when out of shifts but any crystals remain, show fail menu
 		if (gameManager.paradigmShiftsRemaining == 0)
 		{
 			var reinforcedCogCrystals = gameManager.obstacleLayer.GetUsedCellsById(1, new(4, 1));
@@ -508,15 +594,6 @@ public partial class Cogito : Character
 		if (IsInstanceValid(fallingSand))
 			fallingSand.QueueFree();
 
-		// move the canine to the previous position
-		if (previousMove.movementDirections.ContainsKey(this) && previousMove.movementDirections[this] != Vector2I.Zero)
-		{
-			Position -= (Vector2)previousMove.movementDirections[this] * movementDistance;
-
-			targetTileDifferenceVector = previousMove.movementDirections[this];
-		}
-
-
 		foreach (LayeredCustomTileData tileData in previousMove.changedTiles)
 		{
 			if (tileData == null)
@@ -567,9 +644,41 @@ public partial class Cogito : Character
 
 		gameManager.StaminaChanged(gameManager.currentStamina - previousMove.stamina, this);
 
-		// update the tile data Cogito is currently on after restoring everything
-		UpdateCurrentTileData();
+		undoHappened = true;
+		Area2D hitbox = GetNode<Area2D>("Area2D");
 
-		SetCharacterState(CharacterState.idle);
+		// temporarily disable hitbox monitoring as positions are reset one character at a time and there might be a moment where the characters overlap
+		hitbox.Monitoring = false;
+		
+		foreach (KeyValuePair<Character, CharacterMovement> characterPositionPair in previousMove.movementDirections)
+		{
+			Character character = characterPositionPair.Key;
+			CharacterMovement characterMovement = characterPositionPair.Value;
+
+			if (character.stoppedMidMovement)
+				character.Position = character.TargetPosition;
+
+			character.stoppedMidMovement = false;
+
+			character.Position -= (Vector2)characterMovement.directionMoved * movementDistance;
+
+			character.targetTileDifferenceVector = characterMovement.directionMoved;
+
+			// set the snake's movement direction to what was logged
+			if (character is Snake snake)
+			{
+				snake.direction = characterMovement.firstDirection;
+				snake.triedOtherDirection = false;
+			}
+
+			character.UpdateSpriteDirection(characterMovement.firstDirection);
+
+			// update the tile data Cogito is currently on after restoring everything
+			character.UpdateCurrentTileData();
+
+			character.SetCharacterState(CharacterState.idle);
+		}
+
+		undoHappened = false;
 	}
 }

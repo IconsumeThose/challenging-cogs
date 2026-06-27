@@ -15,11 +15,15 @@ public partial class GameManager : Node2D
 	}
 
 	/** <summary>Keep track of the ground and obstacle tiles at the same position</summary> */
-	public class LayeredCustomTileData(CustomTileData groundTile, CustomTileData obstacleTile)
+	public class LayeredCustomTileData(CustomTileData groundTile, CustomTileData obstacleTile, Vector2I tilePosition)
 	{
 		public CustomTileData groundTile = groundTile,
 			obstacleTile = obstacleTile;
+		public Vector2I tilePosition = tilePosition;
 	}
+
+	/** <summary>Stores what character is at each tile position</summary> */
+	public Character[,] characterMatrix = new Character[20, 12];
 
 	/** <summary>Get the direction the tile is facing (from alternate tiles)</summary> */
 	public static Vector2 GetTileDirection(TileData tileData)
@@ -51,17 +55,25 @@ public partial class GameManager : Node2D
 		return direction;
 	}
 
+	/** <summary>Stores the direction moved and the first direction of a move for a character</summary> */
+	public class CharacterMovement(Vector2I directionMoved)
+	{
+		public Vector2I directionMoved = directionMoved;
+		public readonly Vector2I firstDirection = directionMoved;
+	}
+
+
 	/** <summary>
 		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
 		</summary> */
 	public class PreviousMove(int moveNumber, LayeredCustomTileData[,] changedTiles, int stamina, int candiesEaten, bool balloonIsActive = false, 
-		Dictionary<Character, Vector2I> movementDirections = null, bool usedParadigmShift = false, bool leversToggled = false)
+		Dictionary<Character, CharacterMovement> movementDirections = null, bool usedParadigmShift = false, bool leversToggled = false)
 	{
 		public int moveNumber = moveNumber;
 		public readonly LayeredCustomTileData[,] changedTiles = changedTiles ?? new LayeredCustomTileData[20, 12];
-
+		
 		/** <summary> The direction that Cogito moved</summary> */
-		public Dictionary<Character, Vector2I> movementDirections = movementDirections ?? [];
+		public Dictionary<Character, CharacterMovement> movementDirections = movementDirections ?? [];
 		public bool usedParadigmShift = usedParadigmShift;
 		public bool leversToggled = leversToggled;
 		public int stamina = stamina;
@@ -72,22 +84,35 @@ public partial class GameManager : Node2D
 	/** <summary>stack of all previous moves so that they can be undone in correct order(LIFO)</summary> */
 	public readonly Stack<PreviousMove> previousMoves = new();
 
+	/** <summary>List of all characters in the level</summary> */
 	public List<Character> characters = [];
 
+	/** <summary>The current move number</summary> */
 	public int currentMove = 0,
+
+	/** <summary>The last saved move number</summary> */
 		savedMove = 0;
 
+	/** <summary>The maximum number of paradigm shifts allowed in the level</summary> */
 	[Export]
 	public int maxParadigmShifts = 1,
+
+	/** <summary>The max stamina Cogito has</summary> */
 		maxStamina = 0;
+
+	/** <summary>The custom level name displayed at the top of the screen</summary> */
 	[Export] public string levelName = "Name this level yo!";
 	
-	/** <summary>Do not use this variable, use TotalNumberOfCogs</summary> */
+	/** <summary>Only used for the property TotalNumberOfCogs which does the calculations</summary> */
 	private int totalNumberOfCogs = -1;
 
+	/** <summary>Sound effect for challenging a cog (collecting it)</summary> */
 	[Export] public AudioStreamPlayer challengedCogSFX,
+
+	/** <summary>Sound effect for challenging the last cog</summary> */
 		challengedLastCogSFX;
 
+	/** <summary>Reference to the Ui node displayed over each level</summary> */
 	[Export] public Ui ui;
 
 	/** <summary>Don't allow setting the variable and calculate the correct value exactly once</summary> */
@@ -110,17 +135,27 @@ public partial class GameManager : Node2D
 		}
 	}
 
+	/** <summary>The current amount of paradigm shifts remaining</summary> */
 	public int paradigmShiftsRemaining = 0,
+
+		/** <summary>The current number of cogs challenged (collected)</summary> */
 		cogsChallenged = 0,
 
 		/** <summary>The amount of water moves Cogito current has left</summary> */
 		currentStamina;
 
 	[Export]
+	/** <summary>The layer that contains all the obstacle tiles</summary> */
 	public TileMapLayer obstacleLayer,
+
+	/** <summary>The layer that contains all the ground tiles</summary> */
 		groundLayer;
 
+	/** <summary>Stores the coordinates of the goal</summary> */
 	public Vector2I goalCoordinates;
+
+	/** <summary>Reference to the Cogito in the level</summary> */
+	public Cogito cogito;
 
 	/** <summary>Checks if the level is loaded in the level select</summary> */
 	public bool IsLevelSelect()
@@ -129,6 +164,7 @@ public partial class GameManager : Node2D
 		return isLevelSelect;
 	}
 
+	/** <summary>Identify which world and level is loaded</summary> */
 	public void CalculateCurrentWorldAndLevel()
 	{
 		// don't do anything if in level select
@@ -144,6 +180,7 @@ public partial class GameManager : Node2D
 		paradigmShiftsRemaining = maxParadigmShifts;
 	}
 
+	/** <summary>Flag for if the scene is instantiated in level select or not</summary> */
 	public static bool isLevelSelect = false;
 
 	/** <summary>returns true if all characters are idle</summary> */
@@ -153,7 +190,7 @@ public partial class GameManager : Node2D
 		{
 			foreach (Character character in characters)
 			{
-				if (character.currentCharacterState != Character.CharacterState.idle)
+				if (!(character?.currentCharacterState == Character.CharacterState.idle || character?.currentCharacterState == Character.CharacterState.dead))
 				{
 					return false;
 				}
@@ -162,18 +199,38 @@ public partial class GameManager : Node2D
 		}
 	}
 
+	/** <summary>When cogito moves, trigger snakes to move</summary> */
+	public void CogitoMoved()
+	{
+		foreach (Character character in characters)
+		{
+			if (character is Snake snake && snake.currentCharacterState != Character.CharacterState.dead)
+			{
+				snake.startMove = true;
+			}
+		}
+	}
+
 	/** <summary>Initialize the game manager</summary> */
 	public override void _Ready()
 	{
 		if (IsLevelSelect())
 		{
-			// disable the visible of the BACKGROUND which is called TextureRect because sammy never renamed it when first setting it up
+			// disable the visibility of the BACKGROUND which is called TextureRect because sammy never renamed it when first setting it up
 			GetParent().GetNode<TextureRect>("TextureRect").Visible = false;
 			return;
 		}
 		
-		Cogito cogito = GetParent().FindChild("ScalingParent").FindChild("Cogito") as Cogito;
-		characters.Add(cogito);
+		foreach (Node child in GetParent().FindChild("ScalingParent").GetChildren())
+		{
+			if (child is Character character)
+			{
+				characters.Add(character);
+
+				if (character is Cogito cogito)
+					this.cogito = cogito;
+			}
+		}
 
 		CalculateCurrentWorldAndLevel();
 
@@ -263,7 +320,7 @@ public partial class GameManager : Node2D
 		if (currentStamina == 0 && maxStamina > 0 )
 		{
 			character.SetCharacterState(Character.CharacterState.animating);
-			character.animationPlayer.Play("Drown");
+			character.StartDeath("Drown");
 		}
 
 		ui.UpdateStaminaBar(currentStamina);
