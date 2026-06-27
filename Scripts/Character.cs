@@ -45,6 +45,15 @@ public partial class Character : CharacterBody2D
 		"LeverLeft",
 		"LeverRight"
 	];
+
+	/**<summary>List of all different types of void ground tiles</summary>*/
+	protected readonly List<string> voidGround = 
+	[
+		"",
+		"Void",
+		"LeftToggleTileOff",
+		"RightToggleTileOff"
+	];
 	
 	/** <summary>flag that is true the moment the character's death is triggered (starts death animation)</summary> */
 	public bool dying = false,
@@ -268,7 +277,7 @@ public partial class Character : CharacterBody2D
 			GoalInteraction();
 		}
 		// if tile is void or null then make the character fall
-		else if ((currentTileData.groundTile.customType ?? "Void") == "Void" && !BalloonIsActive)
+		else if (voidGround.Contains(currentTileData.groundTile.customType) && !BalloonIsActive)
 		{
 			SetCharacterState(CharacterState.animating);
 			StartDeath("Fall", .5f);
@@ -321,6 +330,21 @@ public partial class Character : CharacterBody2D
 	protected virtual void CogInteraction()
 	{
 
+	}
+
+	/** <summary>Replace all original tiles of the specified atlas coordinates with the tile at the replacement atlas coordinates</summary> */
+	protected void ReplaceTiles(Vector2I originalAtlasCoords, Vector2I replacementAtlasCoords)
+	{
+		var originalTilePositions = gameManager.groundLayer.GetUsedCellsById(1, originalAtlasCoords);
+
+		foreach (Vector2I originalTilePosition in originalTilePositions)
+		{
+			gameManager.groundLayer.SetCell(
+				originalTilePosition,
+				1,
+				replacementAtlasCoords
+			);
+		}
 	}
 
 	/** <summary>Start death animation and set dying to true</summary> */
@@ -478,7 +502,7 @@ public partial class Character : CharacterBody2D
 			}
 		}
 		// switch to float variant of the animation if applicable
-		else if (BalloonIsActive && (currentTileData.groundTile.customType ?? "Void") == "Void")
+		else if (BalloonIsActive && voidGround.Contains(currentTileData.groundTile.customType))
 		{
 			switch (animationName)
 			{
@@ -531,19 +555,23 @@ public partial class Character : CharacterBody2D
 			UpdateSpriteDirection(movementDirection);
 		}
 
-		/* don't move if the character will move to a blocking obstacle/floor 
+		/* skip blocking checks if its rechecking the current tile to see if there is a new interaction to perform (such as a snake now being on void)
+		 * don't move if the character will move to a blocking obstacle/floor 
 		 * or if the character is on a conveyor and trying to move in the opposite direction
 		 * or if the move would put the character out of bounds of the screen */
-		if (!blockingObstacles.Contains(newTileData.obstacleTile.customType) 
-			&& (
-				(!blockingGround.Contains(newTileData.groundTile.customType ?? "") && currentCharacterState != CharacterState.moving)
-				^ currentCharacterState == CharacterState.moving
+		if (movementDirection == Vector2.Zero ||
+			(
+				!blockingObstacles.Contains(newTileData.obstacleTile.customType) 
+				&& (
+					(!blockingGround.Contains(newTileData.groundTile.customType ?? "") && currentCharacterState != CharacterState.moving)
+					^ currentCharacterState == CharacterState.moving
+				)
+				&& !(
+					(currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor")
+					&& movementDirection == -1 * currentTileData.groundTile.direction
+				)
+				&& newTilePosition.X >= 0 && newTilePosition.Y >= 0 && newTilePosition.X < screenTileDimensions.X && newTilePosition.Y < screenTileDimensions.Y
 			)
-			&& !(
-				(currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor")
-				&& movementDirection == -1 * currentTileData.groundTile.direction
-			)
-			&& newTilePosition.X >= 0 && newTilePosition.Y >= 0 && newTilePosition.X < screenTileDimensions.X && newTilePosition.Y < screenTileDimensions.Y
 		)
 		{
 			MoveInit(newPosition, teleport, dryRun, newTilePosition);
@@ -632,7 +660,7 @@ public partial class Character : CharacterBody2D
 			SaveNewMove(changedTiles);
 		}
 
-		if ((currentTileData.groundTile.customType ?? "Void") == "Void" && BalloonIsActive && targetTileDifferenceVector.Length() > 0)
+		if (voidGround.Contains(currentTileData.groundTile.customType) && BalloonIsActive && targetTileDifferenceVector.Length() > 0)
 		{
 			PopBalloon();
 		}

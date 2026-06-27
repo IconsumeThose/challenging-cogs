@@ -47,11 +47,14 @@ public partial class Snake : Character
 		UpdateSpriteDirection(direction);
 
 		base._Ready();
+
+		// snakes avoid water
 		blockingGround.AddRange( [ 
-			"", 
-			"Void",
-			"Water" 
+			"Water",
 		]);
+
+		// snakes avoid void
+		blockingGround.AddRange(voidGround);
 	}
 
 	protected override void MoveInit(Vector2 newPosition, bool teleport, bool dryRun, Vector2I newTilePosition)

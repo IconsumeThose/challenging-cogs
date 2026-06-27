@@ -1,21 +1,21 @@
-[gd_scene format=4 uid="uid://c1as08khxqanb"]
+[gd_scene format=4 uid="uid://bmayuwe2yx0hy"]
 
-[ext_resource type="Texture2D" uid="uid://dvb1i8shnusa5" path="res://Assets/Backgrounds/tastytreats.png" id="1_j0lml"]
-[ext_resource type="TileSet" uid="uid://dd0fa00l4pcs1" path="res://TileSets/tasty_ground.tres" id="2_b12h2"]
-[ext_resource type="TileSet" uid="uid://d38agm057x4qg" path="res://TileSets/tasty_obstacles.tres" id="3_e31r6"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="4_n1x0c"]
-[ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="6_yr3mu"]
-[ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="7_0tpia"]
-[ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="8_fg0fr"]
-[ext_resource type="PackedScene" uid="uid://dj8vu6t4xi3je" path="res://Scenes/pause_menu.tscn" id="9_8i3mk"]
-[ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="10_uss3s"]
+[ext_resource type="Texture2D" uid="uid://47k3vhxg10a5" path="res://Assets/Backgrounds/fungusforest.png" id="1_vkmei"]
+[ext_resource type="TileSet" uid="uid://ceadgnl62xy6" path="res://TileSets/fungus_ground.tres" id="2_4kb7l"]
+[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_4kb7l"]
+[ext_resource type="TileSet" uid="uid://b0cr5d1731gag" path="res://TileSets/fungus_obstacles.tres" id="3_vkmei"]
+[ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="4_kwwvn"]
+[ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="5_fgsbm"]
+[ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="6_x4rao"]
+[ext_resource type="PackedScene" uid="uid://dj8vu6t4xi3je" path="res://Scenes/pause_menu.tscn" id="7_5xirh"]
+[ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="8_66vox"]
 
 [node name="Level" type="Node2D" unique_id=1015827580]
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1217908642]
 offset_right = 1921.0
 offset_bottom = 1081.0
-texture = ExtResource("1_j0lml")
+texture = ExtResource("1_vkmei")
 
 [node name="ScalingParent" type="Node2D" parent="." unique_id=1030117494]
 scale = Vector2(3, 3)
@@ -24,13 +24,13 @@ scale = Vector2(3, 3)
 
 [node name="Ground" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=1945708784]
 tile_map_data = PackedByteArray("AAACAAMAAQAAAAAAAAACAAQAAQAAAAAAAAACAAUAAQAAAAAAAAACAAYAAQAAAAAAAAACAAcAAQAAAAAAAAACAAgAAQAAAAAAAAADAAMAAQAAAAAAAAADAAQAAQAAAAAAAAADAAUAAQAAAAAAAAADAAYAAQAAAAAAAAADAAcAAQAAAAAAAAADAAgAAQAAAAAAAAAEAAMAAQAAAAAAAAAEAAQAAQAAAAAAAAAEAAUAAQAAAAAAAAAEAAYAAQAAAAAAAAAEAAcAAQAAAAAAAAAEAAgAAQAAAAAAAAAFAAMAAQAAAAAAAAAFAAQAAQAAAAAAAAAFAAUAAQAAAAAAAAAFAAYAAQAAAAAAAAAFAAcAAQAAAAAAAAAFAAgAAQAAAAAAAAAGAAMAAQAAAAAAAAAGAAQAAQAAAAAAAAAGAAUAAQAAAAAAAAAGAAYAAQAAAAAAAAAGAAcAAQAAAAAAAAAGAAgAAQAAAAAAAAAHAAMAAQAAAAAAAAAHAAQAAQAAAAAAAAAHAAUAAQAAAAAAAAAHAAYAAQAAAAAAAAAHAAcAAQAAAAAAAAAHAAgAAQAAAAAAAAAIAAMAAQAAAAAAAAAIAAQAAQAAAAAAAAAIAAUAAQAAAAAAAAAIAAYAAQAAAAAAAAAIAAcAAQAAAAAAAAAIAAgAAQAAAAAAAAAJAAMAAQAAAAAAAAAJAAQAAQAAAAAAAAAJAAUAAQAAAAAAAAAJAAYAAQAAAAAAAAAJAAcAAQAAAAAAAAAJAAgAAQAAAAAAAAAKAAMAAQAAAAAAAAAKAAQAAQAAAAAAAAAKAAUAAQACAAEAAAAKAAYAAQAAAAAAAAAKAAcAAQAAAAAAAAAKAAgAAQAAAAAAAAALAAMAAQAAAAAAAAALAAQAAQAAAAAAAAALAAUAAQAAAAAAAAALAAYAAQAAAAAAAAALAAcAAQAAAAAAAAALAAgAAQAAAAAAAAAMAAMAAQAAAAAAAAAMAAQAAQAAAAAAAAAMAAUAAQAAAAAAAAAMAAYAAQAAAAAAAAAMAAcAAQAAAAAAAAAMAAgAAQAAAAAAAAANAAMAAQAAAAAAAAANAAQAAQAAAAAAAAANAAUAAQAAAAAAAAANAAYAAQAAAAAAAAANAAcAAQAAAAAAAAANAAgAAQAAAAAAAAAOAAMAAQAAAAAAAAAOAAQAAQAAAAAAAAAOAAUAAQAAAAAAAAAOAAYAAQAAAAAAAAAOAAcAAQAAAAAAAAAOAAgAAQAAAAAAAAAPAAMAAQAAAAAAAAAPAAQAAQAAAAAAAAAPAAUAAQAAAAAAAAAPAAYAAQAAAAAAAAAPAAcAAQAAAAAAAAAPAAgAAQAAAAAAAAAQAAMAAQAAAAAAAAAQAAQAAQAAAAAAAAAQAAUAAQAAAAAAAAAQAAYAAQAAAAAAAAAQAAcAAQAAAAAAAAAQAAgAAQAAAAAAAAARAAMAAQAAAAAAAAARAAQAAQAAAAAAAAARAAUAAQAAAAAAAAARAAYAAQAAAAAAAAARAAcAAQAAAAAAAAD/////AQACAAAAAAD//wIAAQACAAAAAAD//wMAAQACAAAAAAD//wQAAQACAAAAAAD//wUAAQACAAAAAAD//wYAAQACAAAAAAD//wcAAQACAAAAAAD//wgAAQACAAAAAAD//wkAAQACAAAAAAD//wsAAQACAAAAAAD//wwAAQACAAAAAAAAAAwAAQACAAAAAAABAAwAAQACAAAAAAACAAwAAQACAAAAAAADAAwAAQACAAAAAAAEAAwAAQACAAAAAAAFAAwAAQACAAAAAAAGAAwAAQACAAAAAAAHAAwAAQACAAAAAAAIAAwAAQACAAAAAAAJAAwAAQACAAAAAAAKAAwAAQACAAAAAAALAAwAAQACAAAAAAAMAAwAAQACAAAAAAANAAwAAQACAAAAAAAOAAwAAQACAAAAAAAPAAwAAQACAAAAAAAQAAwAAQACAAAAAAARAAwAAQACAAAAAAASAAwAAQACAAAAAAATAAwAAQACAAAAAAAUAAwAAQACAAAAAAAUAAoAAQACAAAAAAAUAAkAAQACAAAAAAAUAAgAAQACAAAAAAAUAAcAAQACAAAAAAAUAAYAAQACAAAAAAAUAAUAAQACAAAAAAAUAAQAAQACAAAAAAAUAAMAAQACAAAAAAAUAAIAAQACAAAAAAAUAAEAAQACAAAAAAAUAAAAAQACAAAAAAAUAP//AQACAAAAAAATAP//AQACAAAAAAASAP//AQACAAAAAAARAP//AQACAAAAAAAQAP//AQACAAAAAAAPAP//AQACAAAAAAAOAP//AQACAAAAAAANAP//AQACAAAAAAAMAP//AQACAAAAAAALAP//AQACAAAAAAAKAP//AQACAAAAAAAJAP//AQACAAAAAAAIAP//AQACAAAAAAAHAP//AQACAAAAAAAGAP//AQACAAAAAAAFAP//AQACAAAAAAAEAP//AQACAAAAAAADAP//AQACAAAAAAACAP//AQACAAAAAAABAP//AQACAAAAAAAAAP//AQACAAAAAAARAAgAAQAAAAAAAAA=")
-tile_set = ExtResource("2_b12h2")
+tile_set = ExtResource("2_4kb7l")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=419153632]
-tile_set = ExtResource("3_e31r6")
+tile_set = ExtResource("3_vkmei")
 
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("4_n1x0c")]
-position = Vector2(208, 208)
+[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("3_4kb7l")]
+position = Vector2(240, 208)
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
@@ -39,32 +39,32 @@ gameManager = NodePath("../../GameManager")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)
 
-[node name="UI" parent="." unique_id=868482676 node_paths=PackedStringArray("gameManager") instance=ExtResource("6_yr3mu")]
+[node name="UI" parent="." unique_id=868482676 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_kwwvn")]
 offset_right = 1920.0
 offset_bottom = 1080.0
 gameManager = NodePath("../GameManager")
 
-[node name="GameManager" parent="." unique_id=1933725455 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("7_0tpia")]
+[node name="GameManager" parent="." unique_id=1933725455 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("5_fgsbm")]
 maxParadigmShifts = 10
 ui = NodePath("../UI")
 obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
 groundLayer = NodePath("../ScalingParent/TileMaps/Ground")
 
-[node name="WinMenu" parent="." unique_id=1931602780 instance=ExtResource("8_fg0fr")]
+[node name="WinMenu" parent="." unique_id=1931602780 instance=ExtResource("6_x4rao")]
 visible = false
 offset_left = 960.0
 offset_top = 540.0
 offset_right = 960.0
 offset_bottom = 540.0
 
-[node name="PauseMenu" parent="." unique_id=1411021336 instance=ExtResource("9_8i3mk")]
+[node name="PauseMenu" parent="." unique_id=1411021336 instance=ExtResource("7_5xirh")]
 visible = false
 offset_left = 960.0
 offset_top = 540.0
 offset_right = 960.0
 offset_bottom = 540.0
 
-[node name="LoseMenu" parent="." unique_id=74940406 instance=ExtResource("10_uss3s")]
+[node name="LoseMenu" parent="." unique_id=74940406 instance=ExtResource("8_66vox")]
 visible = false
 offset_left = 960.0
 offset_top = 540.0

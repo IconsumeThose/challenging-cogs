@@ -523,7 +523,10 @@ public partial class Cogito : Character
 		}
 	}
 
-	/** <summary>Set all levers to the specified direction but doesn't adjust conveyors</summary> */
+	/** <summary>
+	  * Set all levers to the specified direction and toggles toggle tiles but doesn't adjust conveyors
+	  * Conveyors are only changed in ToggleLevers to allow this method to be called when initializing a level to ensure all tiles are correct
+	  </summary> */
 	public void SetLevers(bool leversAreLeft)
 	{
 		this.leversAreFacingLeft = leversAreLeft;
@@ -543,19 +546,37 @@ public partial class Cogito : Character
 				gameManager.obstacleLayer.SetCell(leverPosition, 1, new(6, 1));
 			}
 		}
+
+		// toggle toggle tiles
+		if (leversAreFacingLeft)
+		{
+			// replace leftToggleTileOffs with leftToggleTileOns
+			ReplaceTiles(new(1, 4), new(0, 4));
+
+			// replace rightToggleTileOns with rightToggleTileOffs
+			ReplaceTiles(new(2, 4), new(3, 4));
+		}
+		else
+		{
+			// replace leftToggleTileOns with leftToggleTileOffs
+			ReplaceTiles(new(0, 4), new(1, 4));
+
+			// replace rightToggleTileOffs with rightToggleTileOns
+			ReplaceTiles(new(3, 4), new(2, 4));
+		}
 	}
 
-	/** <summary>Toggle all levers, switching all conveyors</summary> */
+	/** <summary>Toggle all levers, switching all conveyors and toggling toggle tiles</summary> */
 	public void ToggleLevers()
 	{
 		// set levers to the opposite direction
 		SetLevers(!leversAreFacingLeft);
 
 		// get all conveyors
-		var conveyors = gameManager.groundLayer.GetUsedCellsById(1, new(0, 2));
+		var conveyorPositions = gameManager.groundLayer.GetUsedCellsById(1, new(0, 2));
 
 		// flip the direction of every conveyor
-		foreach (Vector2I conveyorPosition in conveyors)
+		foreach (Vector2I conveyorPosition in conveyorPositions)
 		{
 			CustomTileData conveyorData = new(gameManager.groundLayer.GetCellTileData(conveyorPosition), conveyorPosition,
 				gameManager.groundLayer);
@@ -569,7 +590,7 @@ public partial class Cogito : Character
 			gameManager.groundLayer.SetCell(
 				conveyorPosition,
 				1,
-				new Vector2I(0, 2),
+				new(0, 2),
 				alt
 			);
 		}

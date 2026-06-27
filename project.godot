@@ -18,7 +18,6 @@ config/name="Challenging Cogs"
 run/main_scene="uid://dpafps85bq7wh"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="uid://ce1a06547jkx1"
-config/tags=PackedStringArray()
 
 [autoload]
 
