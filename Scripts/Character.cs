@@ -351,6 +351,9 @@ public partial class Character : CharacterBody2D
 	public virtual void StartDeath(string animationName, float animationSpeed = 1)
 	{
 		dying = true;
+
+		// TODO: make more robust animation handler to ensure reset gets played between playing every animation
+		animationPlayer.Play("RESET");
 		animationPlayer.Play(animationName, customSpeed: animationSpeed);
 	}
 

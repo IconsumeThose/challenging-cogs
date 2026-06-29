@@ -132,7 +132,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_2llrw")
 }],
-"loop": false,
+"loop": 0,
 "name": &"Drown",
 "speed": 3.0
 }, {
@@ -143,7 +143,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ygv81")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Float",
 "speed": 1.5
 }, {
@@ -160,7 +160,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lui3q")
 }],
-"loop": false,
+"loop": 0,
 "name": &"FloatParadigmShift",
 "speed": 10.0
 }, {
@@ -171,7 +171,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_dsxq2")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Idle",
 "speed": 2.0
 }, {
@@ -182,7 +182,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_tcwm3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Move",
 "speed": 8.0
 }, {
@@ -199,7 +199,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ceshj")
 }],
-"loop": false,
+"loop": 0,
 "name": &"ParadigmShift",
 "speed": 10.0
 }, {
@@ -210,7 +210,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rqtea")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Slide",
 "speed": 4.0
 }, {
@@ -221,7 +221,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_422ea")
 }],
-"loop": true,
+"loop": 1,
 "name": &"SwimIdle",
 "speed": 1.5
 }, {
@@ -238,7 +238,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_1avbt")
 }],
-"loop": false,
+"loop": 0,
 "name": &"SwimParadigmShift",
 "speed": 10.0
 }]
@@ -469,25 +469,13 @@ tracks/3/keys = {
 "update": 1,
 "values": [false]
 }
-tracks/4/type = "value"
+tracks/4/type = "method"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("ParadigmShiftParticles:frame")
+tracks/4/path = NodePath(".")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [1]
-}
-tracks/5/type = "method"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath(".")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -542,7 +530,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_r00rv")
 }],
-"loop": false,
+"loop": 0,
 "name": &"default",
 "speed": 5.0
 }]
@@ -569,7 +557,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_o0ail")
 }],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }, {
@@ -583,7 +571,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_btpeo")
 }],
-"loop": false,
+"loop": 0,
 "name": &"pop",
 "speed": 5.0
 }]
@@ -606,7 +594,7 @@ visible = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1841223617]
 sprite_frames = SubResource("SpriteFrames_e0kin")
-animation = &"FloatParadigmShift"
+animation = &"Idle"
 autoplay = "Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1509439521]
@@ -620,14 +608,12 @@ libraries/ = SubResource("AnimationLibrary_dsxq2")
 visible = false
 z_index = -1
 sprite_frames = SubResource("SpriteFrames_j8sqe")
-frame = 1
 
 [node name="Balloon" type="AnimatedSprite2D" parent="." unique_id=1919597749]
 visible = false
 z_index = -1
 position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_pidn6")
-animation = &"pop"
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1387666732]
 

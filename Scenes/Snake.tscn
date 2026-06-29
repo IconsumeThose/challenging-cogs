@@ -3,8 +3,6 @@
 [ext_resource type="Script" uid="uid://gsosdetchpix" path="res://Scripts/Snake.cs" id="1_744d6"]
 [ext_resource type="PackedScene" uid="uid://deyp5g1n4w7pg" path="res://Scenes/falling_sand.tscn" id="2_rt4fi"]
 [ext_resource type="Texture2D" uid="uid://dok1fu6yin71i" path="res://Assets/Sprites/cogitosheet.png" id="3_squsf"]
-[ext_resource type="Texture2D" uid="uid://ghh3pckjfw5t" path="res://Assets/Sprites/particlesheet.png" id="4_atjhp"]
-[ext_resource type="Texture2D" uid="uid://0xavswj54tt" path="res://Assets/Sprites/tastysheet.png" id="5_i3ruk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7hp1u"]
 atlas = ExtResource("3_squsf")
@@ -132,7 +130,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_2llrw")
 }],
-"loop": false,
+"loop": 0,
 "name": &"Drown",
 "speed": 3.0
 }, {
@@ -143,7 +141,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ygv81")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Float",
 "speed": 1.5
 }, {
@@ -160,7 +158,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lui3q")
 }],
-"loop": false,
+"loop": 0,
 "name": &"FloatParadigmShift",
 "speed": 10.0
 }, {
@@ -171,7 +169,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_dsxq2")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Idle",
 "speed": 2.0
 }, {
@@ -182,7 +180,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_tcwm3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Move",
 "speed": 8.0
 }, {
@@ -199,7 +197,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ceshj")
 }],
-"loop": false,
+"loop": 0,
 "name": &"ParadigmShift",
 "speed": 10.0
 }, {
@@ -210,7 +208,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rqtea")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Slide",
 "speed": 4.0
 }, {
@@ -221,7 +219,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_422ea")
 }],
-"loop": true,
+"loop": 1,
 "name": &"SwimIdle",
 "speed": 1.5
 }, {
@@ -238,7 +236,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_1avbt")
 }],
-"loop": false,
+"loop": 0,
 "name": &"SwimParadigmShift",
 "speed": 10.0
 }]
@@ -379,44 +377,6 @@ tracks/1/keys = {
 "update": 1,
 "values": [0]
 }
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("ParadigmShiftParticles:visible")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/3/type = "method"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("ParadigmShiftParticles")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [&"default"],
-"method": &"play"
-}]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("ParadigmShiftParticles:frame")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0]
-}
 
 [sub_resource type="Animation" id="Animation_e0kin"]
 length = 0.001
@@ -456,37 +416,13 @@ tracks/2/keys = {
 "update": 0,
 "values": [0.0]
 }
-tracks/3/type = "value"
+tracks/3/type = "method"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("ParadigmShiftParticles:visible")
+tracks/3/path = NodePath(".")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("ParadigmShiftParticles:frame")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [1]
-}
-tracks/5/type = "method"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath(".")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -524,69 +460,6 @@ _data = {
 &"Teleport": SubResource("Animation_1ujft")
 }
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_h1ytp"]
-atlas = ExtResource("4_atjhp")
-region = Rect2(0, 0, 96, 96)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_r00rv"]
-atlas = ExtResource("4_atjhp")
-region = Rect2(96, 0, 96, 96)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_j8sqe"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_h1ytp")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_r00rv")
-}],
-"loop": false,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_o0ail"]
-atlas = ExtResource("5_i3ruk")
-region = Rect2(192, 128, 32, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3ixy7"]
-atlas = ExtResource("5_i3ruk")
-region = Rect2(192, 128, 32, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pidn6"]
-atlas = ExtResource("5_i3ruk")
-region = Rect2(224, 128, 32, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_btpeo"]
-atlas = ExtResource("5_i3ruk")
-region = Rect2(224, 192, 32, 64)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_pidn6"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_o0ail")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3ixy7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pidn6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_btpeo")
-}],
-"loop": false,
-"name": &"pop",
-"speed": 5.0
-}]
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_744d6"]
 
 [node name="Snake" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("animatedSprite", "animationPlayer")]
@@ -609,19 +482,6 @@ shape = SubResource("CircleShape2D_kihqq")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=739353428]
 libraries/ = SubResource("AnimationLibrary_dsxq2")
-
-[node name="ParadigmShiftParticles" type="AnimatedSprite2D" parent="." unique_id=1310365098]
-visible = false
-z_index = -1
-sprite_frames = SubResource("SpriteFrames_j8sqe")
-frame = 1
-
-[node name="Balloon" type="AnimatedSprite2D" parent="." unique_id=1919597749]
-visible = false
-z_index = -1
-position = Vector2(0, -16)
-sprite_frames = SubResource("SpriteFrames_pidn6")
-animation = &"pop"
 
 [node name="Area2D" type="Area2D" parent="." unique_id=2094983826]
 
