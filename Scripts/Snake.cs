@@ -75,8 +75,10 @@ public partial class Snake : Character
 				gameManager.obstacleLayer
 			);
 
-			// turn the other direction if the new tile has a snake already on it
-			if (gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] is Snake && gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] != null
+			// turn the other direction if the new tile has a snake already on it; only checked if not teleporting
+			if (!teleport && gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] is Snake otherSnake
+				&& otherSnake.currentCharacterState != CharacterState.dead
+				&& gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] != null
 				&& gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] != this)
 			{
 				if (!triedOtherDirection)
@@ -104,10 +106,11 @@ public partial class Snake : Character
 	/** <summary>When collided with another snake, turn around</summary> */
 	protected override void OnCharacterCollision(Node2D body)
 	{		
-		if (body is not Snake snake || snake == this || snake.currentCharacterState == CharacterState.dead || currentCharacterState == CharacterState.dead || gameManager.cogito.undoHappened)
+		if (body is not Snake otherSnake || otherSnake == this || otherSnake.currentCharacterState == CharacterState.dead 
+			|| currentCharacterState == CharacterState.dead || gameManager.cogito.undoHappened)
 			return;
 
-		snake.MoveBack();
+		otherSnake.MoveBack();
 	}
 
 	/** <summary>Try to move 1 tile in the direction the conveyor is facing and adjust the snake direction accordingly</summary> */
@@ -175,7 +178,6 @@ public partial class Snake : Character
 	/** <summary>Snakes drown instantly in water</summary> */
 	protected override void WaterInteraction()
 	{
-		SetCharacterState(CharacterState.animating);
 		StartDeath("Drown");
 	}
 

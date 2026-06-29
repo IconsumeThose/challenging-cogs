@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using static GameManager;
 public partial class Character : CharacterBody2D
 {	
@@ -100,6 +101,9 @@ public partial class Character : CharacterBody2D
 	/** <summary>The character state being exiting during the state</summary> */
 	public CharacterState? exitCharacterState = null;
 
+	/** <summary>The collision shape of the character</summary> */
+	private CollisionShape2D collisionShape;
+
 	/** <summary>Ran during start up</summary> */
 	public override void _Ready()
 	{
@@ -109,6 +113,8 @@ public partial class Character : CharacterBody2D
 
 		// move 1 tile at a time by standard
 		movementDistance = tileSize;
+
+		collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
 
 		// set initial tile data
 		UpdateCurrentTileData();
@@ -122,8 +128,10 @@ public partial class Character : CharacterBody2D
 	{
 		CharacterState? oldState = currentCharacterState;
 
-		// TODO: remember what can change the state back to the old state and comment
-		// do not do anything if the new state is same as old unless an attempt to change states changed back to old state
+		/* Do not do anything if the new state is same as old
+		 * UNLESS while trying to exit the state, it was set back to that old state
+		 * This occurs when trying to exit moving state on a tile that forces another move which...
+		 * makes the character re-enter the move state without calling MoveInit */
 		if (oldState == newState && newState != CharacterState.idle && !(newState == oldState && targetCharacterState != newState))
 		{
 			return;
@@ -279,7 +287,6 @@ public partial class Character : CharacterBody2D
 		// if tile is void or null then make the character fall
 		else if (voidGround.Contains(currentTileData.groundTile.customType) && !BalloonIsActive)
 		{
-			SetCharacterState(CharacterState.animating);
 			StartDeath("Fall", .5f);
 		}
 		// if tile is ice, make the character continue moving in the same direction they were moving
@@ -299,12 +306,21 @@ public partial class Character : CharacterBody2D
 		{
 			TelePop();
 
-			animationPlayer.Play("Teleport");
-			SetCharacterState(CharacterState.animating);
+			SetAnimationPlayerAnimation("Teleport");
 		}
 
 		// update the tile data now that the turn has ended
 		UpdateCurrentTileData();
+	}
+
+	/** <summary>Set the animation player to the specified animation and enter animating state</summary> */
+	protected void SetAnimationPlayerAnimation(string animationName, float animationSpeed = 1)
+	{
+		// play reset animation just in case a different animation is being interrupted, start from end for consistency
+		animationPlayer.Play("RESET", fromEnd: true);
+
+		animationPlayer.Play(animationName, customSpeed: animationSpeed);
+		SetCharacterState(CharacterState.animating);
 	}
 
 	/** <summary>Try to move 1 tile in the direction the conveyor is facing</summary> */
@@ -351,10 +367,7 @@ public partial class Character : CharacterBody2D
 	public virtual void StartDeath(string animationName, float animationSpeed = 1)
 	{
 		dying = true;
-
-		// TODO: make more robust animation handler to ensure reset gets played between playing every animation
-		animationPlayer.Play("RESET");
-		animationPlayer.Play(animationName, customSpeed: animationSpeed);
+		SetAnimationPlayerAnimation(animationName, animationSpeed);		
 	}
 
 	/** <summary>Merge any new movements/changes with the previously logged move to update it properly</summary> */
@@ -450,6 +463,7 @@ public partial class Character : CharacterBody2D
 		dying = false;
 		stoppedMidMovement = false;
 		Visible = true;
+		collisionShape.Disabled = false;
 	}
 
 	/** <summary>Enter the moving state</summary> */
@@ -480,6 +494,9 @@ public partial class Character : CharacterBody2D
 	public void EnterDead()
 	{
 		Visible = false;
+		
+		// prevent colliding with dead snake
+		collisionShape.Disabled = true;
 	}
 
 	/** <summary>Convert global position to the tile position at the specified tile map</summary> */
@@ -558,7 +575,8 @@ public partial class Character : CharacterBody2D
 			UpdateSpriteDirection(movementDirection);
 		}
 
-		/* skip blocking checks if its rechecking the current tile to see if there is a new interaction to perform (such as a snake now being on void)
+		/* skip blocking checks if its rechecking the current tile to see if there is a new interaction to perform 
+		 * (such as a snake now being on void)
 		 * don't move if the character will move to a blocking obstacle/floor 
 		 * or if the character is on a conveyor and trying to move in the opposite direction
 		 * or if the move would put the character out of bounds of the screen */
@@ -567,7 +585,7 @@ public partial class Character : CharacterBody2D
 				!blockingObstacles.Contains(newTileData.obstacleTile.customType) 
 				&& (
 					(!blockingGround.Contains(newTileData.groundTile.customType ?? "") && currentCharacterState != CharacterState.moving)
-					^ currentCharacterState == CharacterState.moving
+					|| currentCharacterState == CharacterState.moving
 				)
 				&& !(
 					(currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor")
@@ -634,8 +652,10 @@ public partial class Character : CharacterBody2D
 
 		LayeredCustomTileData targetTileData = GetTileCustomType(newTilePosition, gameManager.groundLayer,
 			gameManager.obstacleLayer);
-
-		UpdateAnimation(targetTileData);
+		
+		// only update animation if the character is truly moving instead of simply rechecking the tile they are on
+		if (targetTileDifferenceVector != Vector2I.Zero)
+			UpdateAnimation(targetTileData);
 
 		PreviousMove previousMove = null;
 

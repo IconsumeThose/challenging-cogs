@@ -107,10 +107,6 @@ public partial class Cogito : Character
 	/** <summary>Runs every physics frame</summary> */
 	public override void _PhysicsProcess(double delta)
 	{
-		// enable hitbox at start of frame
-		Area2D hitbox = GetNode<Area2D>("Area2D");
-		hitbox.Monitoring = true;
-		
 		base._PhysicsProcess(delta);
 	}
 	
@@ -126,22 +122,13 @@ public partial class Cogito : Character
 	/** <summary> Specifically handle colliding with a snake to die</summary> */
 	protected override void OnCharacterCollision(Node2D body)
 	{
+	
 		// ensure the collision was a snake that is alive
 		if (body is not Snake snake || snake.currentCharacterState == CharacterState.dead || undoHappened)
 			return;
 
-		SetCharacterState(CharacterState.animating);
-		
 		stoppedMidMovement = true;
 	
-		// TODO: see if this code block actually ever comes to play
-		if (currentCharacterState == CharacterState.moving)
-		{
-			PreviousMove previousMove = gameManager.previousMoves.Pop();
-			previousMove.movementDirections[this].directionMoved = Vector2I.Zero;
-			UpdatePreviousMove(previousMove, previousMove.changedTiles, false);
-		}
-
 		StartDeath("Fall", .5f);
 
 		// stop the snake that was collided with too
@@ -368,8 +355,7 @@ public partial class Cogito : Character
 			bufferedInput = Vector2.Zero;
 			teleported = false;
 			
-			SetCharacterState(CharacterState.animating);
-			animationPlayer.Play("ParadigmShift", customSpeed: 1);
+			SetAnimationPlayerAnimation("ParadigmShift");
 
 			// game manager updates the remaining count
 			gameManager.ParadigmShifted(1);
@@ -701,5 +687,6 @@ public partial class Cogito : Character
 		}
 
 		undoHappened = false;
+		hitbox.Monitoring = true;
 	}
 }
