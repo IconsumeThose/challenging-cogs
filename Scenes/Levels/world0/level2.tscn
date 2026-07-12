@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://bjqsrxruv5is1"]
+[gd_scene format=4 uid="uid://d2wxoa331qmi6"]
 
 [ext_resource type="TileSet" uid="uid://dwh2tr6x3yg4e" path="res://TileSets/mechanical_ground.tres" id="1_npvmm"]
 [ext_resource type="Texture2D" uid="uid://cyf7plaoqhrjg" path="res://Assets/Sludge/jimmydog.webp" id="1_r8xor"]

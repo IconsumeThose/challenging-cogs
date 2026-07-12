@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://beovmsg5wn751"]
+[gd_scene format=4 uid="uid://jumuboit11lw"]
 
 [ext_resource type="TileSet" uid="uid://1u282qhp7y1b" path="res://TileSets/gloomy_ground.tres" id="1_ksfv5"]
 [ext_resource type="Texture2D" uid="uid://cdxfful3ufp27" path="res://Assets/Backgrounds/gloomyglacier.png" id="1_ojcl4"]
@@ -31,12 +31,12 @@ tile_set = ExtResource("1_ksfv5")
 tile_map_data = PackedByteArray("AAAKAAkAAQADAAEAAAAJAAMAAQADAAEAAAAIAAMAAQAGAAIAAAAHAAcAAQAEAAEAAAAHAAYAAQABAAAAAAANAAQAAQADAAEAAAAPAAYAAQAGAAIAAAAOAAQAAQAEAAEAAAAJAAEAAQABAAAAAAAIAAEAAQABAAAAAAACAAIAAQABAAAAAAADAAcAAQABAAAAAAAFAAQAAQADAAEAAAARAAkAAQAGAAEAAAALAAYAAQAGAAEAAAA=")
 tile_set = ExtResource("2_ojcl4")
 
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_unlga")]
+[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("3_unlga")]
 position = Vector2(80, 304)
-gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
+gameManager = NodePath("../../GameManager")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

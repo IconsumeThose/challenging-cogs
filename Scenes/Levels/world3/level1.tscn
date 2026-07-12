@@ -10,8 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://dj8vu6t4xi3je" path="res://Scenes/pause_menu.tscn" id="8_ir4xh"]
 [ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="9_sfpki"]
 
-[node name="Level2" type="Node2D" unique_id=1015827580]
-position = Vector2(0, 1)
+[node name="Level" type="Node2D" unique_id=1015827580]
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1375110353]
 offset_right = 1920.0
@@ -32,12 +31,12 @@ tile_set = ExtResource("1_l66tp")
 tile_map_data = PackedByteArray("AAAOAAMAAQABAAAAAAAOAAQAAQABAAAAAAAGAAYAAQADAAEAAAABAAYAAQADAAEAAAACAAQAAQADAAEAAAADAAUAAQADAAEAAAAMAAcAAQABAAAAAAAMAAgAAQABAAAAAAAPAAIAAQABAAAAAAAQAAIAAQABAAAAAAARAAIAAQABAAAAAAASAAIAAQABAAAAAAASAAMAAQABAAAAAAASAAQAAQABAAAAAAAQAAMAAQADAAEAAAARAAQAAQADAAEAAAAIAAQAAQADAAEAAAAKAAYAAQADAAEAAAAKAAMAAQABAAAAAAALAAMAAQABAAAAAAAMAAMAAQABAAAAAAANAAMAAQABAAAAAAAJAAMAAQABAAAAAAA=")
 tile_set = ExtResource("2_uwgjc")
 
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_u0yad")]
+[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("3_u0yad")]
 position = Vector2(208, 112)
-gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
+gameManager = NodePath("../../GameManager")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

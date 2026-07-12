@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+#pragma warning disable CA1050
 public partial class GameManager : Node2D
 {
 	/** <summary>Store all useful information about a tile</summary> */
@@ -158,17 +159,20 @@ public partial class GameManager : Node2D
 	public Cogito cogito;
 
 	/** <summary>Checks if the level is loaded in the level select</summary> */
-	public bool IsLevelSelect()
+	public bool IsLevelSelect
 	{
-		isLevelSelect = GetTree().CurrentScene.Name == "LevelSelect";
-		return isLevelSelect;
+		get 
+		{
+			isLevelSelect = GetTree().CurrentScene.Name == "LevelSelect";
+			return isLevelSelect;
+		}
 	}
 
 	/** <summary>Identify which world and level is loaded</summary> */
 	public void CalculateCurrentWorldAndLevel()
 	{
 		// don't do anything if in level select
-		if (IsLevelSelect())
+		if (IsLevelSelect)
 			return;
 
 		string scenePath = GetTree().CurrentScene.SceneFilePath;
@@ -181,7 +185,7 @@ public partial class GameManager : Node2D
 	}
 
 	/** <summary>Flag for if the scene is instantiated in level select or not</summary> */
-	public static bool isLevelSelect = false;
+	private static bool isLevelSelect = false;
 
 	/** <summary>returns true if all characters are idle</summary> */
 	public bool AllCharactersIdle 
@@ -190,7 +194,7 @@ public partial class GameManager : Node2D
 		{
 			foreach (Character character in characters)
 			{
-				if (!(character?.currentCharacterState == Character.CharacterState.idle || character?.currentCharacterState == Character.CharacterState.dead))
+				if (!(character?.currentCharacterState == character.idleState || character?.currentCharacterState == character.deadState))
 				{
 					return false;
 				}
@@ -199,12 +203,22 @@ public partial class GameManager : Node2D
 		}
 	}
 
+	/** <summary>Increment current move once all characters are idle or dead</summary> */
+	public void CheckToIncrementCurrentMove()
+	{
+		if (AllCharactersIdle)
+		{
+			// once the character enters the idle state then the turn is completely done
+			currentMove++;
+		}
+	}
+
 	/** <summary>When cogito moves, trigger snakes to move</summary> */
 	public void CogitoMoved()
 	{
 		foreach (Character character in characters)
 		{
-			if (character is Snake snake && snake.currentCharacterState != Character.CharacterState.dead)
+			if (character is Snake snake && snake.currentCharacterState != character.deadState)
 			{
 				snake.startMove = true;
 			}
@@ -214,7 +228,7 @@ public partial class GameManager : Node2D
 	/** <summary>Initialize the game manager</summary> */
 	public override void _Ready()
 	{
-		if (IsLevelSelect())
+		if (IsLevelSelect)
 		{
 			// disable the visibility of the BACKGROUND which is called TextureRect because sammy never renamed it when first setting it up
 			GetParent().GetNode<TextureRect>("TextureRect").Visible = false;
@@ -319,7 +333,7 @@ public partial class GameManager : Node2D
 
 		if (currentStamina == 0 && maxStamina > 0 )
 		{
-			character.SetCharacterState(Character.CharacterState.animating);
+			character.SetCharacterState(character.animatingState);
 			character.StartDeath("Drown");
 		}
 

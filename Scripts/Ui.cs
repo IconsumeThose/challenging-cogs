@@ -1,6 +1,5 @@
 using Godot;
-using System;
-
+#pragma warning disable CA1050
 // manage the ui overlaid in the gameplay
 public partial class Ui : Control
 {
@@ -17,7 +16,7 @@ public partial class Ui : Control
 	public override void _Ready()
 	{
 		/** <summary>Disable UI and don't do anything else if in level select</summary> */
-		if (gameManager.IsLevelSelect())
+		if (gameManager.IsLevelSelect)
 		{
 			Visible = false;
 			return;

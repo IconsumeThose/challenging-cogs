@@ -242,6 +242,7 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kihqq"]
+radius = 8.0
 
 [sub_resource type="Animation" id="Animation_tr1jv"]
 resource_name = "Drown"
@@ -470,8 +471,8 @@ tracks/0/keys = {
 "args": [false],
 "method": &"Teleport"
 }, {
-"args": [0],
-"method": &"SetCharacterState"
+"args": [],
+"method": &"EndTeleportAnimation"
 }]
 }
 tracks/1/type = "value"
@@ -511,6 +512,7 @@ _data = {
 [sub_resource type="CircleShape2D" id="CircleShape2D_744d6"]
 
 [node name="Snake" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("animatedSprite", "animationPlayer")]
+collision_mask = 0
 script = ExtResource("1_744d6")
 movementSpeed = 250.0
 animatedSprite = NodePath("AnimatedSprite2D")

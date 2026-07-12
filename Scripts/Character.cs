@@ -1,19 +1,10 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using static GameManager;
+#pragma warning disable CA1050
 public partial class Character : CharacterBody2D
 {	
-	/** <summary> the state the character is in </summary> */
-	public enum CharacterState
-	{
-		moving,
-		animating,
-		idle,
-		dead
-	}
-
 	/** <summary>tracks the instantiated falling sand object</summary> */
 	protected Node2D fallingSand = null;
 
@@ -27,7 +18,7 @@ public partial class Character : CharacterBody2D
 	[Export] public float movementSpeed = 150;
 
 	/** <summary>Reference to the game manager in the current scene</summary> */
-	[Export] protected GameManager gameManager;
+	[Export] public GameManager gameManager;
 
 	/** <summary>Reference to the character's main animated sprite 2D</summary> */
 	[Export]
@@ -47,10 +38,10 @@ public partial class Character : CharacterBody2D
 		"LeverRight"
 	];
 
-	/**<summary>List of all different types of void ground tiles</summary>*/
+	/**<summary>List of all different types of void ground tiles where null is if no tile is set at all, acting like void</summary>*/
 	protected readonly List<string> voidGround = 
 	[
-		"",
+		null,
 		"Void",
 		"LeftToggleTileOff",
 		"RightToggleTileOff"
@@ -69,10 +60,10 @@ public partial class Character : CharacterBody2D
 	protected LayeredCustomTileData currentTileData;
 
 	/** <summary>True if just teleported</summary> */
-	protected bool teleported = false;
+	public bool teleported = false;
 
 	/** <summary>The position to move to</summary> */
-	private Vector2 targetPosition = Vector2.Zero;
+	protected Vector2 targetPosition = Vector2.Zero;
 
 	// round the target position to the exact center of the title to avoid shifting over time which could happen when undoing
 	public Vector2 TargetPosition 
@@ -92,24 +83,45 @@ public partial class Character : CharacterBody2D
 	/** <summary>Distance the character moves to get to the next tile</summary> */
 	protected float movementDistance = 0;
 
+	/** <summary> the state the character is in </summary> */
+	public BaseCharacterState idleState,
+		movingState,
+		animatingState,
+		deadState,
+
 	/** <summary> The state that the character is currently in</summary> */
-	public CharacterState currentCharacterState = CharacterState.idle,
+		currentCharacterState,
 
 	/** <summary>The target character state for the state transition</summary> */
-		targetCharacterState = CharacterState.idle;
+		targetCharacterState,
 
 	/** <summary>The character state being exiting during the state</summary> */
-	public CharacterState? exitCharacterState = null;
+		exitCharacterState;
 
 	/** <summary>The collision shape of the character</summary> */
-	private CollisionShape2D collisionShape;
+	protected CollisionShape2D collisionShape;
+	
+	// methods to initialize states which can be overridden for derived states
+	public virtual BaseCharacterState InitializeIdleState() => new Idle(this);
+	public virtual BaseCharacterState InitializeMovingState() =>  new Moving(this);
+	public virtual BaseCharacterState InitializeAnimatingState() =>  new Animating(this);
+	public virtual BaseCharacterState InitializeDeadState() =>  new Dead(this);
 
 	/** <summary>Ran during start up</summary> */
 	public override void _Ready()
 	{
 		// don't do anything if in level select
-		if (gameManager.IsLevelSelect())
+		if (gameManager.IsLevelSelect)
 			return;
+
+		// initialize all states
+		idleState = InitializeIdleState();
+		movingState = InitializeMovingState();
+		animatingState = InitializeAnimatingState();
+		deadState = InitializeDeadState();
+
+		currentCharacterState = idleState;
+		targetCharacterState = idleState;
 
 		// move 1 tile at a time by standard
 		movementDistance = tileSize;
@@ -123,20 +135,243 @@ public partial class Character : CharacterBody2D
 		AttemptMove(Position);
 	}
 
-	/** <summary>Set the finite state of the character</summary> */
-	public void SetCharacterState(CharacterState newState)
+	/** <summary> Data needed for entering aa state</summary> */
+	public abstract record EnterStateData { }
+
+	/** <summary>Structure of a state</summary> */
+	public abstract class BaseCharacterState(Character character)
 	{
-		CharacterState? oldState = currentCharacterState;
+		public Character Character {get; init;} = character;
+
+		public virtual void Enter(EnterStateData enterStateData = null) { }
+
+		public virtual void Exit() {}
+	}
+
+	/** <summary>The idle state</summary> */
+	public class Idle(Character character) : BaseCharacterState(character)
+	{
+		/** <summary>Enter the idle state</summary> */
+		public override void Enter(EnterStateData enterStateData = null)
+		{	
+			// set animation to idle
+			Character.SetSpriteAnimation("Idle");
+
+			// check if all characters are dead or idle to increment current move
+			Character.gameManager.CheckToIncrementCurrentMove();
+		}
+
+		/** <summary>Enter the moving state</summary> */
+		public override void Exit()
+		{
+			// reset some variables
+			Character.dying = false;
+			Character.stoppedMidMovement = false;
+		}
+	}
+
+	/** <summary>The moving state</summary> */
+	public class Moving(Character character) : BaseCharacterState(character)
+	{
+		/** <summary>Enter the moving state</summary> */
+		public override void Enter(EnterStateData enterStateData = null)
+		{
+			
+		}
+		
+		/** <summary>Exit moving state, handles stopping on a tile and checking what further actions are needed</summary> */
+		public override void Exit()
+		{
+			/* don't snap the position for collisions and being stopped by other means such as dying mid movement
+			 * and do not do any additional tile checks for end move interactions like teleporting, sliding, etc... */
+			if (Character.targetCharacterState == Character.animatingState || Character.stoppedMidMovement)
+			{
+				return;
+			}
+
+			// if a move was stopped prematurely (undoing) set the position backwards based on direction and target
+			if ((Character.Position - Character.TargetPosition).Length() >= 2)
+			{
+				Character.Position = Character.TargetPosition - (Character.targetTileDifferenceVector * Character.tileSize);
+			
+				// reset to zero to avoid interactions like sliding on ice
+				Character.targetTileDifferenceVector = Vector2I.Zero;
+			}
+			else
+			{
+				// set position exactly to target
+				Character.Position = Character.TargetPosition;
+			}
+			
+
+			PreviousMove previousMove = null;
+
+			if (Character.gameManager.previousMoves.Count > 0)
+			{
+				// get the previous data
+				previousMove = Character.gameManager.previousMoves.Pop();
+			}
+
+			LayeredCustomTileData[,] changedTiles = previousMove != null ? previousMove.changedTiles : new LayeredCustomTileData[20, 12];
+
+			Character.UpdateCurrentTileData();
+
+			// save additional cogito specific data for undoing
+			if (Character is Cogito)
+			{
+				CustomTileData obstacleTile = Character.currentTileData.obstacleTile;
+				Vector2I obstaclePosition = obstacleTile.position;
+				
+				// log item position for undoing if found
+				if (changedTiles[obstaclePosition.X, obstaclePosition.Y] == null 
+					&& (obstacleTile.customType == "Cog" 
+					|| obstacleTile.customType == "Candy" 
+					|| obstacleTile.customType == "Balloon"))
+				{
+					changedTiles[obstaclePosition.X, obstaclePosition.Y] = Character.currentTileData;
+				}
+			}
+	
+			// if the move was already started with logged information, update the logged move
+			if (previousMove != null)
+			{
+				bool includeDirection = Character is Snake && Character.targetTileDifferenceVector == Vector2.Zero && !Character.teleported; 
+				Character.UpdatePreviousMove(previousMove, changedTiles, includeDirection);
+			}
+			else if (Character.targetTileDifferenceVector.Length() > 0)
+			{
+				// start logging a new set of moves if a distance was moved
+				Character.SaveNewMove(changedTiles);
+			}
+
+			// properly update counter if on water
+			if (Character.targetTileDifferenceVector.Length() > 0 || (Character.gameManager.previousMoves.Count == 0 && Character.gameManager.currentStamina == Character.gameManager.maxStamina))
+			{
+				if (Character.currentTileData.groundTile.customType == "Water")
+				{
+					Character.WaterInteraction();
+				}
+				else
+				{
+					Character.OutOfWaterInteraction();
+				}
+			}
+
+			// interact with certain items
+			if (Character.currentTileData.obstacleTile.customType == "Cog")
+			{
+				Character.CogInteraction();
+			}
+			else if (Character.currentTileData.obstacleTile.customType == "Candy")
+			{
+				Character.CandyInteraction();
+			}
+			else if (Character.currentTileData.obstacleTile.customType == "Balloon")
+			{
+				Character.BalloonInteraction();
+			}
+		
+			// check goal interaction only if its activated
+			if (Character.currentTileData.groundTile.customType == "GoalOn")
+			{
+				Character.GoalInteraction();
+			}
+			// if tile is void or null then make the character fall
+			else if (Character.voidGround.Contains(Character.currentTileData.groundTile.customType) && !Character.BalloonIsActive)
+			{
+				Character.StartDeath("Fall", .5f);
+			}
+			// if tile is ice, make the character continue moving in the same direction they were moving
+			else if (Character.currentTileData.groundTile.customType == "Ice" && Character.targetTileDifferenceVector.Length() > 0)
+			{
+				Vector2 newPosition = Character.Position + ((Vector2)Character.targetTileDifferenceVector).Normalized() *Character.movementDistance;
+				Character.AttemptMove(newPosition);
+			}
+			// if tile is conveyor, make the character move in the direction the conveyor is facing
+			else if (Character.currentTileData.groundTile.customType == "Conveyor" || Character.currentTileData.groundTile.customType == "EvilConveyor")
+			{
+				Character.ConveyorInteraction();
+			}
+			// if the tile is a teleporter or it is the first move and the character has moved and nothing is blocking the other teleporter, teleport
+			else if (Character.currentTileData.groundTile.customType == "Teleporter" && !(Character.gameManager.previousMoves.Count > 0
+				&& Character.targetTileDifferenceVector == Vector2.Zero) && Character.Teleport(true))
+			{
+				Character.TelePop();
+
+				Character.SetAnimationPlayerAnimation("Teleport");
+			}
+
+			// update the tile data now that the turn has ended
+			Character.UpdateCurrentTileData();
+		}
+	}
+
+	/** <summary>The animating state</summary> */
+	public class Animating(Character character) : BaseCharacterState(character)
+	{
+		/** <summary>Enter the animation state</summary> */
+		public override void Enter(EnterStateData enterStateData = null)
+		{
+			
+		}
+
+		/** <summary>Exit animation state, ensuring the animation player is reset</summary> */
+		public override void Exit()
+		{
+			// only reset dying if the target state isn't the dead state
+			if (Character.targetCharacterState != Character.deadState)
+				Character.dying = false;
+
+			Engine.TimeScale = 1;
+			Character.animationPlayer.Stop();
+			Character.animationPlayer.Play("RESET");
+		}
+	}
+
+	/** <summary>The dead state</summary> */
+	public class Dead(Character character) : BaseCharacterState(character)
+	{
+		/** <summary>Enter the dead state</summary> */
+		public override void Enter(EnterStateData enterStateData = null)
+		{
+			Character.Visible = false;
+			
+			// prevent colliding with dead snake
+			Character.collisionShape.Disabled = true;
+
+			if (Character.currentTileData is not null)
+			{
+				Character.gameManager.characterMatrix[Character.currentTileData.tilePosition.X, Character.currentTileData.tilePosition.Y] = null;
+			}
+
+			// check if all characters are dead or idle now to increment move
+			Character.gameManager.CheckToIncrementCurrentMove();
+		}
+
+		/** <summary>Exit the dead state, resetting proper variables</summary> */
+		public override void Exit()
+		{		
+			Character.dying = false;
+			Character.stoppedMidMovement = false;
+			Character.Visible = true;
+			Character.collisionShape.Disabled = false;
+		}
+	}
+
+	/** <summary>Set the finite state of the character</summary> */
+	public void SetCharacterState(BaseCharacterState newState, EnterStateData enterStateData = null)
+	{
+		BaseCharacterState oldState = currentCharacterState;
 
 		/* Do not do anything if the new state is same as old
 		 * UNLESS while trying to exit the state, it was set back to that old state
 		 * This occurs when trying to exit moving state on a tile that forces another move which...
 		 * makes the character re-enter the move state without calling MoveInit */
-		if (oldState == newState && newState != CharacterState.idle && !(newState == oldState && targetCharacterState != newState))
+		if (oldState == newState && newState != idleState && !(newState == oldState && targetCharacterState != newState))
 		{
 			return;
 		}
-
+		
 		targetCharacterState = newState;
 		
 		// do not exit the same state twice to handle state changes invoked mid-state transition
@@ -144,21 +379,7 @@ public partial class Character : CharacterBody2D
 		{
 			exitCharacterState = oldState;
 
-			switch (oldState)
-			{
-				case CharacterState.idle:
-					ExitIdle();
-					break;
-				case CharacterState.moving:
-					ExitMoving();
-					break;
-				case CharacterState.animating:
-					ExitAnimating();
-					break;
-				case CharacterState.dead:
-					ExitDead();
-					break;
-			}
+			oldState.Exit();
 		}
 
 		// reset exit character state once the old state was properly exited
@@ -166,151 +387,14 @@ public partial class Character : CharacterBody2D
 
 		/* some exit methods change the state so if that happens do not even try entering the previous state
 		 * and there is a case where the new state is the same as old IF attempting to exit/enter a different state forced back to the old */
-		if (!(newState == oldState && newState == CharacterState.idle) && (newState != targetCharacterState || newState == oldState))
+		if (!(newState == oldState && newState == idleState) && (newState != targetCharacterState || newState == oldState))
 		{
 			return;
 		}
 
 		currentCharacterState = targetCharacterState;
 
-		switch (currentCharacterState)
-		{
-			case CharacterState.idle:
-				EnterIdle();
-				break;
-			case CharacterState.moving:
-				EnterMoving();
-				break;
-			case CharacterState.animating:
-				EnterAnimating();
-				break;
-			case CharacterState.dead:
-				EnterDead();
-				break;
-		}
-	}
-
-	/** <summary>Exit idle state</summary> */
-	protected virtual void ExitIdle()
-	{
-		// reset some variables
-		dying = false;
-		stoppedMidMovement = false;
-	}
-
-	/** <summary>Exit moving state, handles stopping on a tile and checking what further actions are needed</summary> */
-	public void ExitMoving()
-	{
-		// don't snap the position for collisions and being stopped by other means such as dying mid movement
-		if (targetCharacterState != CharacterState.animating && !stoppedMidMovement)
-		{
-			// if a move was stopped prematurely (undoing) set the position backwards based on direction and target
-			if ((Position - TargetPosition).Length() >= 2)
-			{
-				Position = TargetPosition - (targetTileDifferenceVector * tileSize);
-
-				// reset to zero to avoid interactions like sliding on ice
-				targetTileDifferenceVector = Vector2I.Zero;
-			}
-			else
-			{
-				// set position exactly to target
-				Position = TargetPosition;
-			}
-		}
-
-		PreviousMove previousMove = null;
-
-		if (gameManager.previousMoves.Count > 0)
-		{
-			// get the previous data
-			previousMove = gameManager.previousMoves.Pop();
-		}
-
-		LayeredCustomTileData[,] changedTiles = previousMove != null ? previousMove.changedTiles : new LayeredCustomTileData[20, 12];
-
-		UpdateCurrentTileData();
-
-		if (this is Cogito)
-		{
-			// log item position for undoing if found
-			if (changedTiles[currentTileData.obstacleTile.position.X, currentTileData.obstacleTile.position.Y] == null &&
-				(currentTileData.obstacleTile.customType == "Cog" || currentTileData.obstacleTile.customType == "Candy" || currentTileData.obstacleTile.customType == "Balloon"))
-			{
-				changedTiles[currentTileData.obstacleTile.position.X, currentTileData.obstacleTile.position.Y] = currentTileData;
-			}
-		}
-
-		// if the move was already started with logged information, update the logged move
-		if (previousMove != null)
-		{
-			UpdatePreviousMove(previousMove, changedTiles, false);
-		}
-		else if (targetTileDifferenceVector.Length() > 0)
-		{
-			// start logging a new set of moves if a distance was moved
-			SaveNewMove(changedTiles);
-		}
-
-		// properly update counter if on water
-		if (targetTileDifferenceVector.Length() > 0 || (gameManager.previousMoves.Count == 0 && gameManager.currentStamina == gameManager.maxStamina))
-		{
-			if (currentTileData.groundTile.customType == "Water")
-			{
-				WaterInteraction();
-			}
-			else
-			{
-				OutOfWaterInteraction();
-			}
-		}
-
-		// interact with certain items
-		if (currentTileData.obstacleTile.customType == "Cog")
-		{
-			CogInteraction();
-		}
-		else if (currentTileData.obstacleTile.customType == "Candy")
-		{
-			CandyInteraction();
-		}
-		else if (currentTileData.obstacleTile.customType == "Balloon")
-		{
-			BalloonInteraction();
-		}
-
-		// check goal interaction only if its activated
-		if (currentTileData.groundTile.customType == "GoalOn")
-		{
-			GoalInteraction();
-		}
-		// if tile is void or null then make the character fall
-		else if (voidGround.Contains(currentTileData.groundTile.customType) && !BalloonIsActive)
-		{
-			StartDeath("Fall", .5f);
-		}
-		// if tile is ice, make the character continue moving in the same direction they were moving
-		else if (currentTileData.groundTile.customType == "Ice" && targetTileDifferenceVector.Length() > 0)
-		{
-			Vector2 newPosition = Position + ((Vector2)targetTileDifferenceVector).Normalized() * movementDistance;
-			AttemptMove(newPosition);
-		}
-		// if tile is conveyor, make the character move in the direction the conveyor is facing
-		else if (currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor")
-		{
-			ConveyorInteraction();
-		}
-		// if the tile is a teleporter or it is the first move and the character has moved and nothing is blocking the other teleporter, teleport
-		else if (currentTileData.groundTile.customType == "Teleporter" && !(gameManager.previousMoves.Count > 0
-			&& targetTileDifferenceVector == Vector2.Zero) && Teleport(true))
-		{
-			TelePop();
-
-			SetAnimationPlayerAnimation("Teleport");
-		}
-
-		// update the tile data now that the turn has ended
-		UpdateCurrentTileData();
+		currentCharacterState.Enter(enterStateData);
 	}
 
 	/** <summary>Set the animation player to the specified animation and enter animating state</summary> */
@@ -320,7 +404,7 @@ public partial class Character : CharacterBody2D
 		animationPlayer.Play("RESET", fromEnd: true);
 
 		animationPlayer.Play(animationName, customSpeed: animationSpeed);
-		SetCharacterState(CharacterState.animating);
+		SetCharacterState(animatingState);
 	}
 
 	/** <summary>Try to move 1 tile in the direction the conveyor is facing</summary> */
@@ -374,7 +458,7 @@ public partial class Character : CharacterBody2D
 	protected void UpdatePreviousMove(PreviousMove previousMove, LayeredCustomTileData[,] changedTiles, bool includeDirection)
 	{
 		gameManager.savedMove = gameManager.currentMove;
-		
+
 		if (includeDirection)
 		{
 			if (!previousMove.movementDirections.ContainsKey(this))
@@ -432,46 +516,6 @@ public partial class Character : CharacterBody2D
 
 	}
 
-	/** <summary>Exit animation state, ensuring the animation player is reset</summary> */
-	public void ExitAnimating()
-	{
-		// only reset dying if the target state isn't the dead state
-		if (targetCharacterState != CharacterState.dead)
-			dying = false;
-
-		Engine.TimeScale = 1;
-		animationPlayer.Stop();
-		animationPlayer.Play("RESET");
-	}
-
-	/** <summary>Enter the idle state</summary> */
-	public void EnterIdle()
-	{
-		if (gameManager.AllCharactersIdle)
-		{
-			// once the character enters the idle state then the turn is completely done
-			gameManager.currentMove++;
-		}
-		
-		// set animation to idle
-		SetSpriteAnimation("Idle");
-	}
-
-	/** <summary>Exit the dead state, resetting proper variables</summary> */
-	public void ExitDead()
-	{
-		dying = false;
-		stoppedMidMovement = false;
-		Visible = true;
-		collisionShape.Disabled = false;
-	}
-
-	/** <summary>Enter the moving state</summary> */
-	public void EnterMoving()
-	{
-
-	}
-
 	/** <summary>Interaction with sand tiles</summary> */
 	protected virtual void SandInteraction(LayeredCustomTileData[,] changedTiles)
 	{
@@ -482,21 +526,6 @@ public partial class Character : CharacterBody2D
 	protected virtual void PopBalloon()
 	{
 
-	}
-
-	/** <summary>Enter the animation state</summary> */
-	public void EnterAnimating()
-	{
-
-	}
-
-	/** <summary>Enter the dead state</summary> */
-	public void EnterDead()
-	{
-		Visible = false;
-		
-		// prevent colliding with dead snake
-		collisionShape.Disabled = true;
 	}
 
 	/** <summary>Convert global position to the tile position at the specified tile map</summary> */
@@ -584,8 +613,8 @@ public partial class Character : CharacterBody2D
 			(
 				!blockingObstacles.Contains(newTileData.obstacleTile.customType) 
 				&& (
-					(!blockingGround.Contains(newTileData.groundTile.customType ?? "") && currentCharacterState != CharacterState.moving)
-					|| currentCharacterState == CharacterState.moving
+					(!blockingGround.Contains(newTileData.groundTile.customType) && currentCharacterState != movingState)
+					|| currentCharacterState == movingState
 				)
 				&& !(
 					(currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor")
@@ -648,7 +677,10 @@ public partial class Character : CharacterBody2D
 		targetTileDifferenceVector = newTilePosition - currentTileData.groundTile.position;
 
 		if (teleported)
+		{
+		 	SetCharacterState(movingState);
 			return;
+		}
 
 		LayeredCustomTileData targetTileData = GetTileCustomType(newTilePosition, gameManager.groundLayer,
 			gameManager.obstacleLayer);
@@ -688,11 +720,11 @@ public partial class Character : CharacterBody2D
 			PopBalloon();
 		}
 
-		SetCharacterState(CharacterState.moving);
+		SetCharacterState(movingState);
 	}
 
 	/** <summary>Update the characters animation based on the tiles they are interacting with</summary> */
-	private void UpdateAnimation(LayeredCustomTileData targetTileData)
+	protected void UpdateAnimation(LayeredCustomTileData targetTileData)
 	{
 		// set animation accordingly to the current tile
 		if ((currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor") && gameManager.savedMove == gameManager.currentMove)
@@ -741,13 +773,14 @@ public partial class Character : CharacterBody2D
 	/** <summary>Called at the end of the paradigm shift animation</summary> */
 	public void EndParadigmShiftAnimation()
 	{
-		SetCharacterState(CharacterState.idle);
+		SetCharacterState(idleState);
 		AttemptMove(Position, false, false);
 	}
 
 	/** <summary>Update the tile data the character is on</summary> */
 	public void UpdateCurrentTileData()
 	{
+		// remove the old character position in the character matrix
 		if (currentTileData is not null && gameManager.characterMatrix[currentTileData.tilePosition.X, currentTileData.tilePosition.Y] == this)
 		{
 			gameManager.characterMatrix[currentTileData.tilePosition.X, currentTileData.tilePosition.Y] = null;
@@ -767,7 +800,7 @@ public partial class Character : CharacterBody2D
 	public bool UpdateMove()
 	{
 		// move the character to target position
-		if (currentCharacterState == CharacterState.moving)
+		if (currentCharacterState == movingState)
 		{
 			SetBufferedInput();
 
@@ -781,9 +814,9 @@ public partial class Character : CharacterBody2D
 				return false;
 			}
 			// stop moving when close enough to target position and the character is still moving (may stop after moving?)
-			else if (currentCharacterState == CharacterState.moving)
+			else if (currentCharacterState == movingState)
 			{
-				SetCharacterState(CharacterState.idle);
+				SetCharacterState(idleState);
 			}
 		}
 
@@ -799,7 +832,7 @@ public partial class Character : CharacterBody2D
 	/** <summary>Runs every physics frame</summary> */
 	public override void _PhysicsProcess(double delta)
 	{
-		if (gameManager.IsLevelSelect())
+		if (gameManager.IsLevelSelect)
 			return;
 
 		ProcessBeforePauseCheck(delta);
@@ -809,7 +842,7 @@ public partial class Character : CharacterBody2D
 			return;
 
 		// don't allow controlling character while dying but allow resetting
-		if (currentCharacterState == CharacterState.animating || currentCharacterState == CharacterState.dead)
+		if (currentCharacterState == animatingState || currentCharacterState == deadState)
 			return;
 
 		if (!UpdateMove() || (!gameManager.AllCharactersIdle && !OverrideAllCharactersIdleCheck()))
@@ -822,15 +855,31 @@ public partial class Character : CharacterBody2D
 		{
 			// where the character will move
 			Vector2 newPosition = Position + inputDirection * movementDistance;
+			
+			// if cogito is rechecking the tile its on, recheck the tile all other characters are on
+			if (this is not Cogito && gameManager.previousMoves.Count > 0)
+			{
+				PreviousMove previousMove = gameManager.previousMoves.Pop();
 
-			if (this is not Cogito && gameManager.cogito.targetTileDifferenceVector.Length() == 0)
-				newPosition = Position;
+				// check cogito's initial movement; if its 0 then it was from a paradigm shift
+				Vector2I cogitoFirstDirection = previousMove.movementDirections[gameManager.cogito].firstDirection;
+				gameManager.previousMoves.Push(previousMove);
+
+				if (cogitoFirstDirection == Vector2I.Zero)
+					newPosition = Position;
+			}
 
 			AttemptMove(newPosition);
 		}
 		else if (MoveWithBuffer) { }
 		// don't allow paradigm shifting if none are remaining
 		else CheckParadigmShiftInput();
+	}
+
+	/** <summary>Set character state to idle at end of teleport animation</summary> */
+	protected void EndTeleportAnimation()
+	{
+		SetCharacterState(idleState);
 	}
 
 	/** <summary>This override allows for the character to continue processing if all characters are not idle</summary> */
@@ -888,6 +937,7 @@ public partial class Character : CharacterBody2D
 			if (teleporterPosition != currentTileData.groundTile.position && !(teleporterAtlasPosition == previousTileAtlasPosition && teleported))
 			{
 				Vector2 teleporterPositionDifference = (Vector2)(teleporterPosition - currentTileData.groundTile.position) * movementDistance;
+				
 				if (dryRun)
 					return AttemptMove(Position + teleporterPositionDifference, true, true);
 

@@ -1,9 +1,6 @@
 using Godot;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using static GameManager;
-using System.Diagnostics;
+#pragma warning disable CA1050
 public partial class Snake : Character
 {
 	/** <summary>Used for snakeDirection</summary> */
@@ -67,7 +64,7 @@ public partial class Snake : Character
 	protected override bool AttemptMove(Vector2 newPosition, bool teleport = false, bool dryRun = false)
 	{
 		// only attempt to move if triggered by Cogito's movement or if the snake is already moving/animating
-		if (startMove || currentCharacterState == CharacterState.moving || currentCharacterState == CharacterState.animating)
+		if (startMove || currentCharacterState == movingState || currentCharacterState == animatingState)
 		{
 			// where the tile is that the character will move to
 			Vector2I newTilePosition = PositionToAtlasIndex(
@@ -77,7 +74,7 @@ public partial class Snake : Character
 
 			// turn the other direction if the new tile has a snake already on it; only checked if not teleporting
 			if (!teleport && gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] is Snake otherSnake
-				&& otherSnake.currentCharacterState != CharacterState.dead
+				&& otherSnake.currentCharacterState != deadState
 				&& gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] != null
 				&& gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] != this)
 			{
@@ -105,10 +102,14 @@ public partial class Snake : Character
 
 	/** <summary>When collided with another snake, turn around</summary> */
 	protected override void OnCharacterCollision(Node2D body)
-	{		
-		if (body is not Snake otherSnake || otherSnake == this || otherSnake.currentCharacterState == CharacterState.dead 
-			|| currentCharacterState == CharacterState.dead || gameManager.cogito.undoHappened)
+	{	
+		// ensure the other snake is alive and collision didn't occur during an undo
+		if (body is not Snake otherSnake || otherSnake == this || otherSnake.currentCharacterState == deadState 
+			|| currentCharacterState == deadState || gameManager.cogito.undoHappened || teleported || otherSnake.teleported)
+		{
 			return;
+		}
+
 
 		otherSnake.MoveBack();
 	}
@@ -169,10 +170,7 @@ public partial class Snake : Character
 	/** <summary>Allow moving for snakes even if all other characters are idle if triggered by Cogito's movement</summary> */
 	protected override bool OverrideAllCharactersIdleCheck()
 	{
-		if (startMove)
-			return true;
-		
-		return false;
+		return startMove;
 	}
 
 	/** <summary>Snakes drown instantly in water</summary> */
@@ -203,7 +201,7 @@ public partial class Snake : Character
 	/** <summary>Called at the end of death animation, sets snake to dead state</summary> */
 	public override void Lose()
 	{
-		SetCharacterState(CharacterState.dead);
+		SetCharacterState(deadState);
 	}
 	
 	public override void UpdateSpriteDirection(Vector2 movementDirection)

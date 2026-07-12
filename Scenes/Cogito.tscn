@@ -523,8 +523,8 @@ tracks/0/keys = {
 "args": [false],
 "method": &"Teleport"
 }, {
-"args": [0],
-"method": &"SetCharacterState"
+"args": [],
+"method": &"EndTeleportAnimation"
 }]
 }
 tracks/1/type = "value"

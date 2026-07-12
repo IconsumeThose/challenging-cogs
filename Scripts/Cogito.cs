@@ -2,7 +2,7 @@ using Godot;
 using System.Collections.Generic;
 using System;
 using static GameManager;
-
+#pragma warning disable CA1050
 public partial class Cogito : Character
 {	
 	/** <summary>Time the reset button must be held to reset the game if setting is enabled</summary> */
@@ -46,11 +46,26 @@ public partial class Cogito : Character
 	/** <summary>True right after an undo occurred; Checked to prevent unwanted behavior</summary> */
 	public bool undoHappened = false;
 
+	/** <summary>Cogito's custom idle state to notify when Cogito exits the idle state (new move started)</summary> */
+	public class CogitoIdle(Cogito character) : Idle(character)
+	{
+		public override void Exit()
+		{
+			base.Exit();
+				
+			// tell the game manager that cogito started a new move
+			if (!((Cogito)Character).undoHappened && Character.targetCharacterState != Character.animatingState)
+				Character.gameManager.CogitoMoved();
+		}
+	}
+
+	public override BaseCharacterState InitializeIdleState() => new CogitoIdle(this);
+
 	/** <summary>Ran during start up</summary> */
 	public override void _Ready()
 	{
 		base._Ready();
-		
+
 		gameManager.currentStamina = gameManager.maxStamina;
 
 		// sync all levers
@@ -107,24 +122,18 @@ public partial class Cogito : Character
 	/** <summary>Runs every physics frame</summary> */
 	public override void _PhysicsProcess(double delta)
 	{
+		// reset undo happens
+		if (undoHappened)
+			undoHappened = false;
+
 		base._PhysicsProcess(delta);
 	}
 	
-	protected override void ExitIdle()
-	{
-		base.ExitIdle();
-
-		// tell the game manager that cogito's move ended
-		if (!undoHappened && targetCharacterState != CharacterState.animating)
-			gameManager.CogitoMoved();
-	}
-
 	/** <summary> Specifically handle colliding with a snake to die</summary> */
 	protected override void OnCharacterCollision(Node2D body)
 	{
-	
 		// ensure the collision was a snake that is alive
-		if (body is not Snake snake || snake.currentCharacterState == CharacterState.dead || undoHappened)
+		if (body is not Snake snake || snake.currentCharacterState == deadState || undoHappened || teleported || snake.teleported)
 			return;
 
 		stoppedMidMovement = true;
@@ -133,7 +142,7 @@ public partial class Cogito : Character
 
 		// stop the snake that was collided with too
 		snake.stoppedMidMovement = true;
-		snake.SetCharacterState(CharacterState.idle);
+		snake.SetCharacterState(snake.idleState);
 	}
 	
 	/** <summary>Start a new movement log for undoing with support for logging Cogito-specific items</summary> */
@@ -141,11 +150,11 @@ public partial class Cogito : Character
 	{
 		gameManager.savedMove = gameManager.currentMove;
 	
-		PreviousMove currentMove = new(gameManager.currentMove, changedTiles, gameManager.currentStamina, candiesEaten,
-			balloonIsActive, movementDirections: new() { 
-				{ this, new(targetTileDifferenceVector) } 
-			}
+		PreviousMove currentMove = new(gameManager.currentMove, changedTiles, gameManager.currentStamina, 
+			candiesEaten,	balloonIsActive
 		);
+
+		AddNewMovementDirection(currentMove);
 
 		gameManager.previousMoves.Push(currentMove);
 	}
@@ -652,10 +661,6 @@ public partial class Cogito : Character
 		gameManager.StaminaChanged(gameManager.currentStamina - previousMove.stamina, this);
 
 		undoHappened = true;
-		Area2D hitbox = GetNode<Area2D>("Area2D");
-
-		// temporarily disable hitbox monitoring as positions are reset one character at a time and there might be a moment where the characters overlap
-		hitbox.Monitoring = false;
 		
 		foreach (KeyValuePair<Character, CharacterMovement> characterPositionPair in previousMove.movementDirections)
 		{
@@ -683,10 +688,7 @@ public partial class Cogito : Character
 			// update the tile data Cogito is currently on after restoring everything
 			character.UpdateCurrentTileData();
 
-			character.SetCharacterState(CharacterState.idle);
+			character.SetCharacterState(character.idleState);
 		}
-
-		undoHappened = false;
-		hitbox.Monitoring = true;
 	}
 }
