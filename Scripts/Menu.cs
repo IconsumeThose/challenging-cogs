@@ -14,7 +14,7 @@ public partial class Menu : Control
 		new("cc1818"),
 		new("89d7ff"),
 		new("e06797"),
-		new("000000"),
+		new("228217"),
 		new("000000"),
 		new("000000"),
 		new("000000"),
