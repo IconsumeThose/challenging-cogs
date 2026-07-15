@@ -657,7 +657,7 @@ public partial class Character : CharacterBody2D
 					(currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor")
 					&& movementDirection == -1 * currentTileData.groundTile.direction
 				)
-				&& newTilePosition.X >= 0 && newTilePosition.Y >= 0 && newTilePosition.X < screenTileDimensions.X && newTilePosition.Y < screenTileDimensions.Y
+				&& newTilePosition.X >= 0 && newTilePosition.Y >= 1 && newTilePosition.X < screenTileDimensions.X && newTilePosition.Y < screenTileDimensions.Y - 1
 			)
 		)
 		{
