@@ -1,0 +1,72 @@
+[gd_scene format=4 uid="uid://drgxencjlk5xo"]
+
+[ext_resource type="Texture2D" uid="uid://47k3vhxg10a5" path="res://Assets/Backgrounds/fungusforest.png" id="1_w0f55"]
+[ext_resource type="TileSet" uid="uid://ceadgnl62xy6" path="res://TileSets/fungus_ground.tres" id="2_ty7sc"]
+[ext_resource type="TileSet" uid="uid://b0cr5d1731gag" path="res://TileSets/fungus_obstacles.tres" id="3_td1gr"]
+[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="4_aaj4u"]
+[ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_lesoe"]
+[ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_mnb6s"]
+[ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_llams"]
+[ext_resource type="PackedScene" uid="uid://dj8vu6t4xi3je" path="res://Scenes/pause_menu.tscn" id="8_aalrv"]
+[ext_resource type="PackedScene" uid="uid://jy01li3fi7yw" path="res://Scenes/lose_menu.tscn" id="9_4tbi2"]
+
+[node name="Level" type="Node2D" unique_id=1015827580]
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1217908642]
+offset_right = 1921.0
+offset_bottom = 1081.0
+texture = ExtResource("1_w0f55")
+
+[node name="ScalingParent" type="Node2D" parent="." unique_id=1030117494]
+scale = Vector2(3, 3)
+
+[node name="TileMaps" type="Node2D" parent="ScalingParent" unique_id=443479030]
+
+[node name="Ground" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=1945708784]
+tile_map_data = PackedByteArray("AAACAAMAAQAAAAAAAAACAAQAAQAAAAAAAAACAAUAAQAAAAAAAAACAAYAAQAAAAAAAAACAAcAAQAAAAAAAAACAAgAAQAAAAAAAAADAAMAAQAAAAAAAAADAAQAAQAAAAAAAAADAAUAAQAAAAAAAAADAAYAAQAAAAAAAAADAAcAAQAAAAAAAAADAAgAAQAAAAAAAAAEAAMAAQAAAAAAAAAEAAQAAQAAAAAAAAAEAAUAAQAAAAAAAAAEAAYAAQAAAAAAAAAEAAcAAQAAAAAAAAAEAAgAAQAAAAAAAAAFAAMAAQAAAAAAAAAFAAQAAQAAAAAAAAAFAAUAAQAAAAAAAAAFAAYAAQAAAAAAAAAFAAcAAQAAAAAAAAAFAAgAAQAAAAAAAAAGAAMAAQAAAAAAAAAGAAQAAQAAAAAAAAAGAAUAAQAAAAAAAAAGAAYAAQAAAAAAAAAGAAcAAQAAAAAAAAAGAAgAAQAAAAAAAAAHAAMAAQAAAAAAAAAHAAQAAQAAAAAAAAAHAAUAAQAAAAAAAAAHAAYAAQAAAAAAAAAHAAcAAQAAAAAAAAAHAAgAAQAAAAAAAAAIAAMAAQAAAAAAAAAIAAQAAQAAAAAAAAAIAAUAAQAAAAAAAAAIAAYAAQAAAAAAAAAIAAcAAQAAAAAAAAAIAAgAAQAAAAAAAAAJAAMAAQAAAAAAAAAJAAQAAQAAAAAAAAAJAAUAAQAAAAAAAAAJAAYAAQAAAAAAAAAJAAcAAQAAAAAAAAAJAAgAAQAAAAAAAAAKAAMAAQAAAAAAAAAKAAQAAQAAAAAAAAAKAAUAAQACAAEAAAAKAAYAAQAAAAAAAAAKAAcAAQAAAAAAAAAKAAgAAQAAAAAAAAALAAMAAQAAAAAAAAALAAQAAQAAAAAAAAALAAUAAQAAAAAAAAALAAYAAQAAAAAAAAALAAcAAQAAAAAAAAALAAgAAQAAAAAAAAAMAAMAAQAAAAAAAAAMAAQAAQAAAAAAAAAMAAUAAQAAAAAAAAAMAAYAAQAAAAAAAAAMAAcAAQAAAAAAAAAMAAgAAQAAAAAAAAANAAMAAQAAAAAAAAANAAQAAQAAAAAAAAANAAUAAQAAAAAAAAANAAYAAQAAAAAAAAANAAcAAQAAAAAAAAANAAgAAQAAAAAAAAAOAAMAAQAAAAAAAAAOAAQAAQAAAAAAAAAOAAUAAQAAAAAAAAAOAAYAAQAAAAAAAAAOAAcAAQAAAAAAAAAOAAgAAQAAAAAAAAAPAAMAAQAAAAAAAAAPAAQAAQAAAAAAAAAPAAUAAQAAAAAAAAAPAAYAAQAAAAAAAAAPAAcAAQAAAAAAAAAPAAgAAQAAAAAAAAAQAAMAAQAAAAAAAAAQAAQAAQAAAAAAAAAQAAUAAQAAAAAAAAAQAAYAAQAAAAAAAAAQAAcAAQAAAAAAAAAQAAgAAQAAAAAAAAARAAMAAQAAAAAAAAARAAQAAQAAAAAAAAARAAUAAQAAAAAAAAARAAYAAQAAAAAAAAARAAcAAQAAAAAAAAD/////AQACAAAAAAD//wIAAQACAAAAAAD//wMAAQACAAAAAAD//wQAAQACAAAAAAD//wUAAQACAAAAAAD//wYAAQACAAAAAAD//wcAAQACAAAAAAD//wgAAQACAAAAAAD//wkAAQACAAAAAAD//wsAAQACAAAAAAD//wwAAQACAAAAAAAAAAwAAQACAAAAAAABAAwAAQACAAAAAAACAAwAAQACAAAAAAADAAwAAQACAAAAAAAEAAwAAQACAAAAAAAFAAwAAQACAAAAAAAGAAwAAQACAAAAAAAHAAwAAQACAAAAAAAIAAwAAQACAAAAAAAJAAwAAQACAAAAAAAKAAwAAQACAAAAAAALAAwAAQACAAAAAAAMAAwAAQACAAAAAAANAAwAAQACAAAAAAAOAAwAAQACAAAAAAAPAAwAAQACAAAAAAAQAAwAAQACAAAAAAARAAwAAQACAAAAAAASAAwAAQACAAAAAAATAAwAAQACAAAAAAAUAAwAAQACAAAAAAAUAAoAAQACAAAAAAAUAAkAAQACAAAAAAAUAAgAAQACAAAAAAAUAAcAAQACAAAAAAAUAAYAAQACAAAAAAAUAAUAAQACAAAAAAAUAAQAAQACAAAAAAAUAAMAAQACAAAAAAAUAAIAAQACAAAAAAAUAAEAAQACAAAAAAAUAAAAAQACAAAAAAAUAP//AQACAAAAAAATAP//AQACAAAAAAASAP//AQACAAAAAAARAP//AQACAAAAAAAQAP//AQACAAAAAAAPAP//AQACAAAAAAAOAP//AQACAAAAAAANAP//AQACAAAAAAAMAP//AQACAAAAAAALAP//AQACAAAAAAAKAP//AQACAAAAAAAJAP//AQACAAAAAAAIAP//AQACAAAAAAAHAP//AQACAAAAAAAGAP//AQACAAAAAAAFAP//AQACAAAAAAAEAP//AQACAAAAAAADAP//AQACAAAAAAACAP//AQACAAAAAAABAP//AQACAAAAAAAAAP//AQACAAAAAAARAAgAAQAAAAAAAAA=")
+tile_set = ExtResource("2_ty7sc")
+
+[node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=419153632]
+tile_set = ExtResource("3_td1gr")
+
+[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("4_aaj4u")]
+position = Vector2(240, 208)
+winMenu = NodePath("../../WinMenu")
+pauseMenu = NodePath("../../PauseMenu")
+loseMenu = NodePath("../../LoseMenu")
+gameManager = NodePath("../../GameManager")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
+position = Vector2(960, 540)
+
+[node name="UI" parent="." unique_id=868482676 node_paths=PackedStringArray("gameManager") instance=ExtResource("5_lesoe")]
+offset_right = 1920.0
+offset_bottom = 1080.0
+gameManager = NodePath("../GameManager")
+
+[node name="GameManager" parent="." unique_id=1933725455 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("6_mnb6s")]
+maxParadigmShifts = 10
+ui = NodePath("../UI")
+obstacleLayer = NodePath("../ScalingParent/TileMaps/Obstacles")
+groundLayer = NodePath("../ScalingParent/TileMaps/Ground")
+
+[node name="WinMenu" parent="." unique_id=1931602780 instance=ExtResource("7_llams")]
+visible = false
+offset_left = 960.0
+offset_top = 540.0
+offset_right = 960.0
+offset_bottom = 540.0
+
+[node name="PauseMenu" parent="." unique_id=1411021336 instance=ExtResource("8_aalrv")]
+visible = false
+offset_left = 960.0
+offset_top = 540.0
+offset_right = 960.0
+offset_bottom = 540.0
+
+[node name="LoseMenu" parent="." unique_id=74940406 instance=ExtResource("9_4tbi2")]
+visible = false
+offset_left = 960.0
+offset_top = 540.0
+offset_right = 960.0
+offset_bottom = 540.0
