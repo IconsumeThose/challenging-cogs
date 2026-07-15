@@ -33,12 +33,12 @@ tile_set = ExtResource("1_jsub5")
 tile_map_data = PackedByteArray("AAABAAIAAQAGAAEAAAAMAAUAAQAHAAEAAAAMAAMAAQAGAAEAAAADAAcAAQAHAAEAAAAKAAYAAQAGAAEAAAACAAAAAQABAAAAAAAEAAEAAQABAAAAAAAHAAUAAQAGAAIAAAAIAAUAAQAGAAIAAAAJAAUAAQAGAAIAAAAPAAUAAQAGAAIAAAAPAAMAAQAGAAIAAAA=")
 tile_set = ExtResource("2_hxhfh")
 
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_a0nqa")]
+[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("3_a0nqa")]
 position = Vector2(304, 112)
-gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
+gameManager = NodePath("../../GameManager")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

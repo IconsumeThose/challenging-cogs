@@ -194,7 +194,9 @@ public partial class GameManager : Node2D
 		{
 			foreach (Character character in characters)
 			{
-				if (!(character?.currentCharacterState == character.idleState || character?.currentCharacterState == character.deadState))
+				// character is considered idle if it is idle, dead, or for snakes, has the queueMove flag to indicate it will attempt to move 
+				if (!(character?.currentCharacterState == character.idleState || character?.currentCharacterState == character.deadState)
+					|| character is Snake snake && snake.queueMove)
 				{
 					return false;
 				}
@@ -220,7 +222,7 @@ public partial class GameManager : Node2D
 		{
 			if (character is Snake snake && snake.currentCharacterState != character.deadState)
 			{
-				snake.startMove = true;
+				snake.queueMove = true;
 			}
 		}
 	}
@@ -331,9 +333,9 @@ public partial class GameManager : Node2D
 
 		currentStamina = Math.Clamp(currentStamina, 0, maxStamina);
 
+		// character drowns when reaching 0 stamina and has a specified max stamina
 		if (currentStamina == 0 && maxStamina > 0 )
 		{
-			character.SetCharacterState(character.animatingState);
 			character.StartDeath("Drown");
 		}
 

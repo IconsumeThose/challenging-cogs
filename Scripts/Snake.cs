@@ -27,7 +27,7 @@ public partial class Snake : Character
 	public Vector2 direction = Vector2.Up;
 
 	/** <summary>Flag that is set to true when the snake's turn was triggered by Cogito movement</summary> */
-	public bool startMove = false,
+	public bool queueMove = false,
 
 		/** <summary>Flag that tracks if the other direction was tried for this movement turn</summary> */
 		triedOtherDirection = false;
@@ -54,17 +54,10 @@ public partial class Snake : Character
 		blockingGround.AddRange(voidGround);
 	}
 
-	protected override void MoveInit(Vector2 newPosition, bool teleport, bool dryRun, Vector2I newTilePosition)
-	{
-		triedOtherDirection = false;
-
-		base.MoveInit(newPosition, teleport, dryRun, newTilePosition);
-	}
-
 	protected override bool AttemptMove(Vector2 newPosition, bool teleport = false, bool dryRun = false)
 	{
 		// only attempt to move if triggered by Cogito's movement or if the snake is already moving/animating
-		if (startMove || currentCharacterState == movingState || currentCharacterState == animatingState)
+		if (queueMove || currentCharacterState == movingState || currentCharacterState == animatingState)
 		{
 			// where the tile is that the character will move to
 			Vector2I newTilePosition = PositionToAtlasIndex(
@@ -81,19 +74,19 @@ public partial class Snake : Character
 				if (!triedOtherDirection)
 					return TryOtherDirection();
 			
-				startMove = false;
+				queueMove = false;
 
 				return false;
 			}
 	
 			if (base.AttemptMove(newPosition, teleport, dryRun))
 			{
-				startMove = false;
+				queueMove = false;
 				return true;
 			}
 			else if (triedOtherDirection)
 			{
-				startMove = false;
+				queueMove = false;
 			}
 		}
 
@@ -122,6 +115,11 @@ public partial class Snake : Character
 			direction = currentTileData.groundTile.direction;
 
 		base.ConveyorInteraction();
+	}
+
+	protected override void OnSuccessfulAttemptMove()
+	{
+		triedOtherDirection = false;
 	}
 
 	protected override bool TryOtherDirection()
@@ -159,7 +157,7 @@ public partial class Snake : Character
 	/** <summary>Return the snake's direction when Cogito started a new move</summary> */
 	public override Vector2 GetInputDirection()
 	{
-		if (startMove)
+		if (queueMove)
 		{
 			return direction;
 		}
@@ -170,7 +168,7 @@ public partial class Snake : Character
 	/** <summary>Allow moving for snakes even if all other characters are idle if triggered by Cogito's movement</summary> */
 	protected override bool OverrideAllCharactersIdleCheck()
 	{
-		return startMove;
+		return queueMove;
 	}
 
 	/** <summary>Snakes drown instantly in water</summary> */

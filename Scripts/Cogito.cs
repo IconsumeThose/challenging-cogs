@@ -38,7 +38,7 @@ public partial class Cogito : Character
 	private double resetHeldTime = 0;
 
 	/** <summary>Store the input direction to be buffered</summary> */
-	private Vector2 bufferedInput = Vector2.Zero;
+	public Vector2 bufferedInput = Vector2.Zero;
 
 	/** <summary>The amount of candies eaten</summary> */
 	private int candiesEaten = 0;
@@ -53,10 +53,15 @@ public partial class Cogito : Character
 		{
 			base.Exit();
 				
-			// tell the game manager that cogito started a new move
-			if (!((Cogito)Character).undoHappened && Character.targetCharacterState != Character.animatingState)
-				Character.gameManager.CogitoMoved();
+			((Cogito)Character).AttemptCogitoMovedCall();
 		}
+	}
+
+	/** <summary> >tell the game manager that cogito started a new move</summary> */
+	public void AttemptCogitoMovedCall()
+	{
+		if (!(undoHappened && targetCharacterState != animatingState))
+				gameManager.CogitoMoved();
 	}
 
 	public override BaseCharacterState InitializeIdleState() => new CogitoIdle(this);
@@ -254,14 +259,6 @@ public partial class Cogito : Character
 		fallingSand.GetNode<AnimationPlayer>("AnimationPlayer").Play("Fall");
 	}
 
-	protected override void MoveInit(Vector2 newPosition, bool teleport, bool dryRun, Vector2I newTilePosition)
-	{
-		// reset buffered input value
-		bufferedInput = Vector2.Zero;
-
-		base.MoveInit(newPosition, teleport, dryRun, newTilePosition);
-	}
-
 	public override void Lose()
 	{
 		base.Lose();
@@ -364,7 +361,7 @@ public partial class Cogito : Character
 			bufferedInput = Vector2.Zero;
 			teleported = false;
 			
-			SetAnimationPlayerAnimation("ParadigmShift");
+			SetCharacterState(animatingState, new AnimatingStateEnterData("ParadigmShift"));
 
 			// game manager updates the remaining count
 			gameManager.ParadigmShifted(1);
@@ -378,6 +375,13 @@ public partial class Cogito : Character
 			);
 			gameManager.previousMoves.Push(currentMove);
 		}
+	}
+	
+	/** <summary>Called at the end of the paradigm shift animation</summary> */
+	public virtual void EndParadigmShiftAnimation() 
+	{
+		AttemptMove(Position, false, false);
+		AttemptCogitoMovedCall();
 	}
 
 	/** <summary>Activate the paradigm shift ability which shifts the correct crystals and levers</summary> */
@@ -516,6 +520,11 @@ public partial class Cogito : Character
 				Lose();
 			}
 		}
+	}
+
+	protected override void OnSuccessfulAttemptMove()
+	{
+		bufferedInput = Vector2.Zero;
 	}
 
 	/** <summary>
