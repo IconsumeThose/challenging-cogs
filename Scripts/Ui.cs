@@ -6,7 +6,8 @@ public partial class Ui : Control
 	[Export]
 	public Label cogCountLabel,
 		paradigmShiftCountLabel,
-		levelInfoLabel;
+		levelInfoLabel,
+		moveCountLabel;
 
 	[Export] public Vector2I staminaSegmentSize = new(471, 471);
 	[Export] public Sprite2D staminaBar;
@@ -39,6 +40,11 @@ public partial class Ui : Control
 	public void UpdateParadigmShiftCountLabel(int newCount)
 	{
 		paradigmShiftCountLabel.Text = $"Paradigm Shifts Left: {newCount} / {gameManager.maxParadigmShifts}";
+	}
+
+	public void UpdateMoveCountLabel(int newCount)
+	{
+		moveCountLabel.Text = $"Moves: {newCount}";
 	}
 
 	public void UpdateStaminaBar(int newCount)

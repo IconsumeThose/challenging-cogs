@@ -4,13 +4,12 @@
 [ext_resource type="LabelSettings" uid="uid://6jq228wrs6k" path="res://Labels/ui.tres" id="2_qdvrb"]
 [ext_resource type="Texture2D" uid="uid://cyf7plaoqhrjg" path="res://Assets/Sludge/jimmydog.webp" id="3_nf4gj"]
 
-[node name="UI" type="Control" unique_id=1636633512 node_paths=PackedStringArray("cogCountLabel", "paradigmShiftCountLabel", "levelInfoLabel", "staminaBar")]
+[node name="UI" type="Control" unique_id=1636633512 node_paths=PackedStringArray("cogCountLabel", "paradigmShiftCountLabel", "levelInfoLabel", "moveCountLabel", "staminaBar")]
 z_index = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_bottom = 432.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
@@ -19,6 +18,7 @@ script = ExtResource("1_jxero")
 cogCountLabel = NodePath("CogCount")
 paradigmShiftCountLabel = NodePath("ParadigmCount")
 levelInfoLabel = NodePath("LevelInfo")
+moveCountLabel = NodePath("MoveCount")
 staminaBar = NodePath("StaminaBar")
 
 [node name="CogCount" type="Label" parent="." unique_id=498219094]
@@ -59,3 +59,14 @@ scale = Vector2(0.15, 0.15)
 texture = ExtResource("3_nf4gj")
 region_enabled = true
 region_rect = Rect2(0, 0, 0, 471)
+
+[node name="MoveCount" type="Label" parent="." unique_id=483360634]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -45.0
+offset_right = 260.0
+grow_vertical = 0
+text = "Moves: 0"
+label_settings = ExtResource("2_qdvrb")

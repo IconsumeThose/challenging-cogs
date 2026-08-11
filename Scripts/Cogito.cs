@@ -153,8 +153,8 @@ public partial class Cogito : Character
 	/** <summary>Start a new movement log for undoing with support for logging Cogito-specific items</summary> */
 	protected override void SaveNewMove(LayeredCustomTileData[,] changedTiles)
 	{
-		gameManager.savedMove = gameManager.currentMove;
-	
+		gameManager.SavedMove = gameManager.currentMove;
+
 		PreviousMove currentMove = new(gameManager.currentMove, changedTiles, gameManager.currentStamina, 
 			candiesEaten,	balloonIsActive
 		);
@@ -240,7 +240,7 @@ public partial class Cogito : Character
 		winMenu.Visible = true;
 		winMenu.GetNode<Button>("VBoxContainer/NextLevelButton").GrabFocus();
 
-		DataManager.SaveGame();
+		DataManager.SaveGame(moveCount: gameManager.SavedMove);
 	}
 
 	/** <summary>For Cogito, sand falls when they walk off of that tile</summary> */
@@ -366,7 +366,7 @@ public partial class Cogito : Character
 			// game manager updates the remaining count
 			gameManager.ParadigmShifted(1);
 
-			gameManager.savedMove = gameManager.currentMove;
+			gameManager.SavedMove = gameManager.currentMove;
 			
 			PreviousMove currentMove = new(gameManager.currentMove, new LayeredCustomTileData[20, 12], gameManager.currentStamina, 
 				candiesEaten,	balloonIsActive, usedParadigmShift: true, 
@@ -610,7 +610,7 @@ public partial class Cogito : Character
 		bufferedInput = Vector2.Zero;
 
 		gameManager.currentMove--;
-		gameManager.savedMove--;
+		gameManager.SavedMove--;
 
 		// get the latest move's data
 		PreviousMove previousMove = gameManager.previousMoves.Pop();

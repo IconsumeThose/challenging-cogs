@@ -89,10 +89,22 @@ public partial class GameManager : Node2D
 	public List<Character> characters = [];
 
 	/** <summary>The current move number</summary> */
-	public int currentMove = 0,
+	public int currentMove = 0;
 
 	/** <summary>The last saved move number</summary> */
-		savedMove = 0;
+	private int savedMove = 0;
+
+	/** <summary>The property for saved move that updates the UI when the value updates</summary> */
+	public int SavedMove
+	{
+		get { return savedMove; }
+	
+		set
+		{
+			savedMove = value;
+			ui.UpdateMoveCountLabel(savedMove);
+		}
+	}
 
 	/** <summary>The maximum number of paradigm shifts allowed in the level</summary> */
 	[Export]
@@ -208,7 +220,8 @@ public partial class GameManager : Node2D
 	/** <summary>Increment current move once all characters are idle or dead</summary> */
 	public void CheckToIncrementCurrentMove()
 	{
-		if (AllCharactersIdle)
+		// also only increment if an undo didn't happen as that triggers AllCharactersIdle too
+		if (AllCharactersIdle && !cogito.undoHappened)
 		{
 			// once the character enters the idle state then the turn is completely done
 			currentMove++;

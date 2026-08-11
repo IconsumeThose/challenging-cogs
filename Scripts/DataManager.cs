@@ -1,4 +1,5 @@
 using Godot;
+using Microsoft.VisualBasic;
 using System;
 
 public partial class DataManager : Node
@@ -10,6 +11,8 @@ public partial class DataManager : Node
 		currentWorld = 1,
 		savedLevel = 1,
 		savedWorld = 1;
+	
+	public static int[,] moveCounts = new int[9,15];
 
 	/** <summary>Setting to allow holding down a direction to keep moving in that direction</summary> */
 	public static bool holdToMove = false,
@@ -60,13 +63,21 @@ public partial class DataManager : Node
 	}
 
 	/** <summary>Save data to file, currently saves level and world</summary> */
-	public static void SaveGame(bool bypassCheck = false, bool incrementLevel = true)
+	public static void SaveGame(bool bypassCheck = false, bool incrementLevel = true, int moveCount = int.MaxValue)
 	{
-		if (!bypassCheck && !((currentWorld == savedWorld && currentLevel == savedLevel) 
-			|| (currentWorld == savedWorld + 1 && currentLevel == 1))
-		)
+		// generally don't update save if the level beaten is not the last unlocked level unless there's a new move count record
+		if (!bypassCheck &&
+			!((currentWorld == savedWorld && currentLevel == savedLevel) || (currentWorld == savedWorld + 1 && currentLevel == 1)))
 		{
-			return;	
+			// if a new record for move count for this level is achieved, update save file, but do not increment level since this is not the last unlocked level
+			if (moveCount < moveCounts[currentWorld, currentLevel - 1])
+			{
+				incrementLevel = false;
+			}
+			else
+			{
+				return;	
+			}
 		}
 		
 		if (incrementLevel)
@@ -96,6 +107,12 @@ public partial class DataManager : Node
 			}
 		}
 
+		// update the move counter
+		if (!bypassCheck && moveCount < moveCounts[currentWorld, currentLevel - 1])
+		{
+			moveCounts[currentWorld, currentLevel - 1] = moveCount;
+		}
+
 		using var saveFile = FileAccess.Open($"user://{saveFileName}", FileAccess.ModeFlags.Write);
 
 		if (saveFile == null)
@@ -111,6 +128,7 @@ public partial class DataManager : Node
 		saveFile.StoreVar(SaveBusVolume("Music"));
 		saveFile.StoreVar(SaveBusVolume("SFX"));
 		saveFile.StoreVar(SaveHoldToReset());
+		saveFile.StoreVar(SaveMoveCounts());
 
 		saveFile.Close();
 	}
@@ -124,7 +142,8 @@ public partial class DataManager : Node
 		masterVolume,
 		musicVolume,
 		SFXVolume,
-		holdToReset
+		holdToReset,
+		moveCounts
 	}
 
 	protected static int SaveCurrentLevel()
@@ -135,6 +154,25 @@ public partial class DataManager : Node
 	protected static int SaveCurrentWorld()
 	{
 		return savedWorld;
+	}
+
+	protected static Godot.Collections.Array<int[]> SaveMoveCounts()
+	{
+		Godot.Collections.Array<int[]> rows = [];
+		
+		for (int worldIndex = 0; worldIndex < moveCounts.GetLength(0); worldIndex++)
+		{
+			int[] levels = new int[moveCounts.GetLength(1)];
+		
+			for (int levelIndex = 0; levelIndex < moveCounts.GetLength(1); levelIndex++)
+			{
+				levels[levelIndex] = moveCounts[worldIndex, levelIndex];
+			}
+
+			rows.Add(levels);
+		}
+
+		return rows;
 	}
 
 	protected static bool SaveHoldToMove()
@@ -168,6 +206,22 @@ public partial class DataManager : Node
 		savedWorld = currentWorld;
 	}
 
+	protected static void LoadMoveCounts(Variant moveCountsData)
+	{
+		ResetMoveCounts();
+		Godot.Collections.Array loaded = moveCountsData.AsGodotArray();
+
+		for (int worldIndex = 0; worldIndex < moveCounts.GetLength(0); worldIndex++)
+		{
+			int[] levels = loaded[worldIndex].AsInt32Array();
+
+			for (int levelIndex = 0; levelIndex < moveCounts.GetLength(1); levelIndex++)
+			{
+				moveCounts[worldIndex, levelIndex] = levels[levelIndex];
+			}
+		}
+	}
+
 	protected static void LoadHoldToMove(Variant holdToMoveData)
 	{
 		bool holdToMove = holdToMoveData.AsBool();
@@ -194,6 +248,19 @@ public partial class DataManager : Node
 		DataManager.holdToReset = holdToReset;
 	}
 
+	public static void ResetMoveCounts()
+	{
+		moveCounts = new int[9, 15];
+
+		for (int worldIndex = 0; worldIndex < moveCounts.GetLength(0); worldIndex++)
+		{
+			for (int levelIndex = 0; levelIndex < moveCounts.GetLength(1); levelIndex++)
+			{
+				moveCounts[worldIndex, levelIndex] = int.MaxValue;
+			}
+		}
+	}
+
 	/** <summary>Reset the save file</summary> */
 	public static void ResetSave()
 	{
@@ -204,6 +271,7 @@ public partial class DataManager : Node
 		LoadBusVolume(1, SaveTypes.musicVolume);
 		LoadBusVolume(1, SaveTypes.SFXVolume);
 		holdToReset = true;
+		ResetMoveCounts();
 		SaveGame(true, false);
 		LoadGame();
 	}
@@ -242,6 +310,9 @@ public partial class DataManager : Node
 					break;
 				case SaveTypes.holdToReset:
 					LoadHoldToReset(nextData);
+					break;
+				case SaveTypes.moveCounts:
+					LoadMoveCounts(nextData);
 					break;
 			}
 

@@ -7,11 +7,12 @@
 [ext_resource type="Texture2D" uid="uid://bdd86i8d18wa0" path="res://Assets/Backgrounds/bananabeach.png" id="4_aljgx"]
 [ext_resource type="Texture2D" uid="uid://cdxfful3ufp27" path="res://Assets/Backgrounds/gloomyglacier.png" id="4_phdj3"]
 [ext_resource type="LabelSettings" uid="uid://0787nyjk01au" path="res://Labels/Level Select Level Label.tres" id="4_vowso"]
-[ext_resource type="Texture2D" uid="uid://dvb1i8shnusa5" path="res://Assets/Backgrounds/tastytreats.png" id="6_yts2j"]
+[ext_resource type="Texture2D" uid="uid://dpbhu46dns6ro" path="res://Assets/Backgrounds/tastytreats.png" id="6_yts2j"]
 [ext_resource type="Texture2D" uid="uid://47k3vhxg10a5" path="res://Assets/Backgrounds/fungusforest.png" id="7_era5x"]
 [ext_resource type="Texture2D" uid="uid://chc266erdxa1c" path="res://Assets/Backgrounds/abandonedamphitheater.png" id="8_1ekpb"]
 [ext_resource type="Texture2D" uid="uid://b0tadbytnllt6" path="res://Assets/Backgrounds/urbanunderground.png" id="9_0xcvp"]
 [ext_resource type="Texture2D" uid="uid://cq63io1jbkhn0" path="res://Assets/Backgrounds/chaoscosmos.png" id="10_mpqlx"]
+[ext_resource type="LabelSettings" uid="uid://6jq228wrs6k" path="res://Labels/ui.tres" id="13_1ekpb"]
 [ext_resource type="LabelSettings" uid="uid://d3a7cu61kq4gy" path="res://Labels/menu.tres" id="13_era5x"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_52mtt"]
@@ -95,7 +96,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview1" unique_id=1895582607]
+[node name="LevelNumber" type="Label" parent="LevelPreview1" unique_id=1895582607]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -103,7 +104,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview1" unique_id=141053474]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview1" unique_id=1692949023]
 offset_right = 320.0
@@ -124,7 +133,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview2" unique_id=1104089600]
+[node name="LevelNumber" type="Label" parent="LevelPreview2" unique_id=1104089600]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -132,7 +141,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview2" unique_id=1294579107]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview2" unique_id=1166529617]
 offset_right = 320.0
@@ -153,7 +170,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview3" unique_id=1793287453]
+[node name="LevelNumber" type="Label" parent="LevelPreview3" unique_id=1793287453]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -161,7 +178,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview3" unique_id=1698784755]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview3" unique_id=1703582295]
 offset_right = 320.0
@@ -182,7 +207,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview4" unique_id=215024926]
+[node name="LevelNumber" type="Label" parent="LevelPreview4" unique_id=215024926]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -190,7 +215,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview4" unique_id=254991588]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview4" unique_id=1139203662]
 offset_right = 320.0
@@ -211,7 +244,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview5" unique_id=704258083]
+[node name="LevelNumber" type="Label" parent="LevelPreview5" unique_id=704258083]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -219,7 +252,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview5" unique_id=1284660684]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview5" unique_id=710304241]
 offset_right = 320.0
@@ -240,7 +281,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview6" unique_id=1811397586]
+[node name="LevelNumber" type="Label" parent="LevelPreview6" unique_id=1811397586]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -248,7 +289,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview6" unique_id=1631132132]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview6" unique_id=1854261567]
 offset_right = 320.0
@@ -269,7 +318,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview7" unique_id=1085077982]
+[node name="LevelNumber" type="Label" parent="LevelPreview7" unique_id=1085077982]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -277,7 +326,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview7" unique_id=1175428077]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview7" unique_id=673672977]
 offset_right = 320.0
@@ -298,7 +355,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview8" unique_id=344831031]
+[node name="LevelNumber" type="Label" parent="LevelPreview8" unique_id=344831031]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -306,7 +363,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview8" unique_id=192497590]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview8" unique_id=825565452]
 offset_right = 320.0
@@ -327,7 +392,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview9" unique_id=1883127312]
+[node name="LevelNumber" type="Label" parent="LevelPreview9" unique_id=1883127312]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -335,7 +400,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview9" unique_id=1953924773]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview9" unique_id=1570179372]
 offset_right = 320.0
@@ -356,7 +429,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview10" unique_id=1079284354]
+[node name="LevelNumber" type="Label" parent="LevelPreview10" unique_id=1079284354]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -364,7 +437,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview10" unique_id=110205990]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview10" unique_id=1268596916]
 offset_right = 320.0
@@ -385,7 +466,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview11" unique_id=248425540]
+[node name="LevelNumber" type="Label" parent="LevelPreview11" unique_id=248425540]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -393,7 +474,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview11" unique_id=628800339]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview11" unique_id=1726600248]
 offset_right = 320.0
@@ -414,7 +503,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview12" unique_id=1195421386]
+[node name="LevelNumber" type="Label" parent="LevelPreview12" unique_id=1195421386]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -422,7 +511,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview12" unique_id=1826083919]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview12" unique_id=879884067]
 offset_right = 320.0
@@ -443,7 +540,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview13" unique_id=408315677]
+[node name="LevelNumber" type="Label" parent="LevelPreview13" unique_id=408315677]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -451,7 +548,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview13" unique_id=464372730]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview13" unique_id=52347930]
 offset_right = 320.0
@@ -472,7 +577,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview14" unique_id=981910166]
+[node name="LevelNumber" type="Label" parent="LevelPreview14" unique_id=981910166]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -480,7 +585,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview14" unique_id=1970767343]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview14" unique_id=1773709363]
 offset_right = 320.0
@@ -501,7 +614,7 @@ handle_input_locally = false
 size = Vector2i(320, 180)
 render_target_update_mode = 4
 
-[node name="Label" type="Label" parent="LevelPreview15" unique_id=287474616]
+[node name="LevelNumber" type="Label" parent="LevelPreview15" unique_id=287474616]
 offset_right = 320.0
 offset_bottom = 180.0
 size_flags_horizontal = 4
@@ -509,7 +622,15 @@ text = "1"
 label_settings = ExtResource("4_vowso")
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
+
+[node name="MoveCount" type="Label" parent="LevelPreview15" unique_id=1371190642]
+offset_top = 70.0
+offset_right = 320.0
+offset_bottom = 250.0
+size_flags_horizontal = 4
+label_settings = ExtResource("13_1ekpb")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="TextureButton" type="TextureButton" parent="LevelPreview15" unique_id=2055507176]
 offset_right = 320.0
@@ -535,10 +656,6 @@ grow_horizontal = 2
 text = "World X: Yo Mamma"
 label_settings = ExtResource("13_era5x")
 
-[connection signal="focus_entered" from="BackButton" to="." method="OnMouseEntered" binds= [NodePath("BackButton")]]
-[connection signal="focus_exited" from="BackButton" to="." method="OnMouseExited" binds= [NodePath("BackButton")]]
-[connection signal="mouse_entered" from="BackButton" to="." method="OnMouseEntered" binds= [NodePath("BackButton")]]
-[connection signal="mouse_exited" from="BackButton" to="." method="OnMouseExited" binds= [NodePath("BackButton")]]
 [connection signal="pressed" from="BackButton" to="." method="OnMainMenuPressed"]
 [connection signal="pressed" from="PreviousWorld" to="." method="OnPreviousWorldPressed"]
 [connection signal="pressed" from="NextWorld" to="." method="OnNextWorldPressed"]

@@ -208,7 +208,7 @@ public partial class Character : CharacterBody2D
 
 			PreviousMove previousMove = null;
 
-			if (Character.gameManager.savedMove == Character.gameManager.currentMove && Character.gameManager.previousMoves.Count > 0)
+			if (Character.gameManager.SavedMove == Character.gameManager.currentMove && Character.gameManager.previousMoves.Count > 0)
 			{
 				// get the previous data
 				previousMove = Character.gameManager.previousMoves.Pop();
@@ -515,7 +515,7 @@ public partial class Character : CharacterBody2D
 	/** <summary>Merge any new movements/changes with the previously logged move to update it properly</summary> */
 	protected void UpdatePreviousMove(PreviousMove previousMove, LayeredCustomTileData[,] changedTiles, bool includeDirection)
 	{
-		gameManager.savedMove = gameManager.currentMove;
+		gameManager.SavedMove = gameManager.currentMove;
 
 		if (includeDirection)
 		{
@@ -710,7 +710,7 @@ public partial class Character : CharacterBody2D
 	protected void UpdateAnimation(LayeredCustomTileData targetTileData)
 	{
 		// set animation accordingly to the current tile
-		if ((currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor") && gameManager.savedMove == gameManager.currentMove)
+		if ((currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor") && gameManager.SavedMove == gameManager.currentMove)
 		{
 			SetSpriteAnimation("Idle");
 		}

@@ -54,11 +54,54 @@ public partial class Menu : Control
 	public Button nextWorldButton,
 		previousWorldButton;
 
+	/** <summary>Don't call outside of MoveCountsShow</summary> */
+	private bool moveCountsShown = false;
+
+	/** <summary>Handles updating all move count labels when updated</summary> */
+	private bool MoveCountsShown
+	{
+		get { return moveCountsShown; }
+		
+		set
+		{
+			moveCountsShown = value;
+
+			for (int i = 1; i <= 15; i++)
+			{
+				// referring to i directly is bad because its a reference and fails to bind pressed correctly
+				int currentLevel = i;
+
+				// find all the necessary sub-components to work with
+				SubViewportContainer subViewportContainer = GetNode<SubViewportContainer>($"LevelPreview{currentLevel}/SubViewportContainer");
+				Label moveCountLabel = subViewportContainer.GetParent().GetNode<Label>("MoveCount");
+
+				// check if the level actually exists
+				bool levelExists = ResourceLoader.Exists($"res://Scenes/Levels/world{DataManager.currentWorld}/level{currentLevel}.tscn");
+
+				if (levelExists)
+				{
+					moveCountLabel.Visible = moveCountsShown;
+				}
+			}
+		}
+	}
+
 	public override void _Ready()
 	{
 		foreach (CanvasItem menuItem in modulatableMenuItem)
 		{
 			menuItem.SelfModulate = worldColors[DataManager.currentWorld];
+
+			// darken the level
+			menuItem.SelfModulate *= menuItemLightenAmount;
+
+			if (menuItem is TextureButton button)
+			{
+				button.MouseEntered += () => OnMouseEntered(button.GetPath());
+				button.MouseExited += () => OnMouseExited(button.GetPath());
+				button.FocusEntered += () => OnFocusEntered(button.GetPath());
+				button.FocusExited += () => OnFocusExited(button.GetPath());
+			}
 		}
 
 		if (Name == "MainMenu")
@@ -83,8 +126,8 @@ public partial class Menu : Control
 				// find all the necessary sub-components to work with
 				SubViewportContainer subViewportContainer = GetNode<SubViewportContainer>($"LevelPreview{currentLevel}/SubViewportContainer");
 				TextureButton button = subViewportContainer.GetParent().GetNode<TextureButton>("TextureButton");
-				Label levelLabel = subViewportContainer.GetParent().GetNode<Label>("Label");
-
+				Label levelLabel = subViewportContainer.GetParent().GetNode<Label>("LevelNumber"),
+					moveCountLabel = subViewportContainer.GetParent().GetNode<Label>("MoveCount");
 
 				// check if the level actually exists
 				bool levelExists = ResourceLoader.Exists($"res://Scenes/Levels/world{DataManager.currentWorld}/level{currentLevel}.tscn");
@@ -111,8 +154,10 @@ public partial class Menu : Control
 					button.Pressed += () => OnLevelButtonPressed(currentLevel);
 					button.MouseEntered += () => OnMouseEntered(subViewportContainer.GetPath());
 					button.MouseExited += () => OnMouseExited(subViewportContainer.GetPath());
-					button.FocusEntered += () => OnMouseEntered(subViewportContainer.GetPath());
-					button.FocusExited += () => OnMouseExited(subViewportContainer.GetPath());
+					button.FocusEntered += () => OnFocusEntered(subViewportContainer.GetPath());
+					button.FocusExited += () => OnFocusExited(subViewportContainer.GetPath());
+
+					moveCountLabel.Visible = false;
 
 					// move focus to saved level if on current world or first level if on previous world
 					if (DataManager.currentWorld == DataManager.savedWorld && currentLevel == DataManager.savedLevel || DataManager.currentWorld != DataManager.savedWorld && currentLevel == 1)
@@ -127,9 +172,13 @@ public partial class Menu : Control
 					subViewportContainer.GetNode($"SubViewport").AddChild(levelScene);
 
 					// darken the level
-					subViewportContainer.SelfModulate *= menuItemLightenAmount * menuItemLightenAmount;
+					subViewportContainer.SelfModulate *= menuItemLightenAmount;
 
 					levelLabel.Text = $"{currentLevel}";
+
+					// only show move count if its less than the default
+					if (DataManager.moveCounts[DataManager.currentWorld, currentLevel - 1] < int.MaxValue)
+						moveCountLabel.Text = $"Best Moves: {DataManager.moveCounts[DataManager.currentWorld, currentLevel - 1]}";
 
 					levelScene.Scale = new(1f / 6f, 1f / 6f);
 				}
@@ -171,6 +220,17 @@ public partial class Menu : Control
 		else
 		{
 			SongMixer.PlaySong((SongMixer.Song)DataManager.currentWorld);
+		}
+	}
+
+	public override void _PhysicsProcess(double delta)
+	{
+		if (Name != "LevelSelect")
+			return;
+
+		if (Input.IsActionJustPressed("ToggleMoveCounts"))
+		{
+			MoveCountsShown = !MoveCountsShown;
 		}
 	}
 
@@ -247,14 +307,57 @@ public partial class Menu : Control
 	{
 		CanvasItem menuItem = GetNode<CanvasItem>(nodePath);
 
+		TextureButton button = null;
+
+		// show move count
+		if (menuItem is SubViewportContainer)
+		{
+			button = menuItem.GetParent().GetNode<TextureButton>("TextureButton");
+		}
+		else if (menuItem is TextureButton textureButton)
+		{
+			button = textureButton;
+		}
+
+		Control focusOwner = GetViewport().GuiGetFocusOwner();
+		if (focusOwner != button)
+		{
+			GetViewport().GuiReleaseFocus();
+		}
+
+		button?.GrabFocus();
+	}
+	
+	public void OnFocusEntered(NodePath nodePath)
+	{
+		CanvasItem menuItem = GetNode<CanvasItem>(nodePath);
+
 		menuItem.SelfModulate *= 1 / menuItemLightenAmount;
+
+		// show move count
+		if (menuItem is SubViewportContainer)
+		{
+			Label moveCountLabel = menuItem.GetParent().GetNode<Label>("MoveCount");
+			moveCountLabel.Visible = true;
+		}
+	}
+	
+	public void OnMouseExited(NodePath nodePath)
+	{
+		
 	}
 
-	public void OnMouseExited(NodePath nodePath)
+	public void OnFocusExited(NodePath nodePath)
 	{
 		CanvasItem menuItem = GetNode<CanvasItem>(nodePath);
 
 		menuItem.SelfModulate *= menuItemLightenAmount;
+
+		if (menuItem is SubViewportContainer)
+		{
+			Label moveCountLabel = menuItem.GetParent().GetNode<Label>("MoveCount");
+			moveCountLabel.Visible = MoveCountsShown;
+		}
 	}
 
 	/** <summary>Restart the level</summary> */
