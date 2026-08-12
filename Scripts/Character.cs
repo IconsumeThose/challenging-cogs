@@ -262,6 +262,9 @@ public partial class Character : CharacterBody2D
 				Character.Position = Character.TargetPosition;
 			}
 
+			// don't recheck tile interactions when undoing and do not modify the move stack
+			if (Character.gameManager.cogito.undoHappened)
+				return;
 
 			PreviousMove previousMove = null;
 

@@ -324,7 +324,7 @@ public partial class Cogito : Character
 				Undo();
 			}
 			// reset the level when reset button is pressed, allow instantly resetting while on a menu screen
-			if (Input.IsActionJustPressed("Reset") && (!DataManager.holdToReset ^ Engine.TimeScale == 0))
+			else if (Input.IsActionJustPressed("Reset") && (!DataManager.holdToReset ^ Engine.TimeScale == 0))
 			{
 				winMenu.OnRestartPressed();
 			}
@@ -345,7 +345,13 @@ public partial class Cogito : Character
 		}
 	}
 
-	protected override bool MoveWithBuffer { get { return bufferedInput != Vector2.Zero && AttemptMove(Position + bufferedInput * movementDistance); } }
+	protected override bool MoveWithBuffer 
+	{ 
+		get 
+		{ 
+			return bufferedInput != Vector2.Zero && AttemptMove(Position + bufferedInput * movementDistance); 
+		} 
+	}
 
 	protected override bool InputDetected(Vector2 inputDirection)
 	{
@@ -609,7 +615,9 @@ public partial class Cogito : Character
 		// cancel buffered inputs
 		bufferedInput = Vector2.Zero;
 
-		gameManager.currentMove--;
+		if (gameManager.currentMove > gameManager.SavedMove)
+			gameManager.currentMove--;
+		
 		gameManager.SavedMove--;
 
 		// get the latest move's data
