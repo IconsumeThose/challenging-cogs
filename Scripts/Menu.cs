@@ -178,7 +178,7 @@ public partial class Menu : Control
 
 					// only show move count if its less than the default
 					if (DataManager.moveCounts[DataManager.currentWorld, currentLevel - 1] < int.MaxValue)
-						moveCountLabel.Text = $"Lease Moves: {DataManager.moveCounts[DataManager.currentWorld, currentLevel - 1]}";
+						moveCountLabel.Text = $"Least Moves: {DataManager.moveCounts[DataManager.currentWorld, currentLevel - 1]}";
 
 					levelScene.Scale = new(1f / 6f, 1f / 6f);
 				}
