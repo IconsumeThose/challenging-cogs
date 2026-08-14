@@ -42,7 +42,8 @@ public partial class Menu : Control
 	[Export] public CheckBox confirmDeleteSave; 
 
 	[Export] public CheckButton holdToMoveSwitch,
-		holdToResetSwitch;
+		holdToResetSwitch,
+		fullscreenSwitch;
 	
 	[Export] public Label worldLabel;
 
@@ -210,6 +211,11 @@ public partial class Menu : Control
 				holdToResetSwitch.SetPressedNoSignal(true);
 			}
 
+			if (DataManager.IsFullscreen)
+			{
+				fullscreenSwitch.SetPressedNoSignal(true);
+			}
+
 			// set all volume sliders to match their current volumes
 			masterVolumeSlider.Value = AudioServer.GetBusVolumeLinear(AudioServer.GetBusIndex("Master")) * 100;
 			musicVolumeSlider.Value = AudioServer.GetBusVolumeLinear(AudioServer.GetBusIndex("Music")) * 100;
@@ -227,13 +233,9 @@ public partial class Menu : Control
 	{
 		if (Input.IsActionJustPressed("ToggleFullscreen"))
 		{
-			bool isFullscreen = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
-
-			DisplayServer.WindowMode targetMode = isFullscreen ? DisplayServer.WindowMode.Windowed : DisplayServer.WindowMode.Fullscreen;
-
-			DisplayServer.WindowSetMode(targetMode);
+			OnFullscreenToggled(!DataManager.IsFullscreen);
 		}
-		
+
 		if (Name != "LevelSelect")
 			return;
 
@@ -288,6 +290,12 @@ public partial class Menu : Control
 			confirmDeleteSave.Text = "Save Deleted!";
 			OnSettingsPressed();
 		}
+	}
+
+	public void OnDefaultSettingsPressed()
+	{
+		DataManager.DefaultSettings();
+		OnSettingsPressed();
 	}
 
 	public void OnSettingsPressed()
@@ -397,6 +405,17 @@ public partial class Menu : Control
 	public void OnHoldToResetToggled(bool toggledOn)
 	{
 		DataManager.holdToReset = toggledOn;
+	}
+
+	public void OnFullscreenToggled(bool toggledOn)
+	{
+		GD.Print(toggledOn);
+		DataManager.SetFullScreen(toggledOn);
+		
+		if (Name == "SettingsMenu")
+		{
+			OnSettingsPressed();
+		}
 	}
 
 	/** <summary>Closes the game</summary> */

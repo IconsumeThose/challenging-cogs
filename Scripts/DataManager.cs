@@ -20,6 +20,9 @@ public partial class DataManager : Node
 
 	public static DataManager instance;
 
+/** <summary>returns true if fullscreen</summary> */
+	public static bool IsFullscreen { get { return DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen; } }
+
 	/** <summary>Get the path of the next level</summary> */
 	public static string LevelPath(int world, int level)
 	{
@@ -129,6 +132,7 @@ public partial class DataManager : Node
 		saveFile.StoreVar(SaveBusVolume("SFX"));
 		saveFile.StoreVar(SaveHoldToReset());
 		saveFile.StoreVar(SaveMoveCounts());
+		saveFile.StoreVar(SaveFullscreenState());
 
 		saveFile.Close();
 	}
@@ -143,7 +147,8 @@ public partial class DataManager : Node
 		musicVolume,
 		SFXVolume,
 		holdToReset,
-		moveCounts
+		moveCounts,
+		fullscreen
 	}
 
 	protected static int SaveCurrentLevel()
@@ -188,6 +193,11 @@ public partial class DataManager : Node
 	protected static bool SaveHoldToReset()
 	{
 		return holdToReset;
+	}
+
+	protected static bool SaveFullscreenState()
+	{
+		return IsFullscreen;
 	}
 
 	protected static void LoadCurrentLevel(Variant currentLevelData)
@@ -248,6 +258,13 @@ public partial class DataManager : Node
 		DataManager.holdToReset = holdToReset;
 	}
 
+	protected static void LoadFullscreenState(Variant fullScreenStateData)
+	{
+		bool fullScreenState = fullScreenStateData.AsBool();
+
+		SetFullScreen(fullScreenState);
+	}
+
 	public static void ResetMoveCounts()
 	{
 		moveCounts = new int[9, 15];
@@ -266,14 +283,30 @@ public partial class DataManager : Node
 	{
 		savedLevel = 1;
 		savedWorld = 1;
+		ResetMoveCounts();
+		SaveGame(true, false);
+		LoadGame();
+	}
+
+	/** <summary>Reset the settings to default</summary> */
+	public static void DefaultSettings()
+	{
 		holdToMove = false;
 		LoadBusVolume(1, SaveTypes.masterVolume);
 		LoadBusVolume(1, SaveTypes.musicVolume);
 		LoadBusVolume(1, SaveTypes.SFXVolume);
 		holdToReset = true;
-		ResetMoveCounts();
+		SetFullScreen(false);
+
 		SaveGame(true, false);
 		LoadGame();
+	}
+
+	public static void SetFullScreen(bool fullscreen)
+	{
+		DisplayServer.WindowMode targetMode = fullscreen ? DisplayServer.WindowMode.Fullscreen : DisplayServer.WindowMode.Windowed;
+		GD.Print(targetMode);
+		DisplayServer.WindowSetMode(targetMode);
 	}
 
 	/** <summary>Load data from file</summary> */
@@ -313,6 +346,9 @@ public partial class DataManager : Node
 					break;
 				case SaveTypes.moveCounts:
 					LoadMoveCounts(nextData);
+					break;
+				case SaveTypes.fullscreen:
+					LoadFullscreenState(nextData);
 					break;
 			}
 
