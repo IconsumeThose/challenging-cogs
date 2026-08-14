@@ -225,6 +225,15 @@ public partial class Menu : Control
 
 	public override void _PhysicsProcess(double delta)
 	{
+		if (Input.IsActionJustPressed("ToggleFullscreen"))
+		{
+			bool isFullscreen = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
+
+			DisplayServer.WindowMode targetMode = isFullscreen ? DisplayServer.WindowMode.Windowed : DisplayServer.WindowMode.Fullscreen;
+
+			DisplayServer.WindowSetMode(targetMode);
+		}
+		
 		if (Name != "LevelSelect")
 			return;
 
