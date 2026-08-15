@@ -235,7 +235,12 @@ public partial class Menu : Control
 		{
 			OnFullscreenToggled(!DataManager.IsFullscreen);
 		}
-
+		if (Input.IsActionJustPressed("DEBUGResetLeastMoves"))
+		{
+			GD.Print(DataManager.currentWorld + " " + DataManager.currentLevel);
+			DataManager.moveCounts[DataManager.currentWorld, DataManager.currentLevel - 1] = int.MaxValue;
+			DataManager.SaveGame();
+		}
 		if (Name != "LevelSelect")
 			return;
 
