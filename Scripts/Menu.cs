@@ -99,7 +99,7 @@ public partial class Menu : Control
 			if (menuItem is TextureButton button)
 			{
 				button.MouseEntered += () => OnMouseEntered(button.GetPath());
-				button.MouseExited += () => OnMouseExited(button.GetPath());
+				button.MouseExited += () => OnMouseExited();
 				button.FocusEntered += () => OnFocusEntered(button.GetPath());
 				button.FocusExited += () => OnFocusExited(button.GetPath());
 			}
@@ -154,7 +154,7 @@ public partial class Menu : Control
 					// bind all the necessary actions for the custom buttons
 					button.Pressed += () => OnLevelButtonPressed(currentLevel);
 					button.MouseEntered += () => OnMouseEntered(subViewportContainer.GetPath());
-					button.MouseExited += () => OnMouseExited(subViewportContainer.GetPath());
+					button.MouseExited += () => OnMouseExited();
 					button.FocusEntered += () => OnFocusEntered(subViewportContainer.GetPath());
 					button.FocusExited += () => OnFocusExited(subViewportContainer.GetPath());
 
@@ -359,7 +359,7 @@ public partial class Menu : Control
 		}
 	}
 	
-	public void OnMouseExited(NodePath nodePath)
+	public void OnMouseExited()
 	{
 		
 	}

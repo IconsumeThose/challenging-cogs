@@ -23,6 +23,8 @@ public partial class Snake : Character
 	/** <summary>The direction the snake starts in which also depends on if the snake will move vertically or horizontally</summary> */
 	[Export] public StartingSnakeDirection startingSnakeDirection = StartingSnakeDirection.upOrRight;
 	
+	[Export] public Texture2D enemySpriteSheet;
+
 	/** <summary>The current direction the snake will move in along its dedicated axis</summary> */
 	public Vector2 direction = Vector2.Up;
 
@@ -36,7 +38,39 @@ public partial class Snake : Character
 	public override void _Ready()
 	{
 		if (snakeDirection == SnakeDirection.horizontal)
+		{
 			direction = Vector2.Right;
+		}
+		else
+		{
+			animatedSprite.SpriteFrames = (SpriteFrames)animatedSprite.SpriteFrames.Duplicate();
+			SpriteFrames snakeFrames = animatedSprite.SpriteFrames;
+
+			snakeFrames.Clear("Idle");
+			snakeFrames.Clear("Move");
+
+			// instantiate new atlas textures to create snertical sprites
+			AtlasTexture snerticalIdle0 = new(),
+				snerticalIdle1 = new(),
+				snerticalMove0 = new(),
+				snerticalMove1 = new();
+
+			// set atlas texture for all animation frames to sprite sheet
+			snerticalIdle0.Atlas = snerticalIdle1.Atlas = snerticalMove0.Atlas = snerticalMove1.Atlas = enemySpriteSheet;
+
+			// set texture regions to where the associated tiles are
+			snerticalIdle0.Region = new(tileSize * new Vector2(0, 1), tileSize * new Vector2(1, 1));
+			snerticalIdle1.Region = new(tileSize * new Vector2(1, 1), tileSize * new Vector2(1, 1));
+			snerticalMove0.Region = new(tileSize * new Vector2(2, 1), tileSize * new Vector2(1, 1));
+			snerticalMove1.Region = new(tileSize * new Vector2(3, 1), tileSize * new Vector2(1, 1));
+
+			// add all the frames to the associated animations
+			snakeFrames.AddFrame("Idle", snerticalIdle0);
+			snakeFrames.AddFrame("Idle", snerticalIdle1);
+
+			snakeFrames.AddFrame("Move", snerticalMove0);
+			snakeFrames.AddFrame("Move", snerticalMove1);
+		}
 
 		if (startingSnakeDirection == StartingSnakeDirection.downOrLeft)
 			direction *= -1;
