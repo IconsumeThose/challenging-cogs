@@ -315,11 +315,12 @@ public partial class Cogito : Character
 		}
 
 		// allow undoing and resetting while game is running or on lose menu
-		if (Engine.TimeScale == 1 || (Engine.TimeScale == 0 && loseMenu.Visible))
+		if (Engine.TimeScale == 1 || (Engine.TimeScale == 0 && (loseMenu.Visible || winMenu.Visible)))
 		{
 			if (Input.IsActionJustPressed("Undo"))
 			{
 				loseMenu.Visible = false;
+				winMenu.Visible = false;
 				Engine.TimeScale = 1;
 				Undo();
 			}

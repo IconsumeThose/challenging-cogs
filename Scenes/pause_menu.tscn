@@ -12,7 +12,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_emv3i")
-modulatableMenuItem = [NodePath("VBoxContainer/ContinueButton"), NodePath("VBoxContainer/RestartButton"), NodePath("VBoxContainer/MainMenuButton")]
+modulatableMenuItem = [NodePath("VBoxContainer/ContinueButton"), NodePath("VBoxContainer/RestartButton"), NodePath("VBoxContainer/MainMenuButton"), NodePath("VBoxContainer/LevelSelectButton")]
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=943029764]
 layout_mode = 1
@@ -42,10 +42,15 @@ text = "Continue"
 layout_mode = 2
 text = "Restart Level"
 
+[node name="LevelSelectButton" type="Button" parent="VBoxContainer" unique_id=1376724446]
+layout_mode = 2
+text = "Level Select"
+
 [node name="MainMenuButton" type="Button" parent="VBoxContainer" unique_id=2125696849]
 layout_mode = 2
 text = "Main Menu"
 
 [connection signal="pressed" from="VBoxContainer/ContinueButton" to="." method="OnContinuePressed"]
 [connection signal="pressed" from="VBoxContainer/RestartButton" to="." method="OnRestartPressed"]
+[connection signal="pressed" from="VBoxContainer/LevelSelectButton" to="." method="OnLevelSelectPressed"]
 [connection signal="pressed" from="VBoxContainer/MainMenuButton" to="." method="OnMainMenuPressed"]
