@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://gsosdetchpix" path="res://Scripts/Snake.cs" id="1_744d6"]
 [ext_resource type="Texture2D" uid="uid://dok1fu6yin71i" path="res://Assets/Sprites/cogitosheet.png" id="3_squsf"]
-[ext_resource type="Texture2D" uid="uid://c6tb0lmy4jsyr" path="res://Assets/Sprites/enemysheet.png" id="4_gq165"]
+[ext_resource type="Texture2D" uid="uid://c6tb0lmy4jsyr" path="res://Assets/Sprites/fungusenemysheet.png" id="4_gq165"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7hp1u"]
 atlas = ExtResource("3_squsf")

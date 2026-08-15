@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c6tb0lmy4jsyr"
-path="res://.godot/imported/enemysheet.png-7c84a83a98862c285fe89b7f0652fc64.ctex"
+path="res://.godot/imported/fungusenemysheet.png-a2b483b25ddc7da7bd27040a7b96e116.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Sprites/enemysheet.png"
-dest_files=["res://.godot/imported/enemysheet.png-7c84a83a98862c285fe89b7f0652fc64.ctex"]
+source_file="res://Assets/Sprites/fungusenemysheet.png"
+dest_files=["res://.godot/imported/fungusenemysheet.png-a2b483b25ddc7da7bd27040a7b96e116.ctex"]
 
 [params]
 
