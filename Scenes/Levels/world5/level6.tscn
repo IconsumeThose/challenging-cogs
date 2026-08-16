@@ -46,7 +46,7 @@ offset_bottom = 1080.0
 gameManager = NodePath("../GameManager")
 
 [node name="GameManager" parent="." unique_id=1933725455 node_paths=PackedStringArray("ui", "obstacleLayer", "groundLayer") instance=ExtResource("6_fro67")]
-maxParadigmShifts = 19
+maxParadigmShifts = 17
 maxStamina = 2
 levelName = "Concentric"
 ui = NodePath("../UI")
