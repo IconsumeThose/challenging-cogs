@@ -305,7 +305,6 @@ public partial class DataManager : Node
 	public static void SetFullScreen(bool fullscreen)
 	{
 		DisplayServer.WindowMode targetMode = fullscreen ? DisplayServer.WindowMode.Fullscreen : DisplayServer.WindowMode.Windowed;
-		GD.Print(targetMode);
 		DisplayServer.WindowSetMode(targetMode);
 	}
 

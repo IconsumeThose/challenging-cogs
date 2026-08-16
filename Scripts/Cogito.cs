@@ -131,6 +131,12 @@ public partial class Cogito : Character
 		if (undoHappened)
 			undoHappened = false;
 
+		if (Input.IsActionJustPressed("DEBUGResetLeastMoves") && !gameManager.IsLevelSelect)
+		{
+			DataManager.moveCounts[DataManager.currentWorld, DataManager.currentLevel] = int.MaxValue;
+			DataManager.SaveGame();
+		}
+
 		base._PhysicsProcess(delta);
 	}
 	
