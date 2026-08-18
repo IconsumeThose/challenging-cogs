@@ -12,8 +12,6 @@ public partial class Cogito : Character
 	[Export] public AnimatedSprite2D fallingSandSprite,
 		candyAuraSprite;
 
-	[Export] public AnimationPlayer candyAuraAnimationPlayer;
-
 	/** <summary>Color of candy aura in ascending order of candies eaten</summary> */
 	[Export] public Godot.Collections.Array<Color> candyAuroma = [
 		new("FF000080"),
@@ -555,19 +553,31 @@ public partial class Cogito : Character
 		}
 	}
 
+	/** <summary>After the initial animation finished, play the looping aura animation</summary> */
+	private void OnCandyAuraAnimationFinished()
+	{
+		if (candyAuraSprite.Animation == "default")
+			candyAuraSprite.Play("aura");
+	}
 
 	/** <summary>Update aura to correct state and color</summary> */
 	protected void UpdateCandyAura()
 	{
 		if (candiesEaten == 0)
 		{
-			candyAuraAnimationPlayer.Play("RESET");
+			candyAuraSprite.Stop();
+			candyAuraSprite.Animation = "default";
+		
+			candyAuraSprite.Visible = false;
+
 			return;
 		}
 
-		// default animation is selecting after getting reset so only start playing once 
+		candyAuraSprite.Visible = true;
+
+		// default animation is selected after getting reset so only start playing once 
 		if (candyAuraSprite.Animation == "default")
-			candyAuraAnimationPlayer.Play("StartCandyAura");
+			candyAuraSprite.Play("default");
 
 		if (candiesEaten <= 7)
 			candyAuraSprite.Modulate = candyAuroma[candiesEaten - 1];
