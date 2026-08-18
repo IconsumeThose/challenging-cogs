@@ -9,7 +9,19 @@ public partial class Cogito : Character
 	[Export] public double resetHoldTime = 0.5;
 
 	/** <summary>Original sand node used to handle the falling animation. These will be instantiated and the sprite corrects to the world automatically</summary> */
-	[Export] public AnimatedSprite2D fallingSandSprite;
+	[Export] public AnimatedSprite2D fallingSandSprite,
+		candyAuraSprite;
+
+	/** <summary>Color of candy aura in ascending order of candies eaten</summary> */
+	[Export] public Godot.Collections.Array<Color> candyAuroma = [
+		new("FF000080"),
+		new("FF800080"),
+		new("FFF30080"),
+		new("00C71980"),
+		new("00B7FF80"),
+		new("0047FF80"),
+		new("A41FFF80"),
+	];
 
 	/** <summary>Used for the falling sand animation</summary> */
 	public PackedScene fallingSandScene = new();
@@ -82,7 +94,8 @@ public partial class Cogito : Character
 		fallingSandFrames.Clear("default");
 
 		// get the current sprite sheet source for the level
-		TileSetSource source = gameManager.groundLayer.TileSet.GetSource(1);
+		TileSetSource groundSource = gameManager.groundLayer.TileSet.GetSource(1);
+		TileSetSource obstacleSource = gameManager.obstacleLayer.TileSet.GetSource(1);
 
 		// instantiate new atlas textures to create world specific animations
 		AtlasTexture fallingSandTexture = new(),
@@ -90,13 +103,15 @@ public partial class Cogito : Character
 			balloonPoppedTexture = new(),
 			emptyTexture = new();
 
-		if (source is TileSetAtlasSource atlasSource)
+		if (groundSource is TileSetAtlasSource groundAtlasSource && obstacleSource is TileSetAtlasSource obstacleAtlasStore)
 		{
 			// get full atlas texture
-			Texture2D fullTexture = atlasSource.Texture;
+			Texture2D fullGroundTexture = groundAtlasSource.Texture;
+			Texture2D fullObstacleTexture = obstacleAtlasStore.Texture;
 
 			// set atlas texture for all animation frames to sprite sheet
-			fallingSandTexture.Atlas = balloonTexture.Atlas = balloonPoppedTexture.Atlas = emptyTexture.Atlas = fullTexture;
+			fallingSandTexture.Atlas = fullGroundTexture;
+			balloonTexture.Atlas = balloonPoppedTexture.Atlas = emptyTexture.Atlas = fullObstacleTexture;
 
 			// set texture regions to where the associated tiles are
 			fallingSandTexture.Region = new(new(0, 0), tileSize * new Vector2(1, 1));
@@ -133,7 +148,7 @@ public partial class Cogito : Character
 
 		if (Input.IsActionJustPressed("DEBUGResetLeastMoves") && !gameManager.IsLevelSelect)
 		{
-			DataManager.moveCounts[DataManager.currentWorld, DataManager.currentLevel] = int.MaxValue;
+			DataManager.moveCounts[DataManager.currentWorld, DataManager.currentLevel - 1] = int.MaxValue;
 			DataManager.SaveGame();
 		}
 
@@ -197,6 +212,7 @@ public partial class Cogito : Character
 	{
 		base.CandyInteraction();
 		candiesEaten++;
+		UpdateCandyAura();
 		gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
 	}
 
@@ -505,6 +521,8 @@ public partial class Cogito : Character
 		{
 			candiesEaten--;
 
+			UpdateCandyAura();
+
 			foreach (Vector2I rockPosition in demolishedRocks)
 			{
 				changedTiles[rockPosition.X, rockPosition.Y] = GetTileCustomType(rockPosition,
@@ -533,6 +551,25 @@ public partial class Cogito : Character
 				Lose();
 			}
 		}
+	}
+
+
+	/** <summary>Update aura to correct state and color</summary> */
+	protected void UpdateCandyAura()
+	{
+		if (candiesEaten == 0)
+		{
+			candyAuraSprite.Visible = false;
+			candyAuraSprite.Stop();
+			return;
+		}
+
+		candyAuraSprite.Visible = true;
+
+		if (candiesEaten <= 7)
+			candyAuraSprite.Modulate = candyAuroma[candiesEaten - 1];
+		
+		candyAuraSprite.Play();
 	}
 
 	protected override void OnSuccessfulAttemptMove()
@@ -660,6 +697,8 @@ public partial class Cogito : Character
 		}
 
 		candiesEaten = previousMove.candiesEaten;
+		UpdateCandyAura();
+
 		balloonIsActive = previousMove.balloonIsActive;
 
 		if (balloonIsActive)

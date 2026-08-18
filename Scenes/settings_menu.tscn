@@ -115,9 +115,7 @@ layout_mode = 2
 text = "Confirm Deletion"
 
 [connection signal="focus_entered" from="BackButton" to="." method="OnMouseEntered" binds= [NodePath("BackButton")]]
-[connection signal="focus_exited" from="BackButton" to="." method="OnMouseExited" binds= [NodePath("BackButton")]]
 [connection signal="mouse_entered" from="BackButton" to="." method="OnMouseEntered" binds= [NodePath("BackButton")]]
-[connection signal="mouse_exited" from="BackButton" to="." method="OnMouseExited" binds= [NodePath("BackButton")]]
 [connection signal="pressed" from="BackButton" to="." method="OnMainMenuPressed"]
 [connection signal="value_changed" from="VBoxContainer/MasterVolumeSlider" to="." method="OnSliderChanged" binds= [0]]
 [connection signal="value_changed" from="VBoxContainer/MusicVolumeSlider" to="." method="OnSliderChanged" binds= [1]]

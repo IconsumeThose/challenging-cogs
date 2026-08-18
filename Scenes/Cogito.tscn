@@ -624,14 +624,65 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_kuace"]
+atlas = ExtResource("4_1ujft")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7tmxi"]
+atlas = ExtResource("4_1ujft")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v27w3"]
+atlas = ExtResource("4_1ujft")
+region = Rect2(64, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jpg51"]
+atlas = ExtResource("4_1ujft")
+region = Rect2(96, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ymiro"]
+atlas = ExtResource("4_1ujft")
+region = Rect2(128, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gy8em"]
+atlas = ExtResource("4_1ujft")
+region = Rect2(160, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_oawf5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kuace")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7tmxi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v27w3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jpg51")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ymiro")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gy8em")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_tr1jv"]
 
-[node name="Cogito" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("fallingSandSprite", "balloonSprite", "animatedSprite", "animationPlayer")]
+[node name="Cogito" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("fallingSandSprite", "candyAuraSprite", "balloonSprite", "animatedSprite", "animationPlayer")]
 z_index = 2
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_eoj5r")
 fallingSandSprite = NodePath("FallingSand")
+candyAuraSprite = NodePath("CandyAura")
 balloonSprite = NodePath("Balloon")
 movementSpeed = 250.0
 animatedSprite = NodePath("AnimatedSprite2D")
@@ -662,6 +713,13 @@ visible = false
 z_index = -1
 position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_pidn6")
+
+[node name="CandyAura" type="AnimatedSprite2D" parent="." unique_id=1174043248]
+visible = false
+z_index = -1
+sprite_frames = SubResource("SpriteFrames_oawf5")
+autoplay = "default"
+frame_progress = 0.34091303
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1387666732]
 
