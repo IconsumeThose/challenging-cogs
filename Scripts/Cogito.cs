@@ -12,6 +12,8 @@ public partial class Cogito : Character
 	[Export] public AnimatedSprite2D fallingSandSprite,
 		candyAuraSprite;
 
+	[Export] public AnimationPlayer candyAuraAnimationPlayer;
+
 	/** <summary>Color of candy aura in ascending order of candies eaten</summary> */
 	[Export] public Godot.Collections.Array<Color> candyAuroma = [
 		new("FF000080"),
@@ -559,17 +561,16 @@ public partial class Cogito : Character
 	{
 		if (candiesEaten == 0)
 		{
-			candyAuraSprite.Visible = false;
-			candyAuraSprite.Stop();
+			candyAuraAnimationPlayer.Play("RESET");
 			return;
 		}
 
-		candyAuraSprite.Visible = true;
+		// default animation is selecting after getting reset so only start playing once 
+		if (candyAuraSprite.Animation == "default")
+			candyAuraAnimationPlayer.Play("StartCandyAura");
 
 		if (candiesEaten <= 7)
 			candyAuraSprite.Modulate = candyAuroma[candiesEaten - 1];
-		
-		candyAuraSprite.Play();
 	}
 
 	protected override void OnSuccessfulAttemptMove()

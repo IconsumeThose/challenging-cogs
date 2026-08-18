@@ -624,14 +624,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_kuace"]
-atlas = ExtResource("4_1ujft")
-region = Rect2(0, 96, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7tmxi"]
-atlas = ExtResource("4_1ujft")
-region = Rect2(32, 96, 32, 32)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_v27w3"]
 atlas = ExtResource("4_1ujft")
 region = Rect2(64, 96, 32, 32)
@@ -648,15 +640,17 @@ region = Rect2(128, 96, 32, 32)
 atlas = ExtResource("4_1ujft")
 region = Rect2(160, 96, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_kuace"]
+atlas = ExtResource("4_1ujft")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7tmxi"]
+atlas = ExtResource("4_1ujft")
+region = Rect2(32, 96, 32, 32)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_oawf5"]
 animations = [{
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kuace")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7tmxi")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_v27w3")
 }, {
@@ -670,19 +664,111 @@ animations = [{
 "texture": SubResource("AtlasTexture_gy8em")
 }],
 "loop": 1,
+"name": &"aura",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kuace")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7tmxi")
+}],
+"loop": 0,
 "name": &"default",
 "speed": 5.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tr1jv"]
 
-[node name="Cogito" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("fallingSandSprite", "candyAuraSprite", "balloonSprite", "animatedSprite", "animationPlayer")]
+[sub_resource type="Animation" id="Animation_3f7oe"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CandyAura:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CandyAura")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"stop"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CandyAura:animation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"default"]
+}
+
+[sub_resource type="Animation" id="Animation_7joi7"]
+resource_name = "StartCandyAura"
+length = 0.39999999999999997
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CandyAura:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CandyAura")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [&"default", 1.0, false],
+"method": &"play"
+}, {
+"args": [&"aura", 1.0, false],
+"method": &"play"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xufpq"]
+_data = {
+&"RESET": SubResource("Animation_3f7oe"),
+&"StartCandyAura": SubResource("Animation_7joi7")
+}
+
+[node name="Cogito" type="CharacterBody2D" unique_id=1090785999 node_paths=PackedStringArray("fallingSandSprite", "candyAuraSprite", "candyAuraAnimationPlayer", "balloonSprite", "animatedSprite", "animationPlayer")]
 z_index = 2
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_eoj5r")
 fallingSandSprite = NodePath("FallingSand")
 candyAuraSprite = NodePath("CandyAura")
+candyAuraAnimationPlayer = NodePath("CandyAuraAnimationPlayer")
 balloonSprite = NodePath("Balloon")
 movementSpeed = 250.0
 animatedSprite = NodePath("AnimatedSprite2D")
@@ -718,12 +804,13 @@ sprite_frames = SubResource("SpriteFrames_pidn6")
 visible = false
 z_index = -1
 sprite_frames = SubResource("SpriteFrames_oawf5")
-autoplay = "default"
-frame_progress = 0.34091303
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1387666732]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1744519]
 shape = SubResource("CircleShape2D_tr1jv")
+
+[node name="CandyAuraAnimationPlayer" type="AnimationPlayer" parent="." unique_id=298052817]
+libraries/ = SubResource("AnimationLibrary_xufpq")
 
 [connection signal="body_entered" from="Area2D" to="." method="OnCharacterCollision"]
