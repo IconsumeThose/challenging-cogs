@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://coyygqk1kug4m"]
 
-[ext_resource type="Texture2D" uid="uid://dvb1i8shnusa5" path="res://Assets/Backgrounds/tastytreats.png" id="1_axpj1"]
+[ext_resource type="Texture2D" uid="uid://dpbhu46dns6ro" path="res://Assets/Backgrounds/tastytreats.png" id="1_axpj1"]
 [ext_resource type="TileSet" uid="uid://dd0fa00l4pcs1" path="res://TileSets/tasty_ground.tres" id="2_1qkwq"]
 [ext_resource type="TileSet" uid="uid://d38agm057x4qg" path="res://TileSets/tasty_obstacles.tres" id="3_3d16e"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="4_1my2w"]
@@ -30,12 +30,12 @@ tile_set = ExtResource("2_1qkwq")
 tile_map_data = PackedByteArray("AAADAAMAAQABAAAAAAADAAIAAQABAAAAAAADAAQAAQABAAAAAAAEAAgAAQADAAEAAAAGAAcAAQAGAAIAAAANAAUAAQAGAAIAAAANAAYAAQAGAAIAAAAOAAUAAQADAAEAAAAOAAYAAQAHAAIAAAAFAAUAAQABAAAAAAAGAAQAAQABAAAAAAAQAAMAAQAGAAIAAAAHAAQAAQADAAEAAAAJAAQAAQAGAAIAAAAQAAkAAQAGAAIAAAAQAAcAAQAGAAIAAAACAAMAAQAHAAIAAAAJAAgAAQABAAAAAAAKAAcAAQABAAAAAAALAAgAAQABAAAAAAAKAAgAAQADAAEAAAA=")
 tile_set = ExtResource("3_3d16e")
 
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("4_1my2w")]
+[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("4_1my2w")]
 position = Vector2(208, 208)
-gameManager = NodePath("../../GameManager")
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
+gameManager = NodePath("../../GameManager")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

@@ -21,6 +21,7 @@ public partial class Menu : Control
 		new("000000")
 	];
 
+	[Export]
 	public Godot.Collections.Array<string> worldNames = [
 		"T",
 		"Banana Beach",
