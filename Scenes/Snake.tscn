@@ -365,9 +365,9 @@ animationPlayer = NodePath("AnimationPlayer")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1841223617]
 sprite_frames = SubResource("SpriteFrames_e0kin")
-animation = &"Move"
+animation = &"Idle"
 autoplay = "Idle"
-frame_progress = 0.8843278
+frame_progress = 0.10228846
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1509439521]
 shape = SubResource("CircleShape2D_kihqq")

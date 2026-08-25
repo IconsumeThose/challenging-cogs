@@ -347,7 +347,7 @@ public partial class Cogito : Character
 				Undo();
 			}
 			// reset the level when reset button is pressed, allow instantly resetting while on a menu screen
-			else if (Input.IsActionJustPressed("Reset") && (!DataManager.holdToReset ^ Engine.TimeScale == 0))
+			else if (Input.IsActionJustPressed("Reset") && (!DataManager.holdToReset || Engine.TimeScale == 0))
 			{
 				winMenu.OnRestartPressed();
 			}

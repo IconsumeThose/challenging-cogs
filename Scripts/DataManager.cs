@@ -114,7 +114,6 @@ public partial class DataManager : Node
 		// update the move counter
 		if (!bypassCheck && moveCount < moveCounts[currentWorld, currentLevel - 1])
 		{
-			GD.Print("TEST" + moveCount);
 			moveCounts[currentWorld, currentLevel - 1] = moveCount;
 		}
 
