@@ -70,6 +70,8 @@ public partial class Snake : Character
 
 			snakeFrames.AddFrame("Move", snerticalMove0);
 			snakeFrames.AddFrame("Move", snerticalMove1);
+
+			animatedSprite.Play("Idle");
 		}
 
 		if (startingSnakeDirection == StartingSnakeDirection.downOrLeft)

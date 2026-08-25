@@ -347,7 +347,7 @@ public partial class Cogito : Character
 				Undo();
 			}
 			// reset the level when reset button is pressed, allow instantly resetting while on a menu screen
-			else if (Input.IsActionJustPressed("Reset") && (!DataManager.holdToReset ^ Engine.TimeScale == 0))
+			else if (Input.IsActionJustPressed("Reset") && (!DataManager.holdToReset || Engine.TimeScale == 0))
 			{
 				winMenu.OnRestartPressed();
 			}
@@ -681,7 +681,7 @@ public partial class Cogito : Character
 		// delete any falling sand if it exists
 		if (IsInstanceValid(fallingSand))
 			fallingSand.QueueFree();
-
+		
 		foreach (LayeredCustomTileData tileData in previousMove.changedTiles)
 		{
 			if (tileData == null)
@@ -740,6 +740,8 @@ public partial class Cogito : Character
 		{
 			Character character = characterPositionPair.Key;
 			CharacterMovement characterMovement = characterPositionPair.Value;
+			
+			character.teleported = false;
 
 			if (character.stoppedMidMovement)
 				character.Position = character.TargetPosition;

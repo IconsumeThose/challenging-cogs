@@ -313,7 +313,9 @@ public partial class DataManager : Node
 	{
 		if (!FileAccess.FileExists($"user://{saveFileName}"))
 		{
-			return; // don't do anything if no save file exists
+			// initialize data if no save currently exists
+			ResetSave();
+			return; 
 		}
 
 		SaveTypes currentType = 0;
