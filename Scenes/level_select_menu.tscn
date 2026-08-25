@@ -17,11 +17,25 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_52mtt"]
 atlas = ExtResource("1_271b8")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1ekpb"]
+load_path = "res://.godot/imported/uisheet.png-09bb1f4dfd72e354e963dd9a7a854a74.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0xcvp"]
+atlas = SubResource("CompressedTexture2D_1ekpb")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_mpqlx"]
+load_path = "res://.godot/imported/uisheet.png-09bb1f4dfd72e354e963dd9a7a854a74.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2pb1k"]
+atlas = SubResource("CompressedTexture2D_mpqlx")
 region = Rect2(7, 1, 50, 30)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3g6d4"]
 atlas = ExtResource("1_271b8")
-region = Rect2(64, 0, 64, 32)
+region = Rect2(80, 5, 30, 22)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_2pb1k"]
 load_path = "res://.godot/imported/bananabeach.png-7632886a2f237846416850ed2ae53aeb.ctex"
@@ -34,7 +48,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_52mtt")
-modulatableMenuItem = [NodePath("BackButton"), NodePath("PreviousWorld"), NodePath("NextWorld")]
+modulatableMenuItem = [NodePath("BackButton"), NodePath("NextWorld"), NodePath("PreviousWorld")]
 worldBackgrounds = Array[CompressedTexture2D]([ExtResource("2_yts2j"), ExtResource("4_aljgx"), ExtResource("3_16w6l"), ExtResource("4_phdj3"), ExtResource("6_yts2j"), ExtResource("7_era5x"), ExtResource("8_1ekpb"), ExtResource("9_0xcvp"), ExtResource("10_mpqlx")])
 background = NodePath("Background")
 worldLabel = NodePath("WorldName")
@@ -46,41 +60,54 @@ self_modulate = Color(1, 0.2784314, 1, 1)
 layout_mode = 1
 offset_left = 80.0
 offset_top = 60.0
-offset_right = 130.0
-offset_bottom = 90.0
+offset_right = 112.0
+offset_bottom = 92.0
 scale = Vector2(3, 3)
 texture_normal = SubResource("AtlasTexture_52mtt")
 
 [node name="Sprite2D" type="Sprite2D" parent="BackButton" unique_id=1584597704]
-position = Vector2(25, 15)
-texture = SubResource("AtlasTexture_3g6d4")
+position = Vector2(16, 16)
+texture = SubResource("AtlasTexture_0xcvp")
 
-[node name="PreviousWorld" type="Button" parent="." unique_id=282120577]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 80.0
-offset_top = -170.0
-offset_right = 320.0
-offset_bottom = -60.0
-grow_vertical = 0
-text = "<"
-
-[node name="NextWorld" type="Button" parent="." unique_id=449615557]
+[node name="NextWorld" type="TextureButton" parent="." unique_id=1278368240]
+self_modulate = Color(1, 0.2784314, 1, 1)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -320.0
-offset_top = -170.0
-offset_right = -80.0
-offset_bottom = -60.0
+offset_left = -230.0
+offset_top = -150.0
+offset_right = -180.0
+offset_bottom = -118.0
 grow_horizontal = 0
 grow_vertical = 0
-text = ">"
+scale = Vector2(3, 3)
+texture_normal = SubResource("AtlasTexture_2pb1k")
+
+[node name="Sprite2D" type="Sprite2D" parent="NextWorld" unique_id=1389369919]
+position = Vector2(24, 15)
+texture = SubResource("AtlasTexture_3g6d4")
+flip_h = true
+
+[node name="PreviousWorld" type="TextureButton" parent="." unique_id=776407059]
+self_modulate = Color(1, 0.2784314, 1, 1)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 80.0
+offset_top = -150.0
+offset_right = 130.0
+offset_bottom = -120.0
+grow_vertical = 0
+scale = Vector2(3, 3)
+texture_normal = SubResource("AtlasTexture_2pb1k")
+
+[node name="Sprite2D" type="Sprite2D" parent="PreviousWorld" unique_id=2014635374]
+position = Vector2(24, 15)
+texture = SubResource("AtlasTexture_3g6d4")
 
 [node name="LevelPreview1" type="Node2D" parent="." unique_id=1304970288]
 position = Vector2(80, 220)
@@ -657,5 +684,5 @@ text = "World X: Yo Mamma"
 label_settings = ExtResource("13_era5x")
 
 [connection signal="pressed" from="BackButton" to="." method="OnMainMenuPressed"]
-[connection signal="pressed" from="PreviousWorld" to="." method="OnPreviousWorldPressed"]
 [connection signal="pressed" from="NextWorld" to="." method="OnNextWorldPressed"]
+[connection signal="pressed" from="PreviousWorld" to="." method="OnPreviousWorldPressed"]

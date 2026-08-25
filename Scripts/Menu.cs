@@ -53,7 +53,7 @@ public partial class Menu : Control
 		SFXVolumeSlider;
 
 	[Export]
-	public Button nextWorldButton,
+	public TextureButton nextWorldButton,
 		previousWorldButton;
 
 	/** <summary>Don't call outside of MoveCountsShow</summary> */
