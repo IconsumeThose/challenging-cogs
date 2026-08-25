@@ -681,7 +681,7 @@ public partial class Cogito : Character
 		// delete any falling sand if it exists
 		if (IsInstanceValid(fallingSand))
 			fallingSand.QueueFree();
-
+		
 		foreach (LayeredCustomTileData tileData in previousMove.changedTiles)
 		{
 			if (tileData == null)
@@ -740,6 +740,8 @@ public partial class Cogito : Character
 		{
 			Character character = characterPositionPair.Key;
 			CharacterMovement characterMovement = characterPositionPair.Value;
+			
+			character.teleported = false;
 
 			if (character.stoppedMidMovement)
 				character.Position = character.TargetPosition;

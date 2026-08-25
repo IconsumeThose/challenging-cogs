@@ -24,8 +24,16 @@ public partial class Character : CharacterBody2D
 	[Export]
 	public AnimatedSprite2D animatedSprite;
 
-	/** <summary>Reference to </summary> */
+	/** <summary>Reference to animation player</summary> */
 	[Export] public AnimationPlayer animationPlayer;
+
+	/** <summary>Color of teleporters</summary> */
+	[Export] public Godot.Collections.Array<Color> teleporterColors = [
+		new("1d93d3"),
+		new("c45caf"),
+		new("74c433"),
+		new("ffd20c")
+	];
 
 	/** <summary>List of all obstacles that block movement</summary> */
 	protected readonly List<string> blockingObstacles =
@@ -154,8 +162,11 @@ public partial class Character : CharacterBody2D
 		/** <summary>Enter the idle state</summary> */
 		public override void Enter(BaseEnterStateData enterStateData = null)
 		{
-			// set animation to idle
-			Character.SetSpriteAnimation("Idle");
+			if (!Character.teleported)
+			{
+				// set animation to idle
+				Character.SetSpriteAnimation("Idle");
+			}
 
 			// check if all characters are dead or idle to increment current move
 			Character.gameManager.CheckToIncrementCurrentMove();
@@ -191,8 +202,6 @@ public partial class Character : CharacterBody2D
 
 			// ensure proper data when starting a move
 			Character.UpdateCurrentTileData();
-
-			Character.teleported = movingStateEnterData.teleport;
 			Character.TargetPosition = movingStateEnterData.newPosition;
 			Character.targetTileDifferenceVector = movingStateEnterData.newTilePosition - Character.currentTileData.groundTile.position;
 
@@ -359,6 +368,9 @@ public partial class Character : CharacterBody2D
 				&& Character.targetTileDifferenceVector == Vector2.Zero) && Character.Teleport(true))
 			{
 				Character.TelePop();
+				Vector2I teleporterAtlasPosition = Character.gameManager.groundLayer.GetCellAtlasCoords(Character.currentTileData.groundTile.position);
+
+				Character.animatedSprite.Modulate = Character.teleporterColors[teleporterAtlasPosition.X - 4];
 
 				Character.SetCharacterState(Character.animatingState, new AnimatingStateEnterData("Teleport"));
 			}
@@ -402,6 +414,11 @@ public partial class Character : CharacterBody2D
 				Character.dying = false;
 
 			Engine.TimeScale = 1;
+
+			// don't stop the animation for teleporting
+			if (Character.teleported)
+				return;
+
 			Character.animationPlayer.Stop();
 			Character.animationPlayer.Play("RESET");
 		}
@@ -637,7 +654,7 @@ public partial class Character : CharacterBody2D
 		Vector2 movementDirection = (newPosition - Position).Normalized();
 
 		// make character face direction of movement
-		if (!dryRun)
+		if (!dryRun && !teleport)
 		{
 			teleported = false;
 
@@ -669,6 +686,7 @@ public partial class Character : CharacterBody2D
 			// do not enter moving state for dry run
 			if (!dryRun)
 			{
+				teleported = teleport;
 				SetCharacterState(movingState, new MovingStateEnterDate(newPosition, teleport, newTilePosition));
 			}
 
@@ -818,7 +836,7 @@ public partial class Character : CharacterBody2D
 		if (currentCharacterState == animatingState || currentCharacterState == deadState)
 			return;
 
-		if (!UpdateMove() || (!gameManager.AllCharactersIdle && !OverrideAllCharactersIdleCheck()))
+		if (!UpdateMove() || (!gameManager.AllCharactersIdle && !OverrideAllCharactersIdleCheck()) || animationPlayer.IsPlaying())
 			return;
 
 		Vector2 inputDirection = GetInputDirection();
@@ -852,7 +870,9 @@ public partial class Character : CharacterBody2D
 	/** <summary>Set character state to idle at end of teleport animation</summary> */
 	protected void EndTeleportAnimation()
 	{
-		SetCharacterState(idleState);
+		teleported = false;
+		animatedSprite.Modulate = new("FFFFFF");
+		SetSpriteAnimation("Idle");
 	}
 
 	/** <summary>This override allows for the character to continue processing if all characters are not idle</summary> */
