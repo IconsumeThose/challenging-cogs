@@ -285,6 +285,7 @@ public partial class Cogito : Character
 	{
 		base.Lose();
 		
+		candyAuraSprite.Visible = false;
 		Engine.TimeScale = 0;
 		loseMenu.Visible = true;
 		loseMenu.GetNode<Button>("VBoxContainer/UndoButton").GrabFocus();
@@ -742,6 +743,7 @@ public partial class Cogito : Character
 			CharacterMovement characterMovement = characterPositionPair.Value;
 			
 			character.teleported = false;
+			character.animatedSprite.Modulate = new("FFFFFF");
 
 			if (character.stoppedMidMovement)
 				character.Position = character.TargetPosition;
