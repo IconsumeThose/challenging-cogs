@@ -5,7 +5,8 @@ using System;
 public partial class DataManager : Node
 {
 	public static string saveFileName = "";
-	[Export(PropertyHint.GlobalSaveFile)] protected string saveFileNameInstance = "save.sav";
+	
+	[Export(PropertyHint.GlobalSaveFile)] protected string saveFileNameInstance = "challengingcogs.sav";
 
 	public static int currentLevel = 1,
 		currentWorld = 1,
@@ -116,25 +117,24 @@ public partial class DataManager : Node
 			moveCounts[currentWorld, currentLevel - 1] = moveCount;
 		}
 
-		using var saveFile = FileAccess.Open($"user://{saveFileName}", FileAccess.ModeFlags.Write);
+		using var saveFileJSON = FileAccess.Open($"user://{saveFileName}", FileAccess.ModeFlags.Write);
 
-		if (saveFile == null)
+		if (saveFileJSON == null)
 		{
 			GD.Print(FileAccess.GetOpenError());
 		}
 
-		// order must match the order of the enum SaveType!
-		saveFile.StoreVar(SaveCurrentWorld());
-		saveFile.StoreVar(SaveCurrentLevel());
-		saveFile.StoreVar(SaveHoldToMove());
-		saveFile.StoreVar(SaveBusVolume("Master"));
-		saveFile.StoreVar(SaveBusVolume("Music"));
-		saveFile.StoreVar(SaveBusVolume("SFX"));
-		saveFile.StoreVar(SaveHoldToReset());
-		saveFile.StoreVar(SaveMoveCounts());
-		saveFile.StoreVar(SaveFullscreenState());
+		saveFileJSON.StoreLine(Json.Stringify(SaveCurrentWorld()));
+		saveFileJSON.StoreLine(Json.Stringify(SaveCurrentLevel()));
+		saveFileJSON.StoreLine(Json.Stringify(SaveHoldToMove()));
+		saveFileJSON.StoreLine(Json.Stringify(SaveBusVolume("Master")));
+		saveFileJSON.StoreLine(Json.Stringify(SaveBusVolume("Music")));
+		saveFileJSON.StoreLine(Json.Stringify(SaveBusVolume("SFX")));
+		saveFileJSON.StoreLine(Json.Stringify(SaveHoldToReset()));
+		saveFileJSON.StoreLine(Json.Stringify(SaveMoveCounts()));
+		saveFileJSON.StoreLine(Json.Stringify(SaveFullscreenState()));
 
-		saveFile.Close();
+		saveFileJSON.Close();
 	}
 
 	/** <summary>Order MATTERS</summary> */
@@ -316,13 +316,18 @@ public partial class DataManager : Node
 			return; // don't do anything if no save file exists
 		}
 
-		using var saveFile = FileAccess.Open($"user://{saveFileName}", FileAccess.ModeFlags.ReadWrite);
-
 		SaveTypes currentType = 0;
 
-		while (saveFile.GetPosition() < saveFile.GetLength())
+		using var saveFileJSON = FileAccess.Open($"user://{saveFileName}", FileAccess.ModeFlags.ReadWrite);
+
+		if (saveFileJSON == null)
 		{
-			var nextData = saveFile.GetVar(true);
+			GD.Print(FileAccess.GetOpenError());
+		}
+
+		while (saveFileJSON.GetPosition() < saveFileJSON.GetLength())
+		{
+			var nextData = Json.ParseString(saveFileJSON.GetLine());
 
 			switch (currentType)
 			{
@@ -354,7 +359,7 @@ public partial class DataManager : Node
 			currentType++;
 		}
 
-		saveFile.Close();
+		saveFileJSON.Close();
 	}
 
 	/** <summary>load the specified level or the next level by default</summary> */
@@ -416,6 +421,7 @@ public partial class DataManager : Node
 	public override void _Ready()
 	{
 		instance = this;
+
 		saveFileName = saveFileNameInstance;
 		LoadGame();
 	}
