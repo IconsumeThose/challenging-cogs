@@ -114,6 +114,7 @@ public partial class DataManager : Node
 		// update the move counter
 		if (!bypassCheck && moveCount < moveCounts[currentWorld, currentLevel - 1])
 		{
+			GD.Print("TEST" + moveCount);
 			moveCounts[currentWorld, currentLevel - 1] = moveCount;
 		}
 
@@ -313,7 +314,9 @@ public partial class DataManager : Node
 	{
 		if (!FileAccess.FileExists($"user://{saveFileName}"))
 		{
-			return; // don't do anything if no save file exists
+			// initialize data if no save currently exists
+			ResetSave();
+			return; 
 		}
 
 		SaveTypes currentType = 0;
