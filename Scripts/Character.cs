@@ -839,6 +839,10 @@ public partial class Character : CharacterBody2D
 		if (!UpdateMove() || (!gameManager.AllCharactersIdle && !OverrideAllCharactersIdleCheck()) || animationPlayer.IsPlaying())
 			return;
 
+		// check if paused again such so no more inputs are read after winning or losing on same frame
+		if (Engine.TimeScale == 0)
+			return;
+
 		Vector2 inputDirection = GetInputDirection();
 
 		// i'm sammyrog
