@@ -18,7 +18,7 @@ public partial class Character : CharacterBody2D
 	[Export] public float movementSpeed = 150;
 
 	/** <summary>Reference to the game manager in the current scene</summary> */
-	[Export] public GameManager gameManager;
+	public GameManager gameManager;
 
 	/** <summary>Reference to the character's main animated sprite 2D</summary> */
 	[Export]
@@ -118,6 +118,8 @@ public partial class Character : CharacterBody2D
 	/** <summary>Ran during start up</summary> */
 	public override void _Ready()
 	{
+		gameManager = GetParent().GetParent().GetNode<GameManager>("GameManager");
+
 		// don't do anything if in level select
 		if (gameManager.IsLevelSelect)
 			return;
@@ -872,7 +874,7 @@ public partial class Character : CharacterBody2D
 	}
 
 	/** <summary>Set character state to idle at end of teleport animation</summary> */
-	protected void EndTeleportAnimation()
+	protected virtual void EndTeleportAnimation()
 	{
 		teleported = false;
 		animatedSprite.Modulate = new("FFFFFF");

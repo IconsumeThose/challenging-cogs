@@ -4,6 +4,8 @@ using System.Collections.Generic;
 #pragma warning disable CA1050
 public partial class GameManager : Node2D
 {
+	[Export] public PackedScene packedSnakeScene;
+
 	/** <summary>Store all useful information about a tile</summary> */
 	public class CustomTileData(TileData tileData, Vector2I position, TileMapLayer tileLayer)
 	{
@@ -250,22 +252,18 @@ public partial class GameManager : Node2D
 			return;
 		}
 		
-		foreach (Node child in GetParent().FindChild("ScalingParent").GetChildren())
-		{
-			if (child is Character character)
-			{
-				characters.Add(character);
-
-				if (character is Cogito cogito)
-					this.cogito = cogito;
-			}
-		}
+		cogito = GetParent().FindChild("Cogito") as Cogito;
 
 		CalculateCurrentWorldAndLevel();
 
 		// find all goals
 		var offGoals = groundLayer.GetUsedCellsById(1, new(1, 1));
 		var onGoals = groundLayer.GetUsedCellsById(1, new(2, 1));
+
+		var snorizontalLefts = obstacleLayer.GetUsedCellsById(0, new(1, 0));
+		var snorizontalRights = obstacleLayer.GetUsedCellsById(0, new(0, 0));
+		var snerticalDowns = obstacleLayer.GetUsedCellsById(0, new(0, 1));
+		var snerticalUps = obstacleLayer.GetUsedCellsById(0, new(1, 1));
 
 		if (offGoals.Count + onGoals.Count > 1)
 		{
@@ -311,6 +309,44 @@ public partial class GameManager : Node2D
 				GD.PushError("For each teleporter type, please put exactly 2 tiles or none!");
 			}
 		}
+
+		foreach (Vector2I snorizontalLeftCoordinates in snorizontalLefts)
+		{
+			SpawnSnake(snorizontalLeftCoordinates, Snake.SnakeDirection.horizontal, Snake.StartingSnakeDirection.downOrLeft);
+		}
+
+		foreach (Vector2I snorizontalRightCoordinates in snorizontalRights)
+		{
+			SpawnSnake(snorizontalRightCoordinates, Snake.SnakeDirection.horizontal, Snake.StartingSnakeDirection.upOrRight);
+		}
+
+		foreach (Vector2I snerticalDownCoordinates in snerticalDowns)
+		{
+			SpawnSnake(snerticalDownCoordinates, Snake.SnakeDirection.vertical, Snake.StartingSnakeDirection.downOrLeft);
+		}
+
+		foreach (Vector2I snerticalUpCoordinates in snerticalUps)
+		{
+			SpawnSnake(snerticalUpCoordinates, Snake.SnakeDirection.vertical, Snake.StartingSnakeDirection.upOrRight);
+		}
+	}
+
+	/** <summary>spawns a snake at the specified position</summary> */
+	private void SpawnSnake(Vector2I snakeCoordinates, Snake.SnakeDirection snakeDirection, Snake.StartingSnakeDirection startingSnakeDirection)
+	{
+		Snake snake = packedSnakeScene.Instantiate<Snake>();
+
+		snake.snakeDirection = snakeDirection;
+		snake.startingSnakeDirection = startingSnakeDirection;
+
+		snake.TargetPosition = obstacleLayer.MapToLocal(snakeCoordinates);
+		snake.Position = snake.TargetPosition;
+
+		GetParent().FindChild("ScalingParent").AddChild(snake);
+
+		characters.Add(snake);
+
+		obstacleLayer.SetCell(snakeCoordinates);
 	}
 
 	/** <summary>Update the paradigm shift counts and ui</summary> */

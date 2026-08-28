@@ -29,12 +29,11 @@ tile_set = ExtResource("2_r1cul")
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=419153632]
 tile_set = ExtResource("3_70n18")
 
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("4_sy4ou")]
+[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu") instance=ExtResource("4_sy4ou")]
 position = Vector2(240, 208)
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
-gameManager = NodePath("../../GameManager")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

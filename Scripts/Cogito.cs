@@ -562,7 +562,7 @@ public partial class Cogito : Character
 	}
 
 	/** <summary>Update aura to correct state and color</summary> */
-	protected void UpdateCandyAura()
+	public void UpdateCandyAura()
 	{
 		if (candiesEaten == 0)
 		{
@@ -587,6 +587,12 @@ public partial class Cogito : Character
 	protected override void OnSuccessfulAttemptMove()
 	{
 		bufferedInput = Vector2.Zero;
+	}
+
+	protected override void EndTeleportAnimation()
+	{
+		base.EndTeleportAnimation();
+		UpdateCandyAura();
 	}
 
 	/** <summary>
@@ -709,7 +715,6 @@ public partial class Cogito : Character
 		}
 
 		candiesEaten = previousMove.candiesEaten;
-		UpdateCandyAura();
 
 		balloonIsActive = previousMove.balloonIsActive;
 
@@ -768,5 +773,6 @@ public partial class Cogito : Character
 
 			character.SetCharacterState(character.idleState);
 		}
+		UpdateCandyAura();
 	}
 }

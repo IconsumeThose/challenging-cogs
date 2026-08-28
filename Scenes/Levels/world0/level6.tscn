@@ -2,9 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://dpbhu46dns6ro" path="res://Assets/Backgrounds/tastytreats.png" id="1_146y7"]
 [ext_resource type="TileSet" uid="uid://dd0fa00l4pcs1" path="res://TileSets/tasty_ground.tres" id="1_wltxl"]
-[ext_resource type="TileSet" uid="uid://d38agm057x4qg" path="res://TileSets/tasty_obstacles.tres" id="2_8wt6g"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_2v7cn"]
-[ext_resource type="PackedScene" uid="uid://cbsuywq6rqgry" path="res://Scenes/Snake.tscn" id="4_6xwmg"]
+[ext_resource type="TileSet" uid="uid://b0cr5d1731gag" path="res://TileSets/fungus_obstacles.tres" id="3_146y7"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="4_kx7ap"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="5_okx4t"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="6_tvlfy"]
@@ -29,64 +28,14 @@ tile_set = ExtResource("1_wltxl")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=419153632]
 position = Vector2(0, 0.33333334)
-tile_map_data = PackedByteArray("AAAJAAUAAQAHAAIAAAAJAAQAAQAFAAEAAAANAAcAAQADAAEAAAAJAAgAAQADAAEAAAAJAAcAAQADAAEAAAD7/wUAAQAAAAAAAAD7/wQAAQAFAAAAAAD6/wQAAQAAAAIAAAD6/wMAAQAAAAAAAAD6/wIAAQAAAAEAAAD7/wMAAQAAAAAAAAD6/wUAAQAAAAAAAAD8/wMAAQAEAAAAAAD8/wQAAQAFAAAAAAD8/wUAAQAAAAAAAAD9/wUAAQAAAAAAAAD9/wQAAQAHAAAAAAD9/wMAAQAAAAAAAAD9/wIAAQAAAAAAAAD+/wIAAQAAAAAAAAD+/wMAAQAAAAAAAAD+/wQAAQAAAAAAAAD+/wUAAQAAAAAAAAD8/wIAAQAAAAIAAgD7/wIAAQAAAAAAAAAEAAcAAQADAAEAAAALAAMAAQABAAAAAAAEAAkAAQADAAEAAAANAAYAAQADAAEAAAACAAUAAQADAAEAAAA=")
-tile_set = ExtResource("2_8wt6g")
+tile_map_data = PackedByteArray("AAAJAAUAAQAHAAIAAAAJAAQAAQAFAAEAAAANAAcAAQADAAEAAAAJAAgAAQADAAEAAAAJAAcAAQADAAEAAAD7/wUAAQAAAAAAAAD7/wQAAQAFAAAAAAD6/wQAAQAAAAIAAAD6/wMAAQAAAAAAAAD6/wIAAQAAAAEAAAD7/wMAAQAAAAAAAAD6/wUAAQAAAAAAAAD8/wMAAQAEAAAAAAD8/wQAAQAFAAAAAAD8/wUAAQAAAAAAAAD9/wUAAQAAAAAAAAD9/wQAAQAHAAAAAAD9/wMAAQAAAAAAAAD9/wIAAQAAAAAAAAD+/wIAAQAAAAAAAAD+/wMAAQAAAAAAAAD+/wQAAQAAAAAAAAD+/wUAAQAAAAAAAAD8/wIAAQAAAAIAAgD7/wIAAQAAAAAAAAAEAAcAAQADAAEAAAALAAMAAQABAAAAAAAEAAkAAQADAAEAAAANAAYAAQADAAEAAAACAAUAAQADAAEAAAANAAQAAAAAAAEAAAAJAAMAAAAAAAAAAAAKAAMAAAABAAAAAAAPAAUAAAAAAAAAAAAPAAYAAAAAAAAAAAARAAgAAAAAAAAAAAARAAMAAAAAAAAAAAAKAAQAAAAAAAEAAAACAAQAAAAAAAEAAAA=")
+tile_set = ExtResource("3_146y7")
 
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("3_2v7cn")]
+[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_2v7cn")]
 position = Vector2(272, 208)
 winMenu = NodePath("../../WinMenu")
 pauseMenu = NodePath("../../PauseMenu")
 loseMenu = NodePath("../../LoseMenu")
-gameManager = NodePath("../../GameManager")
-
-[node name="Snake" parent="ScalingParent" unique_id=1090785999 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_6xwmg")]
-position = Vector2(304, 112)
-snakeDirection = 0
-gameManager = NodePath("../../GameManager")
-
-[node name="Snake2" parent="ScalingParent" unique_id=16023765 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_6xwmg")]
-position = Vector2(336, 112)
-snakeDirection = 0
-startingSnakeDirection = 1
-gameManager = NodePath("../../GameManager")
-
-[node name="Snake4" parent="ScalingParent" unique_id=1320829264 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_6xwmg")]
-position = Vector2(432, 144)
-startingSnakeDirection = 1
-gameManager = NodePath("../../GameManager")
-
-[node name="Snake5" parent="ScalingParent" unique_id=911482699 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_6xwmg")]
-position = Vector2(496, 176)
-snakeDirection = 0
-gameManager = NodePath("../../GameManager")
-
-[node name="Snake6" parent="ScalingParent" unique_id=1343857076 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_6xwmg")]
-modulate = Color(0.19663608, 2.7061515e-05, 0.19702372, 1)
-position = Vector2(496, 208)
-snakeDirection = 0
-gameManager = NodePath("../../GameManager")
-
-[node name="Snake9" parent="ScalingParent" unique_id=1191140988 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_6xwmg")]
-modulate = Color(0.19663608, 2.7061515e-05, 0.19702372, 1)
-position = Vector2(560, 272)
-snakeDirection = 0
-gameManager = NodePath("../../GameManager")
-
-[node name="Snake10" parent="ScalingParent" unique_id=295237116 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_6xwmg")]
-modulate = Color(0.19663608, 2.7061515e-05, 0.19702372, 1)
-position = Vector2(560, 112)
-snakeDirection = 0
-gameManager = NodePath("../../GameManager")
-
-[node name="Snake3" parent="ScalingParent" unique_id=1434823924 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_6xwmg")]
-position = Vector2(336, 144)
-startingSnakeDirection = 1
-gameManager = NodePath("../../GameManager")
-
-[node name="Snake7" parent="ScalingParent" unique_id=327430708 node_paths=PackedStringArray("gameManager") instance=ExtResource("4_6xwmg")]
-position = Vector2(80, 144)
-startingSnakeDirection = 1
-gameManager = NodePath("../../GameManager")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)
