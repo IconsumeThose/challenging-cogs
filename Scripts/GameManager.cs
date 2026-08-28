@@ -71,7 +71,7 @@ public partial class GameManager : Node2D
 	/** <summary>
 		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
 		</summary> */
-	public class MoveRecord(int moveNumber, LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd, int stamina, int candiesEaten, bool balloonIsActive = false, 
+	public class MoveRecord(int moveNumber, LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd, int staminaChange, int candiesEatenChange, bool balloonIsActive = false, 
 		Dictionary<Character, CharacterMovement> movementDirections = null, bool usedParadigmShift = false, bool leversToggled = false, bool balloonPopped = false)
 	{
 		public int moveNumber = moveNumber;
@@ -81,8 +81,8 @@ public partial class GameManager : Node2D
 		public Dictionary<Character, CharacterMovement> movementDirections = movementDirections ?? [];
 		public bool usedParadigmShift = usedParadigmShift;
 		public bool leversToggled = leversToggled;
-		public int stamina = stamina;
-		public int candiesEaten = candiesEaten;
+		public int staminaChange = staminaChange;
+		public int candiesEatenChange = candiesEatenChange;
 		public bool balloonIsActive = balloonIsActive;
 		public bool balloonPopped = balloonPopped;
 	}
@@ -227,7 +227,7 @@ public partial class GameManager : Node2D
 	public void CheckToIncrementCurrentMove()
 	{
 		// also only increment if an undo didn't happen as that triggers AllCharactersIdle too
-		if (AllCharactersIdle && !cogito.undoHappened)
+		if (AllCharactersIdle && !cogito.undoOrRedoHappened)
 		{
 			// once the character enters the idle state then the turn is completely done
 			currentMove++;
@@ -404,9 +404,22 @@ public partial class GameManager : Node2D
 	/** <summary>Update the stamina count and ui</summary> */
 	public void StaminaChanged(int change, Character character)
 	{
-		currentStamina -= change;
+		int oldStamina = currentStamina;
+
+		currentStamina += change;
 
 		currentStamina = Math.Clamp(currentStamina, 0, maxStamina);
+
+		change = oldStamina - currentStamina;
+
+		if (!cogito.undoOrRedoHappened && previousMoves.Count > 0)
+		{
+			MoveRecord previousMove = previousMoves.Pop();
+			
+			previousMove.staminaChange += change;
+
+			cogito.UpdatePreviousMove(previousMove, previousMove.changedTilesStart, previousMove.changedTilesEnd, false);
+		}
 
 		// character drowns when reaching 0 stamina and has a specified max stamina
 		if (currentStamina == 0 && maxStamina > 0 )

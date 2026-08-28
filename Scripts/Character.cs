@@ -275,7 +275,7 @@ public partial class Character : CharacterBody2D
 			}
 
 			// don't recheck tile interactions when undoing and do not modify the move stack
-			if (Character.gameManager.cogito.undoHappened)
+			if (Character.gameManager.cogito.undoOrRedoHappened)
 				return;
 
 			MoveRecord previousMove = null;
@@ -307,6 +307,8 @@ public partial class Character : CharacterBody2D
 						changedTilesStart[obstaclePosition.X, obstaclePosition.Y] = Character.currentTileData;
 					}
 
+					int candiesEatenChange = cogito.candiesEaten;
+
 					switch (obstacleTile.customType)
 					{
 						case "Cog":
@@ -323,6 +325,10 @@ public partial class Character : CharacterBody2D
 					changedTilesEnd[obstaclePosition.X, obstaclePosition.Y] = GetTileCustomType(
 							obstaclePosition, 
 							Character.gameManager.groundLayer, Character.gameManager.obstacleLayer);
+				
+					candiesEatenChange -= cogito.candiesEaten;
+
+					previousMove.candiesEatenChange = candiesEatenChange;
 				}
 			}
 
@@ -345,7 +351,7 @@ public partial class Character : CharacterBody2D
 				{
 					Character.WaterInteraction();
 				}
-				else
+				else if (Character.gameManager.currentStamina < Character.gameManager.maxStamina)
 				{
 					Character.OutOfWaterInteraction();
 				}
@@ -533,7 +539,7 @@ public partial class Character : CharacterBody2D
 	}
 
 	/** <summary>Merge any new movements/changes with the previously logged move to update it properly</summary> */
-	protected void UpdatePreviousMove(MoveRecord previousMove, LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd, bool includeDirection)
+	public void UpdatePreviousMove(MoveRecord previousMove, LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd, bool includeDirection)
 	{
 		gameManager.SavedMove = gameManager.currentMove;
 
@@ -549,8 +555,9 @@ public partial class Character : CharacterBody2D
 			}
 		}
 
-		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd, previousMove.stamina,
-			previousMove.candiesEaten, previousMove.balloonIsActive, balloonPopped: previousMove.balloonPopped,
+		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd, 
+			previousMove.staminaChange,
+			previousMove.candiesEatenChange, previousMove.balloonIsActive, balloonPopped: previousMove.balloonPopped,
 			movementDirections: previousMove.movementDirections, usedParadigmShift: previousMove.usedParadigmShift, leversToggled: previousMove.leversToggled);
 		gameManager.previousMoves.Push(currentMove);
 	}
@@ -705,7 +712,7 @@ public partial class Character : CharacterBody2D
 			if (!dryRun)
 			{
 				teleported = teleport;
-				if (this is Cogito cogito && !cogito.undoHappened && movementDirection.Length() > 0)
+				if (this is Cogito cogito && !cogito.undoOrRedoHappened && movementDirection.Length() > 0)
 				{
 					gameManager.nextMoves.Clear();
 				}
@@ -858,11 +865,12 @@ public partial class Character : CharacterBody2D
 		// don't allow controlling character while dying but allow resetting
 		if (currentCharacterState == animatingState || currentCharacterState == deadState)
 			return;
+
 		if (!UpdateMove() || (!gameManager.AllCharactersIdle && !OverrideAllCharactersIdleCheck()) || animationPlayer.IsPlaying())
 			return;
 
 		// check if paused again or if an undo/redo occurred so no more inputs are read after winning or losing or loading move on same frame
-		if (Engine.TimeScale == 0 || gameManager.cogito.undoHappened)
+		if (Engine.TimeScale == 0 || gameManager.cogito.undoOrRedoHappened)
 			return;
 
 		Vector2 inputDirection = GetInputDirection();

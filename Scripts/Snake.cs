@@ -134,7 +134,7 @@ public partial class Snake : Character
 	{	
 		// ensure the other snake is alive and collision didn't occur during an undo
 		if (body is not Snake otherSnake || otherSnake == this || otherSnake.currentCharacterState == deadState 
-			|| currentCharacterState == deadState || gameManager.cogito.undoHappened || teleported || otherSnake.teleported)
+			|| currentCharacterState == deadState || gameManager.cogito.undoOrRedoHappened || teleported || otherSnake.teleported)
 		{
 			return;
 		}

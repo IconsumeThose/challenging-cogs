@@ -52,10 +52,10 @@ public partial class Cogito : Character
 	public Vector2 bufferedInput = Vector2.Zero;
 
 	/** <summary>The amount of candies eaten</summary> */
-	private int candiesEaten = 0;
+	public int candiesEaten = 0;
 
 	/** <summary>True right after an undo occurred; Checked to prevent unwanted behavior</summary> */
-	public bool undoHappened = false;
+	public bool undoOrRedoHappened = false;
 
 	/** <summary>Cogito's custom idle state to notify when Cogito exits the idle state (new move started)</summary> */
 	public class CogitoIdle(Cogito character) : Idle(character)
@@ -71,7 +71,7 @@ public partial class Cogito : Character
 	/** <summary> >tell the game manager that cogito started a new move</summary> */
 	public void AttemptCogitoMovedCall()
 	{
-		if (!(undoHappened && targetCharacterState != animatingState))
+		if (!(undoOrRedoHappened && targetCharacterState != animatingState))
 				gameManager.CogitoMoved();
 	}
 
@@ -146,8 +146,8 @@ public partial class Cogito : Character
 	public override void _PhysicsProcess(double delta)
 	{
 		// reset undo happens
-		if (undoHappened)
-			undoHappened = false;
+		if (undoOrRedoHappened)
+			undoOrRedoHappened = false;
 
 		if (Input.IsActionJustPressed("DEBUGResetLeastMoves") && !gameManager.IsLevelSelect)
 		{
@@ -162,7 +162,7 @@ public partial class Cogito : Character
 	protected override void OnCharacterCollision(Node2D body)
 	{
 		// ensure the collision was a snake that is alive
-		if (body is not Snake snake || snake.currentCharacterState == deadState || undoHappened || teleported || snake.teleported)
+		if (body is not Snake snake || snake.currentCharacterState == deadState || undoOrRedoHappened || teleported || snake.teleported)
 			return;
 
 		stoppedMidMovement = true;
@@ -179,8 +179,8 @@ public partial class Cogito : Character
 	{
 		gameManager.SavedMove = gameManager.currentMove;
 
-		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd, gameManager.currentStamina, 
-			candiesEaten,	balloonIsActive
+		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd, 0, 
+			0,	balloonIsActive
 		);
 
 		AddNewMovementDirection(currentMove);
@@ -192,14 +192,14 @@ public partial class Cogito : Character
 	protected override void OutOfWaterInteraction()
 	{
 		base.OutOfWaterInteraction();
-		gameManager.StaminaChanged(-99999999, this);
+		gameManager.StaminaChanged(99999999, this);
 	}
 
 	/** <summary>Subtract one stamina when moving through water</summary> */
 	protected override void WaterInteraction()
 	{
 		base.WaterInteraction();
-		gameManager.StaminaChanged(1, this);
+		gameManager.StaminaChanged(-1, this);
 	}
 
 	/** <summary>Collect the cog!</summary> */
@@ -409,7 +409,7 @@ public partial class Cogito : Character
 			gameManager.SavedMove = gameManager.currentMove;
 			
 			MoveRecord currentMove = new(gameManager.currentMove, new LayeredCustomTileData[20, 12], new LayeredCustomTileData[20, 12],
-				gameManager.currentStamina, 
+				0, 
 				candiesEaten,	balloonIsActive, usedParadigmShift: true, 
 				movementDirections:  new() { 
 				{ this, new(Vector2I.Zero) } }
@@ -533,10 +533,12 @@ public partial class Cogito : Character
 				gameManager.groundLayer, gameManager.obstacleLayer);
 		}
 
+		int candiesEatenChange = 0;
 		// remove all adjacent rocks if candy has been eaten
 		if (candiesEaten > 0 && demolishedRocks.Count > 0)
 		{
-			candiesEaten--;
+			candiesEatenChange = 1;
+			candiesEaten -= candiesEatenChange;
 
 			UpdateCandyAura();
 
@@ -557,7 +559,7 @@ public partial class Cogito : Character
 
 		// save paradigm shift data to be undone
 		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd,
-			gameManager.currentStamina, previousMove.candiesEaten, 
+			0, candiesEatenChange, 
 			balloonIsActive, usedParadigmShift: true, leversToggled: leversJustToggled, movementDirections: previousMove.movementDirections);
 		gameManager.previousMoves.Push(currentMove);
 
@@ -706,7 +708,7 @@ public partial class Cogito : Character
 
 		MoveRecord loadedMove;
 
-		undoHappened = true;
+		undoOrRedoHappened = true;
 
 		if (loadMove == LoadMove.undo)
 		{
@@ -750,9 +752,6 @@ public partial class Cogito : Character
 		
 		// load balloon state, where if redoing and ballon was popped, balloon is set to inactive
 		balloonIsActive = loadedMove.balloonIsActive && !(loadedMove.balloonPopped && loadMove == LoadMove.redo);
-		
-		candiesEaten = loadedMove.candiesEaten;
-		bool rocksBroken = false;
 
 		foreach (LayeredCustomTileData tileData in changedTiles)
 		{
@@ -776,15 +775,7 @@ public partial class Cogito : Character
 			}
 			else if (loadMove == LoadMove.redo && changedTileEndData.obstacleTile.customType == null)
 			{
-				if (changedTileStartData.obstacleTile.customType == "Candy")
-				{
-					candiesEaten++;
-				}
-				else if (changedTileStartData.obstacleTile.customType == "Rock")
-				{
-					rocksBroken = true;
-				}
-				else if (changedTileStartData.obstacleTile.customType == "Balloon")
+				if (changedTileStartData.obstacleTile.customType == "Balloon")
 				{
 					balloonIsActive = true;
 				}
@@ -797,8 +788,7 @@ public partial class Cogito : Character
 					tileData.obstacleTile.atlasPosition, tileData.obstacleTile.alternative);
 		}
 
-		if (rocksBroken)
-			candiesEaten--;
+		candiesEaten += loadedMove.candiesEatenChange * loadedMoveMultiplier;
 
 		UpdateCandyAura();
 
@@ -822,7 +812,7 @@ public partial class Cogito : Character
 		if (loadedMove.leversToggled)
 			ToggleLevers();
 
-		gameManager.StaminaChanged(gameManager.currentStamina - loadedMove.stamina, this);
+		gameManager.StaminaChanged(loadedMove.staminaChange * loadedMoveMultiplier, this);
 		
 		foreach (KeyValuePair<Character, CharacterMovement> characterPositionPair in loadedMove.movementDirections)
 		{
