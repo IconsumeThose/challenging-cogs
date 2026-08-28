@@ -175,11 +175,11 @@ public partial class Cogito : Character
 	}
 	
 	/** <summary>Start a new movement log for undoing with support for logging Cogito-specific items</summary> */
-	protected override void SaveNewMove(LayeredCustomTileData[,] changedTiles)
+	protected override void SaveNewMove(LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd)
 	{
 		gameManager.SavedMove = gameManager.currentMove;
 
-		PreviousMove currentMove = new(gameManager.currentMove, changedTiles, gameManager.currentStamina, 
+		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd, gameManager.currentStamina, 
 			candiesEaten,	balloonIsActive
 		);
 
@@ -203,27 +203,23 @@ public partial class Cogito : Character
 	}
 
 	/** <summary>Collect the cog!</summary> */
-	protected override void CogInteraction()
+	public void CogInteraction()
 	{
-		base.CogInteraction();
 		gameManager.CogChallenged(1);
 		gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
 	}
 
 	/** <summary>Eat the candy!</summary> */
-	protected override void CandyInteraction()
+	public void CandyInteraction()
 	{
-		base.CandyInteraction();
 		candiesEaten++;
 		UpdateCandyAura();
 		gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
 	}
 
 	/** <summary>Equip the balloon!</summary> */
-	protected override void BalloonInteraction()
+	public void BalloonInteraction()
 	{
-		base.BalloonInteraction();
-
 		// don't do anything if Cogito already has a balloon
 		if (!balloonIsActive)
 		{
@@ -243,6 +239,11 @@ public partial class Cogito : Character
 
 		balloonIsActive = false;
 		balloonSprite.Play("pop");
+
+		MoveRecord previousMove = gameManager.previousMoves.Pop();
+
+		previousMove.balloonPopped = true;
+		UpdatePreviousMove(previousMove, previousMove.changedTilesStart, previousMove.changedTilesEnd, false);
 	}
 
 	/** <summary>Pop the active balloon when teleporting</summary> */
@@ -269,14 +270,17 @@ public partial class Cogito : Character
 	}
 
 	/** <summary>For Cogito, sand falls when they walk off of that tile</summary> */
-	protected override void SandInteraction(LayeredCustomTileData[,] changedTiles)
+	protected override void SandInteraction(LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd)
 	{
-		base.SandInteraction(changedTiles);
+		base.SandInteraction(changedTilesStart, changedTilesEnd);
 		
-		changedTiles[currentTileData.groundTile.position.X, currentTileData.groundTile.position.Y] = currentTileData;
+		changedTilesStart[currentTileData.groundTile.position.X, currentTileData.groundTile.position.Y] = currentTileData;
 
 		// make sand fall after walking off that tile
 		gameManager.groundLayer.SetCell(currentTileData.groundTile.position, 1, new(2, 0));
+
+		changedTilesEnd[currentTileData.groundTile.position.X, currentTileData.groundTile.position.Y] = GetTileCustomType(currentTileData.groundTile.position, 
+			gameManager.groundLayer, gameManager.obstacleLayer);
 
 		fallingSand = fallingSandScene.Instantiate<Node2D>();
 		GetParent().AddChild(fallingSand);
@@ -345,10 +349,11 @@ public partial class Cogito : Character
 		{
 			if (Input.IsActionJustPressed("Undo"))
 			{
-				loseMenu.Visible = false;
-				winMenu.Visible = false;
-				Engine.TimeScale = 1;
-				Undo();
+				Undo(LoadMove.undo);
+			}
+			else if (Input.IsActionJustPressed("Redo"))
+			{
+				Undo(LoadMove.redo);
 			}
 			// reset the level when reset button is pressed, allow instantly resetting while on a menu screen
 			else if (Input.IsActionJustPressed("Reset") && (!DataManager.holdToReset || Engine.TimeScale == 0))
@@ -393,6 +398,8 @@ public partial class Cogito : Character
 		{
 			bufferedInput = Vector2.Zero;
 			teleported = false;
+
+			gameManager.nextMoves.Clear();
 			
 			SetCharacterState(animatingState, new AnimatingStateEnterData("ParadigmShift"));
 
@@ -401,7 +408,8 @@ public partial class Cogito : Character
 
 			gameManager.SavedMove = gameManager.currentMove;
 			
-			PreviousMove currentMove = new(gameManager.currentMove, new LayeredCustomTileData[20, 12], gameManager.currentStamina, 
+			MoveRecord currentMove = new(gameManager.currentMove, new LayeredCustomTileData[20, 12], new LayeredCustomTileData[20, 12],
+				gameManager.currentStamina, 
 				candiesEaten,	balloonIsActive, usedParadigmShift: true, 
 				movementDirections:  new() { 
 				{ this, new(Vector2I.Zero) } }
@@ -510,14 +518,19 @@ public partial class Cogito : Character
 		totalShiftedCogCrystals.AddRange(shiftedReinforcedCogCrystals);
 		totalShiftedCogCrystals.AddRange(shiftedDeinforcedCogCrystals);
 
-		LayeredCustomTileData[,] changedTiles = new LayeredCustomTileData[20, 12];
+		LayeredCustomTileData[,] changedTilesStart = new LayeredCustomTileData[20, 12],
+			changedTilesEnd = new LayeredCustomTileData[20, 12];
 
 		// convert all crystals shifted to cogs
 		foreach (Vector2I crystalPosition in totalShiftedCogCrystals)
 		{
-			changedTiles[crystalPosition.X, crystalPosition.Y] = GetTileCustomType(crystalPosition,
+			changedTilesStart[crystalPosition.X, crystalPosition.Y] = GetTileCustomType(crystalPosition,
 				gameManager.groundLayer, gameManager.obstacleLayer);
+
 			gameManager.obstacleLayer.SetCell(crystalPosition, 1, new(5, 1));
+		
+			changedTilesEnd[crystalPosition.X, crystalPosition.Y] = GetTileCustomType(crystalPosition, 
+				gameManager.groundLayer, gameManager.obstacleLayer);
 		}
 
 		// remove all adjacent rocks if candy has been eaten
@@ -529,17 +542,22 @@ public partial class Cogito : Character
 
 			foreach (Vector2I rockPosition in demolishedRocks)
 			{
-				changedTiles[rockPosition.X, rockPosition.Y] = GetTileCustomType(rockPosition,
+				changedTilesStart[rockPosition.X, rockPosition.Y] = GetTileCustomType(rockPosition,
 					gameManager.groundLayer, gameManager.obstacleLayer);
+
 				gameManager.obstacleLayer.SetCell(rockPosition);
+
+				changedTilesEnd[rockPosition.X, rockPosition.Y] = GetTileCustomType(rockPosition, 
+					gameManager.groundLayer, gameManager.obstacleLayer);
 			}
 		}
 
 		// previous move was just lowering paradigm shift count but this will merge with the crystals removed to allow undoing mid animation
-		PreviousMove previousMove = gameManager.previousMoves.Pop();
+		MoveRecord previousMove = gameManager.previousMoves.Pop();
 
 		// save paradigm shift data to be undone
-		PreviousMove currentMove = new(gameManager.currentMove, changedTiles, gameManager.currentStamina, previousMove.candiesEaten, 
+		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd,
+			gameManager.currentStamina, previousMove.candiesEaten, 
 			balloonIsActive, usedParadigmShift: true, leversToggled: leversJustToggled, movementDirections: previousMove.movementDirections);
 		gameManager.previousMoves.Push(currentMove);
 
@@ -671,43 +689,105 @@ public partial class Cogito : Character
 		}
 	}
 
-	/** <summary>Undo the last saved move</summary> */
-	public void Undo()
+	public enum LoadMove
 	{
-		if (gameManager.previousMoves.Count < 1)
+		undo,
+		redo
+	}
+
+	/** <summary>Undo the last saved move</summary> */
+	public void Undo(LoadMove loadMove)
+	{
+		if ((loadMove == LoadMove.undo && gameManager.previousMoves.Count < 1) || (loadMove == LoadMove.redo && gameManager.nextMoves.Count < 1))
 			return;
 
 		// cancel buffered inputs
 		bufferedInput = Vector2.Zero;
 
-		if (gameManager.currentMove > gameManager.SavedMove)
-			gameManager.currentMove--;
-		
-		gameManager.SavedMove--;
+		MoveRecord loadedMove;
 
-		// get the latest move's data
-		PreviousMove previousMove = gameManager.previousMoves.Pop();
+		undoHappened = true;
+
+		if (loadMove == LoadMove.undo)
+		{
+			// get the latest move's data
+			loadedMove = gameManager.previousMoves.Pop();
+
+			if (gameManager.currentMove > gameManager.SavedMove)
+			{
+				gameManager.currentMove--;
+			}
+
+			if (gameManager.AllCharactersIdle && !dying && Engine.TimeScale == 1)
+			{
+				gameManager.nextMoves.Push(loadedMove);
+			}
+			
+			gameManager.SavedMove--;
+		}
+		else // is redoing
+		{
+			gameManager.SavedMove++;
+			gameManager.currentMove = gameManager.SavedMove + 1;
+
+			loadedMove = gameManager.nextMoves.Pop();
+
+			gameManager.previousMoves.Push(loadedMove);
+		}
+		
+		loseMenu.Visible = false;
+		winMenu.Visible = false;
+		Engine.TimeScale = 1;
+
+		// invert actions with this multiplier when undoing
+		int loadedMoveMultiplier = loadMove == LoadMove.undo ? 1 : -1;
 
 		// delete any falling sand if it exists
 		if (IsInstanceValid(fallingSand))
 			fallingSand.QueueFree();
+
+		LayeredCustomTileData[,] changedTiles = loadMove == LoadMove.undo ? loadedMove.changedTilesStart : loadedMove.changedTilesEnd;
 		
-		foreach (LayeredCustomTileData tileData in previousMove.changedTiles)
+		// load balloon state, where if redoing and ballon was popped, balloon is set to inactive
+		balloonIsActive = loadedMove.balloonIsActive && !(loadedMove.balloonPopped && loadMove == LoadMove.redo);
+		
+		candiesEaten = loadedMove.candiesEaten;
+		bool rocksBroken = false;
+
+		foreach (LayeredCustomTileData tileData in changedTiles)
 		{
 			if (tileData == null)
 				continue;
 
-			if (tileData.obstacleTile.customType == "Cog" || ((tileData.obstacleTile.customType == "CogCrystal" || tileData.obstacleTile.customType == "ReinforcedCogCrystal"
-				|| tileData.obstacleTile.customType == "DeinforcedCogCrystal") && gameManager.obstacleLayer.GetCellSourceId(tileData.groundTile.position) == -1))
+			LayeredCustomTileData changedTileStartData = loadedMove.changedTilesStart[tileData.groundTile.position.X, tileData.groundTile.position.Y],
+				changedTileEndData = loadedMove.changedTilesEnd[tileData.groundTile.position.X, tileData.groundTile.position.Y];
+
+			if (changedTileEndData.obstacleTile.customType == null && (changedTileStartData.obstacleTile.customType == "Cog" || changedTileStartData.obstacleTile.customType == "CogCrystal" 
+				|| changedTileStartData.obstacleTile.customType == "ReinforcedCogCrystal" || changedTileStartData.obstacleTile.customType == "DeinforcedCogCrystal"))
 			{
 				// turn the goal back off if it was on		
-				if (gameManager.cogsChallenged == gameManager.TotalNumberOfCogs)
+				if (loadMove == LoadMove.undo && gameManager.cogsChallenged == gameManager.TotalNumberOfCogs)
 				{
 					gameManager.groundLayer.SetCell(gameManager.goalCoordinates, 1, new(1, 1));
 				}
 
 				// adjust counter
-				gameManager.CogChallenged(-1);
+				gameManager.CogChallenged(-1 * loadedMoveMultiplier);
+			}
+			else if (loadMove == LoadMove.redo && changedTileEndData.obstacleTile.customType == null)
+			{
+				if (changedTileStartData.obstacleTile.customType == "Candy")
+				{
+					candiesEaten++;
+				}
+				else if (changedTileStartData.obstacleTile.customType == "Rock")
+				{
+					rocksBroken = true;
+				}
+				else if (changedTileStartData.obstacleTile.customType == "Balloon")
+				{
+					balloonIsActive = true;
+				}
 			}
 
 			gameManager.groundLayer.SetCell(tileData.groundTile.position, 1,
@@ -717,9 +797,10 @@ public partial class Cogito : Character
 					tileData.obstacleTile.atlasPosition, tileData.obstacleTile.alternative);
 		}
 
-		candiesEaten = previousMove.candiesEaten;
+		if (rocksBroken)
+			candiesEaten--;
 
-		balloonIsActive = previousMove.balloonIsActive;
+		UpdateCandyAura();
 
 		if (balloonIsActive)
 		{
@@ -732,20 +813,18 @@ public partial class Cogito : Character
 		}
 
 		// un-shift crystals 
-		if (previousMove.usedParadigmShift)
+		if (loadedMove.usedParadigmShift)
 		{
-			// adjust counter
-			gameManager.ParadigmShifted(-1);
+			// adjust counter by adding a shift if undoing and subtracting a shift if redoing
+			gameManager.ParadigmShifted(-1 * loadedMoveMultiplier);
 		}
 
-		if (previousMove.leversToggled)
+		if (loadedMove.leversToggled)
 			ToggleLevers();
 
-		gameManager.StaminaChanged(gameManager.currentStamina - previousMove.stamina, this);
-
-		undoHappened = true;
+		gameManager.StaminaChanged(gameManager.currentStamina - loadedMove.stamina, this);
 		
-		foreach (KeyValuePair<Character, CharacterMovement> characterPositionPair in previousMove.movementDirections)
+		foreach (KeyValuePair<Character, CharacterMovement> characterPositionPair in loadedMove.movementDirections)
 		{
 			Character character = characterPositionPair.Key;
 			CharacterMovement characterMovement = characterPositionPair.Value;
@@ -758,9 +837,14 @@ public partial class Cogito : Character
 
 			character.stoppedMidMovement = false;
 
-			character.Position -= (Vector2)characterMovement.directionMoved * movementDistance;
+			character.Position -= (Vector2)characterMovement.directionMoved * movementDistance * loadedMoveMultiplier;
 
-			character.targetTileDifferenceVector = characterMovement.directionMoved;
+			character.targetTileDifferenceVector = characterMovement.directionMoved * loadedMoveMultiplier;
+
+			if (characterMovement.died)
+			{
+				character.SetDeathVariables(loadMove == LoadMove.redo);
+			}
 
 			// set the snake's movement direction to what was logged
 			if (character is Snake snake)
@@ -776,6 +860,5 @@ public partial class Cogito : Character
 
 			character.SetCharacterState(character.idleState);
 		}
-		UpdateCandyAura();
 	}
 }

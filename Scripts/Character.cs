@@ -217,7 +217,7 @@ public partial class Character : CharacterBody2D
 			if (Character.targetTileDifferenceVector != Vector2I.Zero)
 				Character.UpdateAnimation(targetTileData);
 
-			PreviousMove previousMove = null;
+			MoveRecord previousMove = null;
 
 			if (Character.gameManager.SavedMove == Character.gameManager.currentMove && Character.gameManager.previousMoves.Count > 0)
 			{
@@ -225,22 +225,23 @@ public partial class Character : CharacterBody2D
 				previousMove = Character.gameManager.previousMoves.Pop();
 			}
 
-			LayeredCustomTileData[,] changedTiles = previousMove != null ? previousMove.changedTiles : new LayeredCustomTileData[20, 12];
+			LayeredCustomTileData[,] changedTilesStart = previousMove != null ? previousMove.changedTilesStart : new LayeredCustomTileData[20, 12],
+				changedTilesEnd = previousMove != null ? previousMove.changedTilesEnd : new LayeredCustomTileData[20, 12];
 
 
 			if (Character.currentTileData.groundTile.customType == "Sand" && Character.targetTileDifferenceVector.Length() > 0)
 			{
-				Character.SandInteraction(changedTiles);
+				Character.SandInteraction(changedTilesStart, changedTilesEnd);
 			}
 
 			// if the previous move was forced (ice, conveyor, etc...) then merge the previous moves data with the current one
 			if (previousMove != null)
 			{
-				Character.UpdatePreviousMove(previousMove, changedTiles, true);
+				Character.UpdatePreviousMove(previousMove, changedTilesStart, changedTilesEnd, true);
 			}
 			else if (Character.targetTileDifferenceVector.Length() > 0)
 			{
-				Character.SaveNewMove(changedTiles);
+				Character.SaveNewMove(changedTilesStart, changedTilesEnd);
 			}
 
 			if (Character.voidGround.Contains(Character.currentTileData.groundTile.customType) && Character.BalloonIsActive && Character.targetTileDifferenceVector.Length() > 0)
@@ -277,7 +278,7 @@ public partial class Character : CharacterBody2D
 			if (Character.gameManager.cogito.undoHappened)
 				return;
 
-			PreviousMove previousMove = null;
+			MoveRecord previousMove = null;
 
 			if (Character.gameManager.previousMoves.Count > 0)
 			{
@@ -285,23 +286,43 @@ public partial class Character : CharacterBody2D
 				previousMove = Character.gameManager.previousMoves.Pop();
 			}
 
-			LayeredCustomTileData[,] changedTiles = previousMove != null ? previousMove.changedTiles : new LayeredCustomTileData[20, 12];
-
+			LayeredCustomTileData[,] changedTilesStart = previousMove != null ? previousMove.changedTilesStart : new LayeredCustomTileData[20, 12],
+				changedTilesEnd = previousMove != null ? previousMove.changedTilesEnd : new LayeredCustomTileData[20, 12];
+				
 			Character.UpdateCurrentTileData();
 
 			// save additional cogito specific data for undoing
-			if (Character is Cogito)
+			if (Character is Cogito cogito)
 			{
 				CustomTileData obstacleTile = Character.currentTileData.obstacleTile;
 				Vector2I obstaclePosition = obstacleTile.position;
 
-				// log item position for undoing if found
-				if (changedTiles[obstaclePosition.X, obstaclePosition.Y] == null
-					&& (obstacleTile.customType == "Cog"
+				if (obstacleTile.customType == "Cog"
 					|| obstacleTile.customType == "Candy"
-					|| obstacleTile.customType == "Balloon"))
+					|| obstacleTile.customType == "Balloon")
 				{
-					changedTiles[obstaclePosition.X, obstaclePosition.Y] = Character.currentTileData;
+					// log item position for undoing if found
+					if (changedTilesStart[obstaclePosition.X, obstaclePosition.Y] == null)
+					{
+						changedTilesStart[obstaclePosition.X, obstaclePosition.Y] = Character.currentTileData;
+					}
+
+					switch (obstacleTile.customType)
+					{
+						case "Cog":
+							cogito.CogInteraction();
+							break;
+						case "Candy":
+							cogito.CandyInteraction();
+							break;
+						case "Balloon":
+							cogito.BalloonInteraction();
+							break;
+					}
+
+					changedTilesEnd[obstaclePosition.X, obstaclePosition.Y] = GetTileCustomType(
+							obstaclePosition, 
+							Character.gameManager.groundLayer, Character.gameManager.obstacleLayer);
 				}
 			}
 
@@ -309,12 +330,12 @@ public partial class Character : CharacterBody2D
 			if (previousMove != null)
 			{
 				bool includeDirection = Character is Snake && Character.targetTileDifferenceVector == Vector2.Zero && !Character.teleported;
-				Character.UpdatePreviousMove(previousMove, changedTiles, includeDirection);
+				Character.UpdatePreviousMove(previousMove, changedTilesStart, changedTilesEnd, includeDirection);
 			}
 			else if (Character.targetTileDifferenceVector.Length() > 0)
 			{
 				// start logging a new set of moves if a distance was moved
-				Character.SaveNewMove(changedTiles);
+				Character.SaveNewMove(changedTilesStart, changedTilesEnd);
 			}
 
 			// properly update counter if on water
@@ -328,20 +349,6 @@ public partial class Character : CharacterBody2D
 				{
 					Character.OutOfWaterInteraction();
 				}
-			}
-
-			// interact with certain items
-			if (Character.currentTileData.obstacleTile.customType == "Cog")
-			{
-				Character.CogInteraction();
-			}
-			else if (Character.currentTileData.obstacleTile.customType == "Candy")
-			{
-				Character.CandyInteraction();
-			}
-			else if (Character.currentTileData.obstacleTile.customType == "Balloon")
-			{
-				Character.BalloonInteraction();
 			}
 
 			// check goal interaction only if its activated
@@ -432,15 +439,12 @@ public partial class Character : CharacterBody2D
 		/** <summary>Enter the dead state</summary> */
 		public override void Enter(BaseEnterStateData enterStateData = null)
 		{
-			Character.Visible = false;
+			Character.SetDeathVariables(true);
 
-			// prevent colliding with dead snake
-			Character.collisionShape.Disabled = true;
+			MoveRecord previousMove = Character.gameManager.previousMoves.Pop();
 
-			if (Character.currentTileData is not null)
-			{
-				Character.gameManager.characterMatrix[Character.currentTileData.tilePosition.X, Character.currentTileData.tilePosition.Y] = null;
-			}
+			previousMove.movementDirections[Character].died = true;
+			Character.UpdatePreviousMove(previousMove, previousMove.changedTilesStart, previousMove.changedTilesEnd, false);
 
 			// check if all characters are dead or idle now to increment move
 			Character.gameManager.CheckToIncrementCurrentMove();
@@ -449,10 +453,7 @@ public partial class Character : CharacterBody2D
 		/** <summary>Exit the dead state, resetting proper variables</summary> */
 		public override void Exit()
 		{
-			Character.dying = false;
-			Character.stoppedMidMovement = false;
-			Character.Visible = true;
-			Character.collisionShape.Disabled = false;
+			Character.SetDeathVariables(false);
 		}
 	}
 
@@ -509,9 +510,6 @@ public partial class Character : CharacterBody2D
 	/** <summary>Specific interactions when on water</summary> */
 	protected virtual void WaterInteraction() {	}
 
-	/** <summary>Interaction with cog item</summary> */
-	protected virtual void CogInteraction() { }
-
 	/** <summary>Replace all original tiles of the specified atlas coordinates with the tile at the replacement atlas coordinates</summary> */
 	protected void ReplaceTiles(Vector2I originalAtlasCoords, Vector2I replacementAtlasCoords)
 	{
@@ -535,7 +533,7 @@ public partial class Character : CharacterBody2D
 	}
 
 	/** <summary>Merge any new movements/changes with the previously logged move to update it properly</summary> */
-	protected void UpdatePreviousMove(PreviousMove previousMove, LayeredCustomTileData[,] changedTiles, bool includeDirection)
+	protected void UpdatePreviousMove(MoveRecord previousMove, LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd, bool includeDirection)
 	{
 		gameManager.SavedMove = gameManager.currentMove;
 
@@ -551,14 +549,38 @@ public partial class Character : CharacterBody2D
 			}
 		}
 
-		PreviousMove currentMove = new(gameManager.currentMove, changedTiles, previousMove.stamina,
-			previousMove.candiesEaten, previousMove.balloonIsActive,
+		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd, previousMove.stamina,
+			previousMove.candiesEaten, previousMove.balloonIsActive, balloonPopped: previousMove.balloonPopped,
 			movementDirections: previousMove.movementDirections, usedParadigmShift: previousMove.usedParadigmShift, leversToggled: previousMove.leversToggled);
 		gameManager.previousMoves.Push(currentMove);
 	}
 
+	public void SetDeathVariables(bool died)
+	{
+		if (died)
+		{
+			Visible = false;
+
+			// prevent colliding with dead snake
+			collisionShape.Disabled = true;
+
+			if (currentTileData is not null)
+			{
+				gameManager.characterMatrix[currentTileData.tilePosition.X, currentTileData.tilePosition.Y] = null;
+			}
+		}
+		else
+		{
+			dying = false;
+			stoppedMidMovement = false;
+			Visible = true;
+			collisionShape.Disabled = false;
+		}
+	}
+
+
 	/** <summary>Add a new character's movement to the log for undoing</summary> */
-	protected virtual void AddNewMovementDirection(PreviousMove previousMove)
+	protected virtual void AddNewMovementDirection(MoveRecord previousMove)
 	{
 		previousMove.movementDirections.Add(this, new(targetTileDifferenceVector));
 	}
@@ -572,17 +594,11 @@ public partial class Character : CharacterBody2D
 	/** <summary>Interaction with active goal tile</summary> */
 	protected virtual void GoalInteraction() { }
 
-	/** <summary>Interaction with candy tile</summary> */
-	protected virtual void CandyInteraction() {	}
-
 	/** <summary>Start a new movement log for undoing</summary> */
-	protected virtual void SaveNewMove(LayeredCustomTileData[,] changedTiles) {	}
-
-	/** <summary>Interact with balloon tile</summary> */
-	protected virtual void BalloonInteraction() { }
+	protected virtual void SaveNewMove(LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd) { }
 
 	/** <summary>Interaction with sand tiles</summary> */
-	protected virtual void SandInteraction(LayeredCustomTileData[,] changedTiles) { }
+	protected virtual void SandInteraction(LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd) { }
 
 	/** <summary>Handle popping the balloon</summary> */
 	protected virtual void PopBalloon() { }
@@ -689,6 +705,11 @@ public partial class Character : CharacterBody2D
 			if (!dryRun)
 			{
 				teleported = teleport;
+				if (this is Cogito cogito && !cogito.undoHappened && movementDirection.Length() > 0)
+				{
+					gameManager.nextMoves.Clear();
+				}
+
 				SetCharacterState(movingState, new MovingStateEnterDate(newPosition, teleport, newTilePosition));
 			}
 
@@ -837,12 +858,11 @@ public partial class Character : CharacterBody2D
 		// don't allow controlling character while dying but allow resetting
 		if (currentCharacterState == animatingState || currentCharacterState == deadState)
 			return;
-
 		if (!UpdateMove() || (!gameManager.AllCharactersIdle && !OverrideAllCharactersIdleCheck()) || animationPlayer.IsPlaying())
 			return;
 
-		// check if paused again such so no more inputs are read after winning or losing on same frame
-		if (Engine.TimeScale == 0)
+		// check if paused again or if an undo/redo occurred so no more inputs are read after winning or losing or loading move on same frame
+		if (Engine.TimeScale == 0 || gameManager.cogito.undoHappened)
 			return;
 
 		Vector2 inputDirection = GetInputDirection();
@@ -856,7 +876,8 @@ public partial class Character : CharacterBody2D
 			// if cogito is rechecking the tile its on, recheck the tile all other characters are on
 			if (this is not Cogito && gameManager.previousMoves.Count > 0)
 			{
-				PreviousMove previousMove = gameManager.previousMoves.Pop();
+				// PreviousMove previousMove = gameManager.previousMoves.Pop();
+				MoveRecord previousMove = gameManager.previousMoves.Pop();
 
 				// check cogito's initial movement; if its 0 then it was from a paradigm shift
 				Vector2I cogitoFirstDirection = previousMove.movementDirections[gameManager.cogito].firstDirection;
@@ -902,10 +923,10 @@ public partial class Character : CharacterBody2D
 	/** <summary>Move back to the tile the character came from, called mid move</summary> */
 	public virtual void MoveBack()
 	{
-		PreviousMove previousMove = gameManager.previousMoves.Pop();
+		MoveRecord previousMove = gameManager.previousMoves.Pop();
 		targetTileDifferenceVector *= -1;
-		UpdatePreviousMove(previousMove, previousMove.changedTiles, true);
-		// targetTileDifferenceVector *= -1;
+		UpdatePreviousMove(previousMove, previousMove.changedTilesStart, previousMove.changedTilesEnd, true);
+
 		TargetPosition += targetTileDifferenceVector * tileSize;
 
 		UpdateSpriteDirection(targetTileDifferenceVector);
@@ -943,10 +964,10 @@ public partial class Character : CharacterBody2D
 
 					if (gameManager.previousMoves.Count > 0)
 					{
-						PreviousMove previousMove = gameManager.previousMoves.Pop();
+						MoveRecord previousMove = gameManager.previousMoves.Pop();
 
 						// use previous data with added direction
-						UpdatePreviousMove(previousMove, previousMove.changedTiles, true);
+						UpdatePreviousMove(previousMove, previousMove.changedTilesStart, previousMove.changedTilesEnd, true);
 					}
 
 					targetTileDifferenceVector = new(0, 0);

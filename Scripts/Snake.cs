@@ -213,7 +213,7 @@ public partial class Snake : Character
 		StartDeath("Drown");
 	}
 
-	protected override void AddNewMovementDirection(PreviousMove previousMove)
+	protected override void AddNewMovementDirection(MoveRecord previousMove)
 	{
 		CharacterMovement characterMovement;
 

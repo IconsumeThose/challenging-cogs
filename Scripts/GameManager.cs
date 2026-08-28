@@ -60,22 +60,23 @@ public partial class GameManager : Node2D
 	}
 
 	/** <summary>Stores the direction moved and the first direction of a move for a character</summary> */
-	public class CharacterMovement(Vector2I directionMoved)
+	public class CharacterMovement(Vector2I directionMoved, bool died = false)
 	{
 		public Vector2I directionMoved = directionMoved;
 		public readonly Vector2I firstDirection = directionMoved;
+		public bool died = died;
 	}
 
 
 	/** <summary>
 		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
 		</summary> */
-	public class PreviousMove(int moveNumber, LayeredCustomTileData[,] changedTiles, int stamina, int candiesEaten, bool balloonIsActive = false, 
-		Dictionary<Character, CharacterMovement> movementDirections = null, bool usedParadigmShift = false, bool leversToggled = false)
+	public class MoveRecord(int moveNumber, LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd, int stamina, int candiesEaten, bool balloonIsActive = false, 
+		Dictionary<Character, CharacterMovement> movementDirections = null, bool usedParadigmShift = false, bool leversToggled = false, bool balloonPopped = false)
 	{
 		public int moveNumber = moveNumber;
-		public readonly LayeredCustomTileData[,] changedTiles = changedTiles ?? new LayeredCustomTileData[20, 12];
-		
+		public readonly LayeredCustomTileData[,] changedTilesStart = changedTilesStart ?? new LayeredCustomTileData[20, 12],
+			changedTilesEnd = changedTilesEnd ?? new LayeredCustomTileData[20, 12];		
 		/** <summary> The direction that Cogito moved</summary> */
 		public Dictionary<Character, CharacterMovement> movementDirections = movementDirections ?? [];
 		public bool usedParadigmShift = usedParadigmShift;
@@ -83,10 +84,12 @@ public partial class GameManager : Node2D
 		public int stamina = stamina;
 		public int candiesEaten = candiesEaten;
 		public bool balloonIsActive = balloonIsActive;
+		public bool balloonPopped = balloonPopped;
 	}
 
 	/** <summary>stack of all previous moves so that they can be undone in correct order(LIFO)</summary> */
-	public readonly Stack<PreviousMove> previousMoves = new();
+	public readonly Stack<MoveRecord> previousMoves = new();
+	public readonly Stack<MoveRecord> nextMoves = new();
 
 	/** <summary>List of all characters in the level</summary> */
 	public List<Character> characters = [];
@@ -329,6 +332,8 @@ public partial class GameManager : Node2D
 			this.cogito = cogito;
 
 			obstacleLayer.SetCell(cogitoCoordinates[0]);
+
+			characters.Add(cogito);
 		}
 
 		foreach (Vector2I snorizontalLeftCoordinates in snorizontalLefts)
