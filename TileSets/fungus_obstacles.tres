@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://d0mkr780tbbms" path="res://Assets/Sprites/fungussheet.png" id="1_7sfjc"]
 [ext_resource type="Texture2D" uid="uid://c6tb0lmy4jsyr" path="res://Assets/Sprites/fungusenemysheet.png" id="1_badbt"]
+[ext_resource type="Texture2D" uid="uid://dok1fu6yin71i" path="res://Assets/Sprites/cogitosheet.png" id="3_2bjts"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2bjts"]
 texture = ExtResource("1_badbt")
@@ -37,6 +38,12 @@ texture_region_size = Vector2i(32, 32)
 7:3/0 = 0
 7:3/0/custom_data_0 = "Balloon"
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_scvyk"]
+texture = ExtResource("3_2bjts")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/custom_data_0 = "Cogito"
+
 [resource]
 tile_size = Vector2i(32, 32)
 navigation_layer_0/layers = 1
@@ -44,3 +51,4 @@ custom_data_layer_0/name = "CustomType"
 custom_data_layer_0/type = 4
 sources/1 = SubResource("TileSetAtlasSource_klol8")
 sources/0 = SubResource("TileSetAtlasSource_2bjts")
+sources/2 = SubResource("TileSetAtlasSource_scvyk")

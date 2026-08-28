@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://47k3vhxg10a5" path="res://Assets/Backgrounds/fungusforest.png" id="1_hi7hs"]
 [ext_resource type="TileSet" uid="uid://ceadgnl62xy6" path="res://TileSets/fungus_ground.tres" id="2_r1cul"]
 [ext_resource type="TileSet" uid="uid://b0cr5d1731gag" path="res://TileSets/fungus_obstacles.tres" id="3_70n18"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="4_sy4ou"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_p0m0y"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_eujfk"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_iq4s1"]
@@ -27,13 +26,8 @@ tile_map_data = PackedByteArray("AAACAAMAAQAAAAAAAAACAAQAAQAAAAAAAAACAAUAAQAAAAA
 tile_set = ExtResource("2_r1cul")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=419153632]
+tile_map_data = PackedByteArray("AAAHAAYAAgAAAAAAAAA=")
 tile_set = ExtResource("3_70n18")
-
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu") instance=ExtResource("4_sy4ou")]
-position = Vector2(240, 208)
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

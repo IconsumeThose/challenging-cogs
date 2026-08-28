@@ -3,7 +3,6 @@
 [ext_resource type="TileSet" uid="uid://dwh2tr6x3yg4e" path="res://TileSets/mechanical_ground.tres" id="1_34b6i"]
 [ext_resource type="Texture2D" uid="uid://c5o4hm5530gna" path="res://Assets/Backgrounds/mechanicalmachinery.png" id="1_b6wgy"]
 [ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_b6wgy"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_7ouyj"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_frsrb"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_qxjky"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_ggo28"]
@@ -27,15 +26,8 @@ tile_map_data = PackedByteArray("AAACAAgAAQAEAAAAAAADAAYAAQAAAAAAAAADAAgAAQAAAAI
 tile_set = ExtResource("1_34b6i")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=1672664678]
-tile_map_data = PackedByteArray("AAAEAAUAAQADAAEAAAAGAAQAAQADAAEAAAAEAAYAAQADAAEAAAAGAAYAAQADAAEAAAAIAAUAAQADAAEAAAAKAAUAAQADAAEAAAALAAkAAQADAAEAAAANAAkAAQADAAEAAAAFAAIAAQAEAAEAAAAFAAMAAQADAAEAAAA=")
+tile_map_data = PackedByteArray("AAAEAAUAAQADAAEAAAAGAAQAAQADAAEAAAAEAAYAAQADAAEAAAAGAAYAAQADAAEAAAAIAAUAAQADAAEAAAAKAAUAAQADAAEAAAALAAkAAQADAAEAAAANAAkAAQADAAEAAAAFAAIAAQAEAAEAAAAFAAMAAQADAAEAAAAEAAQAAgAAAAAAAAA=")
 tile_set = ExtResource("2_b6wgy")
-
-[node name="Cogito" parent="ScalingParent" unique_id=1785116844 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_7ouyj")]
-position = Vector2(144, 144)
-gameManager = NodePath("../../GameManager")
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=569802775]
 position = Vector2(960, 540)

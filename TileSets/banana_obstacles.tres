@@ -1,6 +1,7 @@
 [gd_resource type="TileSet" format=3 uid="uid://bg2x7dajuff8p"]
 
 [ext_resource type="Texture2D" uid="uid://ewg0a22brnvg" path="res://Assets/Sprites/bananasheet.png" id="1_fr4cv"]
+[ext_resource type="Texture2D" uid="uid://dok1fu6yin71i" path="res://Assets/Sprites/cogitosheet.png" id="2_b2scm"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_81xng"]
 texture = ExtResource("1_fr4cv")
@@ -14,9 +15,16 @@ texture_region_size = Vector2i(32, 32)
 5:1/0 = 0
 5:1/0/custom_data_0 = "Cog"
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i7p3t"]
+texture = ExtResource("2_b2scm")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/custom_data_0 = "Cogito"
+
 [resource]
 tile_size = Vector2i(32, 32)
 navigation_layer_0/layers = 1
 custom_data_layer_0/name = "CustomType"
 custom_data_layer_0/type = 4
 sources/1 = SubResource("TileSetAtlasSource_81xng")
+sources/2 = SubResource("TileSetAtlasSource_i7p3t")

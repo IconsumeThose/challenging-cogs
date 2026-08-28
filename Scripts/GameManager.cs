@@ -4,7 +4,8 @@ using System.Collections.Generic;
 #pragma warning disable CA1050
 public partial class GameManager : Node2D
 {
-	[Export] public PackedScene packedSnakeScene;
+	[Export] public PackedScene packedCogitoScene,
+		packedSnakeScene;
 
 	/** <summary>Store all useful information about a tile</summary> */
 	public class CustomTileData(TileData tileData, Vector2I position, TileMapLayer tileLayer)
@@ -252,7 +253,7 @@ public partial class GameManager : Node2D
 			return;
 		}
 		
-		cogito = GetParent().FindChild("Cogito") as Cogito;
+		// cogito = GetParent().FindChild("Cogito") as Cogito;
 
 		CalculateCurrentWorldAndLevel();
 
@@ -264,6 +265,8 @@ public partial class GameManager : Node2D
 		var snorizontalRights = obstacleLayer.GetUsedCellsById(0, new(0, 0));
 		var snerticalDowns = obstacleLayer.GetUsedCellsById(0, new(0, 1));
 		var snerticalUps = obstacleLayer.GetUsedCellsById(0, new(1, 1));
+
+		var cogitoCoordinates = obstacleLayer.GetUsedCellsById(2, new(0, 0));
 
 		if (offGoals.Count + onGoals.Count > 1)
 		{
@@ -308,6 +311,24 @@ public partial class GameManager : Node2D
 			{
 				GD.PushError("For each teleporter type, please put exactly 2 tiles or none!");
 			}
+		}
+
+		if (cogitoCoordinates.Count != 1)
+		{
+			GD.PushError("Please spawn exactly 1 cogito");
+		}
+		else
+		{
+			// spawn cogito where the cogito obstacle is placed
+			Cogito cogito = packedCogitoScene.Instantiate<Cogito>();
+
+			cogito.TargetPosition = obstacleLayer.MapToLocal(cogitoCoordinates[0]);
+			cogito.Position = cogito.TargetPosition;
+
+			GetParent().FindChild("ScalingParent").AddChild(cogito);
+			this.cogito = cogito;
+
+			obstacleLayer.SetCell(cogitoCoordinates[0]);
 		}
 
 		foreach (Vector2I snorizontalLeftCoordinates in snorizontalLefts)

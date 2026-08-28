@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://47k3vhxg10a5" path="res://Assets/Backgrounds/fungusforest.png" id="1_namt6"]
 [ext_resource type="TileSet" uid="uid://ceadgnl62xy6" path="res://TileSets/fungus_ground.tres" id="2_lpjyj"]
 [ext_resource type="TileSet" uid="uid://b0cr5d1731gag" path="res://TileSets/fungus_obstacles.tres" id="3_qtd4j"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="4_0vmar"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_oyho6"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_6c6t3"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_pkvwi"]
@@ -27,14 +26,8 @@ tile_map_data = PackedByteArray("AAACAAMAAQAAAAQAAAACAAQAAQAAAAQAAAACAAYAAQAAAAQ
 tile_set = ExtResource("2_lpjyj")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=419153632]
-tile_map_data = PackedByteArray("AAAIAAgAAQABAAAAAAAJAAgAAQABAAAAAAAJAAkAAQABAAAAAAAKAAEAAQABAAAAAAAKAAIAAQABAAAAAAALAAIAAQABAAAAAAAEAAEAAQADAAEAAAAGAAEAAQADAAEAAAANAAEAAQAGAAIAAAAPAAEAAQAGAAIAAAAEAAkAAQAEAAEAAAAGAAkAAQAEAAEAAAANAAkAAQADAAEAAAAPAAkAAQADAAEAAAAJAAUAAQAGAAIAAAADAAkAAQAGAAEAAAADAAEAAQAGAAEAAAADAAUAAQAGAAEAAAAHAAEAAQAGAAEAAAAMAAkAAQAGAAEAAAAQAAkAAQAGAAEAAAAQAAEAAQAGAAEAAAAQAAUAAQAGAAEAAAADAAgAAQABAAAAAAADAAIAAQABAAAAAAAQAAgAAQABAAAAAAAQAAIAAQABAAAAAAAIAAkAAAAAAAAAAAALAAEAAAABAAEAAAA=")
+tile_map_data = PackedByteArray("AAAIAAgAAQABAAAAAAAJAAgAAQABAAAAAAAJAAkAAQABAAAAAAAKAAEAAQABAAAAAAAKAAIAAQABAAAAAAALAAIAAQABAAAAAAAEAAEAAQADAAEAAAAGAAEAAQADAAEAAAANAAEAAQAGAAIAAAAPAAEAAQAGAAIAAAAEAAkAAQAEAAEAAAAGAAkAAQAEAAEAAAANAAkAAQADAAEAAAAPAAkAAQADAAEAAAAJAAUAAQAGAAIAAAADAAkAAQAGAAEAAAADAAEAAQAGAAEAAAADAAUAAQAGAAEAAAAHAAEAAQAGAAEAAAAMAAkAAQAGAAEAAAAQAAkAAQAGAAEAAAAQAAEAAQAGAAEAAAAQAAUAAQAGAAEAAAADAAgAAQABAAAAAAADAAIAAQABAAAAAAAQAAgAAQABAAAAAAAQAAIAAQABAAAAAAAIAAkAAAAAAAAAAAALAAEAAAABAAEAAAAMAAQAAgAAAAAAAAA=")
 tile_set = ExtResource("3_qtd4j")
-
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu") instance=ExtResource("4_0vmar")]
-position = Vector2(400, 144)
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

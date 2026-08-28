@@ -3,7 +3,6 @@
 [ext_resource type="TileSet" uid="uid://dwh2tr6x3yg4e" path="res://TileSets/mechanical_ground.tres" id="1_0icqn"]
 [ext_resource type="Texture2D" uid="uid://c5o4hm5530gna" path="res://Assets/Backgrounds/mechanicalmachinery.png" id="1_irdnx"]
 [ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_irdnx"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_fqgvy"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_hwb52"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_ow7rg"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_wjy7o"]
@@ -27,15 +26,8 @@ tile_map_data = PackedByteArray("AAACAAMAAQAAAAEAAAACAAQAAQAAAAEAAAACAAUAAQAAAAA
 tile_set = ExtResource("1_0icqn")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=417763628]
-tile_map_data = PackedByteArray("AAAGAAQAAQAGAAEAAAAGAAMAAQADAAEAAAAQAAgAAQABAAAAAAACAAUAAQABAAAAAAACAAYAAQAEAAEAAAAIAAMAAQADAAEAAAAGAAIAAQABAAAAAAAPAAgAAQABAAAAAAAOAAgAAQABAAAAAAANAAgAAQABAAAAAAANAAkAAQABAAAAAAALAAQAAQADAAEAAAALAAYAAQADAAEAAAAOAAQAAQAEAAEAAAAOAAYAAQAEAAEAAAAQAAUAAQAEAAEAAAAQAAcAAQAEAAEAAAAGAAUAAQADAAEAAAAFAAkAAQABAAAAAAAEAAYAAQABAAAAAAADAAYAAQABAAAAAAAFAAUAAQADAAEAAAA=")
+tile_map_data = PackedByteArray("AAAGAAQAAQAGAAEAAAAGAAMAAQADAAEAAAAQAAgAAQABAAAAAAACAAUAAQABAAAAAAACAAYAAQAEAAEAAAAIAAMAAQADAAEAAAAGAAIAAQABAAAAAAAPAAgAAQABAAAAAAAOAAgAAQABAAAAAAANAAgAAQABAAAAAAANAAkAAQABAAAAAAALAAQAAQADAAEAAAALAAYAAQADAAEAAAAOAAQAAQAEAAEAAAAOAAYAAQAEAAEAAAAQAAUAAQAEAAEAAAAQAAcAAQAEAAEAAAAGAAUAAQADAAEAAAAFAAkAAQABAAAAAAAEAAYAAQABAAAAAAADAAYAAQABAAAAAAAFAAUAAQADAAEAAAAEAAQAAgAAAAAAAAA=")
 tile_set = ExtResource("2_irdnx")
-
-[node name="Cogito" parent="ScalingParent" unique_id=606962780 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_fqgvy")]
-position = Vector2(144, 144)
-gameManager = NodePath("../../GameManager")
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1135284153]
 position = Vector2(960, 540)

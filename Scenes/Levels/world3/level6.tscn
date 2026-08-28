@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://cdxfful3ufp27" path="res://Assets/Backgrounds/gloomyglacier.png" id="1_og6w2"]
 [ext_resource type="TileSet" uid="uid://1u282qhp7y1b" path="res://TileSets/gloomy_ground.tres" id="1_rdakk"]
 [ext_resource type="TileSet" uid="uid://c81cx7647ulg3" path="res://TileSets/gloomy_obstacles.tres" id="2_og6w2"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_jyg1a"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_yqmkb"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_klhvp"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_ntkgj"]
@@ -28,15 +27,8 @@ tile_map_data = PackedByteArray("AAACAAMAAQAAAAEAAAACAAQAAQAAAAEAAAACAAUAAQAAAAA
 tile_set = ExtResource("1_rdakk")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=419153632]
-tile_map_data = PackedByteArray("AAANAAgAAQABAAAAAAALAAgAAQABAAAAAAAJAAgAAQABAAAAAAAJAAYAAQABAAAAAAAKAAYAAQABAAAAAAALAAYAAQABAAAAAAAMAAYAAQABAAAAAAANAAYAAQABAAAAAAAIAAgAAQADAAEAAAAOAAYAAQABAAAAAAAPAAYAAQABAAAAAAAQAAYAAQABAAAAAAARAAYAAQABAAAAAAAQAAgAAQADAAEAAAARAAcAAQADAAEAAAAIAAYAAQADAAEAAAAHAAUAAQABAAAAAAAHAAQAAQABAAAAAAAHAAMAAQABAAAAAAACAAYAAQADAAEAAAAEAAQAAQADAAEAAAAQAAUAAQADAAEAAAAQAAMAAQADAAEAAAAGAAMAAQABAAAAAAAGAAQAAQABAAAAAAAGAAUAAQABAAAAAAA=")
+tile_map_data = PackedByteArray("AAANAAgAAQABAAAAAAALAAgAAQABAAAAAAAJAAgAAQABAAAAAAAJAAYAAQABAAAAAAAKAAYAAQABAAAAAAALAAYAAQABAAAAAAAMAAYAAQABAAAAAAANAAYAAQABAAAAAAAIAAgAAQADAAEAAAAOAAYAAQABAAAAAAAPAAYAAQABAAAAAAAQAAYAAQABAAAAAAARAAYAAQABAAAAAAAQAAgAAQADAAEAAAARAAcAAQADAAEAAAAIAAYAAQADAAEAAAAHAAUAAQABAAAAAAAHAAQAAQABAAAAAAAHAAMAAQABAAAAAAACAAYAAQADAAEAAAAEAAQAAQADAAEAAAAQAAUAAQADAAEAAAAQAAMAAQADAAEAAAAGAAMAAQABAAAAAAAGAAQAAQABAAAAAAAGAAUAAQABAAAAAAAPAAcAAgAAAAAAAAA=")
 tile_set = ExtResource("2_og6w2")
-
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_jyg1a")]
-position = Vector2(496, 240)
-gameManager = NodePath("../../GameManager")
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

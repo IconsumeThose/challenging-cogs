@@ -3,7 +3,6 @@
 [ext_resource type="TileSet" uid="uid://dd0fa00l4pcs1" path="res://TileSets/tasty_ground.tres" id="1_2v2hi"]
 [ext_resource type="Texture2D" uid="uid://cyf7plaoqhrjg" path="res://Assets/Sludge/jimmydog.webp" id="1_ot2e6"]
 [ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_i4xld"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_i13tx"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="4_hrj4j"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="5_10dqx"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="6_ktqub"]
@@ -30,15 +29,8 @@ tile_map_data = PackedByteArray("AAAAAAAAAQAAAAAAAAAAAAEAAQAAAAAAAAAAAAIAAQAAAAA
 tile_set = ExtResource("1_2v2hi")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=1521911906]
-tile_map_data = PackedByteArray("AAAKAAYAAQAEAAEAAAAFAAkAAQAEAAEAAAAMAAQAAQADAAEAAAANAAgAAQAFAAEAAAABAAcAAQADAAEAAAAGAAgAAQADAAEAAAAOAAIAAQAHAAEAAAAIAAgAAQABAAAAAAAFAAEAAQAEAAEAAAANAAMAAQAFAAEAAAA=")
+tile_map_data = PackedByteArray("AAAKAAYAAQAEAAEAAAAFAAkAAQAEAAEAAAAMAAQAAQADAAEAAAANAAgAAQAFAAEAAAABAAcAAQADAAEAAAAGAAgAAQADAAEAAAAOAAIAAQAHAAEAAAAIAAgAAQABAAAAAAAFAAEAAQAEAAEAAAANAAMAAQAFAAEAAAABAAEAAgAAAAAAAAA=")
 tile_set = ExtResource("2_i4xld")
-
-[node name="Cogito" parent="ScalingParent" unique_id=1335827337 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("3_i13tx")]
-position = Vector2(48, 48)
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
-gameManager = NodePath("../../GameManager")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1841753196]
 position = Vector2(960, 540)

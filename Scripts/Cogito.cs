@@ -26,7 +26,6 @@ public partial class Cogito : Character
 	/** <summary>Used for the falling sand animation</summary> */
 	public PackedScene fallingSandScene = new();
 
-	[Export]
 	/** <summary>Reference to win menu in scene</summary> */
 	public Menu winMenu,
 
@@ -85,6 +84,10 @@ public partial class Cogito : Character
 
 		gameManager.currentStamina = gameManager.maxStamina;
 
+		winMenu = GetParent().GetParent().FindChild("WinMenu") as Menu;
+		loseMenu = GetParent().GetParent().FindChild("LoseMenu") as Menu;
+		pauseMenu = GetParent().GetParent().FindChild("PauseMenu") as Menu;
+		
 		// sync all levers
 		SetLevers(true);
 

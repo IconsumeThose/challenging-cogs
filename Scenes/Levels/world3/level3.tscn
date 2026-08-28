@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://cdxfful3ufp27" path="res://Assets/Backgrounds/gloomyglacier.png" id="1_kx78r"]
 [ext_resource type="TileSet" uid="uid://1u282qhp7y1b" path="res://TileSets/gloomy_ground.tres" id="1_ocvpq"]
 [ext_resource type="TileSet" uid="uid://c81cx7647ulg3" path="res://TileSets/gloomy_obstacles.tres" id="2_kx78r"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_ooil4"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_iuf61"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_xkm7s"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_gmj1n"]
@@ -28,15 +27,8 @@ tile_map_data = PackedByteArray("AAACAAUAAQAEAAAAAAACAAYAAQAAAAIAAwADAAUAAQAAAAA
 tile_set = ExtResource("1_ocvpq")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=419153632]
-tile_map_data = PackedByteArray("AAAQAAYAAQABAAAAAAAQAAUAAQABAAAAAAARAAUAAQABAAAAAAADAAUAAQABAAAAAAADAAYAAQABAAAAAAAEAAUAAQADAAEAAAAFAAMAAQADAAEAAAAPAAQAAQABAAAAAAAPAAUAAQADAAEAAAAQAAQAAQADAAEAAAAPAAMAAQADAAEAAAAOAAQAAQABAAAAAAAFAAgAAQADAAEAAAAGAAkAAQADAAEAAAACAAIAAQABAAAAAAALAAUAAQADAAEAAAALAAMAAQADAAEAAAA=")
+tile_map_data = PackedByteArray("AAAQAAYAAQABAAAAAAAQAAUAAQABAAAAAAARAAUAAQABAAAAAAADAAUAAQABAAAAAAADAAYAAQABAAAAAAAEAAUAAQADAAEAAAAFAAMAAQADAAEAAAAPAAQAAQABAAAAAAAPAAUAAQADAAEAAAAQAAQAAQADAAEAAAAPAAMAAQADAAEAAAAOAAQAAQABAAAAAAAFAAgAAQADAAEAAAAGAAkAAQADAAEAAAACAAIAAQABAAAAAAALAAUAAQADAAEAAAALAAMAAQADAAEAAAALAAkAAgAAAAAAAAA=")
 tile_set = ExtResource("2_kx78r")
-
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("3_ooil4")]
-position = Vector2(368, 304)
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
-gameManager = NodePath("../../GameManager")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

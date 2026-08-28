@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://cdxfful3ufp27" path="res://Assets/Backgrounds/gloomyglacier.png" id="1_5jsvd"]
 [ext_resource type="TileSet" uid="uid://1u282qhp7y1b" path="res://TileSets/gloomy_ground.tres" id="1_6wxxp"]
 [ext_resource type="TileSet" uid="uid://c81cx7647ulg3" path="res://TileSets/gloomy_obstacles.tres" id="2_5jsvd"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_kkkwd"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_n0s5j"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_dstlk"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_h5kax"]
@@ -28,15 +27,8 @@ tile_map_data = PackedByteArray("AAACAAMAAQAEAAIAAAACAAQAAQAEAAIAAAACAAUAAQAEAAI
 tile_set = ExtResource("1_6wxxp")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=419153632]
-tile_map_data = PackedByteArray("AAAIAAYAAQAGAAIAAAAGAAYAAQAGAAIAAAAMAAQAAQAEAAEAAAAMAAYAAQAEAAEAAAAEAAUAAQAGAAIAAAADAAQAAQAGAAIAAAAQAAkAAQAGAAIAAAAQAAgAAQAEAAEAAAAHAAIAAQADAAEAAAAJAAQAAQADAAEAAAAKAAcAAQAEAAEAAAAKAAkAAQAEAAEAAAAPAAUAAQAGAAIAAAAQAAQAAQAGAAIAAAANAAIAAQADAAEAAAAOAAIAAQAGAAIAAAA=")
+tile_map_data = PackedByteArray("AAAIAAYAAQAGAAIAAAAGAAYAAQAGAAIAAAAMAAQAAQAEAAEAAAAMAAYAAQAEAAEAAAAEAAUAAQAGAAIAAAADAAQAAQAGAAIAAAAQAAkAAQAGAAIAAAAQAAgAAQAEAAEAAAAHAAIAAQADAAEAAAAJAAQAAQADAAEAAAAKAAcAAQAEAAEAAAAKAAkAAQAEAAEAAAAPAAUAAQAGAAIAAAAQAAQAAQAGAAIAAAANAAIAAQADAAEAAAAOAAIAAQAGAAIAAAACAAkAAgAAAAAAAAA=")
 tile_set = ExtResource("2_5jsvd")
-
-[node name="Cogito" parent="ScalingParent" unique_id=1411860383 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_kkkwd")]
-position = Vector2(80, 304)
-gameManager = NodePath("../../GameManager")
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774336652]
 position = Vector2(960, 540)

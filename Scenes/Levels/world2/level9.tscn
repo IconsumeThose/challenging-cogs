@@ -3,7 +3,6 @@
 [ext_resource type="TileSet" uid="uid://dwh2tr6x3yg4e" path="res://TileSets/mechanical_ground.tres" id="1_3eumt"]
 [ext_resource type="Texture2D" uid="uid://c5o4hm5530gna" path="res://Assets/Backgrounds/mechanicalmachinery.png" id="1_vuphy"]
 [ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_vuphy"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_au3xy"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="5_ftf40"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="6_bdbkm"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="7_1vllo"]
@@ -27,15 +26,8 @@ tile_map_data = PackedByteArray("AAACAAQAAQAFAAAAAAACAAUAAQAAAAAAAAADAAMAAQAAAAA
 tile_set = ExtResource("1_3eumt")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=757700403]
-tile_map_data = PackedByteArray("AAALAAUAAQABAAAAAAALAAcAAQABAAAAAAARAAcAAQADAAEAAAAQAAYAAQADAAEAAAACAAUAAQADAAEAAAADAAQAAQADAAEAAAAIAAQAAQABAAAAAAAKAAUAAQADAAEAAAAMAAcAAQADAAEAAAAKAAcAAQADAAEAAAAGAAQAAQADAAEAAAAIAAUAAQABAAAAAAAIAAYAAQABAAAAAAAIAAcAAQABAAAAAAAIAAgAAQABAAAAAAAHAAUAAQAEAAEAAAAPAAcAAQAEAAEAAAA=")
+tile_map_data = PackedByteArray("AAALAAUAAQABAAAAAAALAAcAAQABAAAAAAARAAcAAQADAAEAAAAQAAYAAQADAAEAAAACAAUAAQADAAEAAAADAAQAAQADAAEAAAAIAAQAAQABAAAAAAAKAAUAAQADAAEAAAAMAAcAAQADAAEAAAAKAAcAAQADAAEAAAAGAAQAAQADAAEAAAAIAAUAAQABAAAAAAAIAAYAAQABAAAAAAAIAAcAAQABAAAAAAAIAAgAAQABAAAAAAAHAAUAAQAEAAEAAAAPAAcAAQAEAAEAAAAIAAIAAgAAAAAAAAA=")
 tile_set = ExtResource("2_vuphy")
-
-[node name="Cogito" parent="ScalingParent" unique_id=1219843324 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_au3xy")]
-position = Vector2(272, 80)
-gameManager = NodePath("../../GameManager")
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=631808748]
 position = Vector2(960, 540)

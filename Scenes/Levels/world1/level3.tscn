@@ -3,7 +3,6 @@
 [ext_resource type="TileSet" uid="uid://baliot562tha7" path="res://TileSets/banana_ground.tres" id="1_e6kyj"]
 [ext_resource type="Texture2D" uid="uid://bdd86i8d18wa0" path="res://Assets/Backgrounds/bananabeach.png" id="1_xusdo"]
 [ext_resource type="TileSet" uid="uid://bg2x7dajuff8p" path="res://TileSets/banana_obstacles.tres" id="2_877ot"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="3_vpax4"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="4_30y6s"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="5_vxnsw"]
 [ext_resource type="PackedScene" uid="uid://dtwyoc2b6dadv" path="res://Scenes/win_menu.tscn" id="6_qt6yb"]
@@ -29,15 +28,8 @@ tile_map_data = PackedByteArray("AAAIAAMAAQAAAAAAAAAIAAQAAQAAAAAAAAAIAAUAAQAAAAA
 tile_set = ExtResource("1_e6kyj")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=1753428060]
-tile_map_data = PackedByteArray("AAALAAIAAQABAAAAAAAKAAEAAQADAAEAAAAKAAcAAQADAAEAAAAJAAYAAQADAAEAAAAKAAMAAQADAAEAAAAKAAIAAQADAAEAAAALAAcAAQADAAEAAAAIAAEAAQABAAAAAAAHAAEAAQABAAAAAAAHAAIAAQABAAAAAAAHAAcAAQABAAAAAAAMAAcAAQABAAAAAAAIAAQAAQADAAEAAAAJAAUAAQADAAEAAAAKAAQAAQADAAEAAAA=")
+tile_map_data = PackedByteArray("AAALAAIAAQABAAAAAAAKAAEAAQADAAEAAAAKAAcAAQADAAEAAAAJAAYAAQADAAEAAAAKAAMAAQADAAEAAAAKAAIAAQADAAEAAAALAAcAAQADAAEAAAAIAAEAAQABAAAAAAAHAAEAAQABAAAAAAAHAAIAAQABAAAAAAAHAAcAAQABAAAAAAAMAAcAAQABAAAAAAAIAAQAAQADAAEAAAAJAAUAAQADAAEAAAAKAAQAAQADAAEAAAAIAAIAAgAAAAAAAAA=")
 tile_set = ExtResource("2_877ot")
-
-[node name="Cogito" parent="ScalingParent" unique_id=1022237886 node_paths=PackedStringArray("gameManager", "winMenu", "pauseMenu", "loseMenu") instance=ExtResource("3_vpax4")]
-position = Vector2(272, 80)
-gameManager = NodePath("../../GameManager")
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1883610266]
 position = Vector2(960, 540)

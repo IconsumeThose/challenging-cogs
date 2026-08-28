@@ -2,7 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://cyf7plaoqhrjg" path="res://Assets/Sludge/jimmydog.webp" id="1_na61s"]
 [ext_resource type="TileSet" uid="uid://dwh2tr6x3yg4e" path="res://TileSets/mechanical_ground.tres" id="1_xeygf"]
-[ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="2_i36j2"]
 [ext_resource type="TileSet" uid="uid://b6lmh2nkcrho0" path="res://TileSets/mechanical_obstacles.tres" id="2_xeygf"]
 [ext_resource type="PackedScene" uid="uid://i2xx1e807dx0" path="res://Scenes/ui.tscn" id="3_hkfpk"]
 [ext_resource type="PackedScene" uid="uid://bxbsqs4uy0ayb" path="res://Scenes/GameManager.tscn" id="4_ir7pk"]
@@ -29,15 +28,8 @@ tile_map_data = PackedByteArray("AAAAAAAAAQAAAAAAAAAAAAEAAQAAAAAAAAAAAAIAAQAAAAA
 tile_set = ExtResource("1_xeygf")
 
 [node name="Obstacles" type="TileMapLayer" parent="ScalingParent/TileMaps" unique_id=2119654505]
-tile_map_data = PackedByteArray("AAAHAAQAAQABAAAAAAANAAMAAQABAAAAAAAIAAcAAQAFAAEAAAAAAAEAAQADAAEAAAAAAAIAAQAEAAEAAAAAAAMAAQADAAEAAAABAAEAAQAEAAEAAAABAAMAAQAEAAEAAAACAAEAAQADAAEAAAACAAIAAQAEAAEAAAACAAMAAQADAAEAAAAGAAIAAQABAAAAAAAFAAgAAQADAAEAAAAGAAgAAQAEAAEAAAALAAcAAQABAAAAAAAMAAcAAQABAAAAAAAOAAYAAQABAAAAAAAEAAcAAQABAAAAAAA=")
+tile_map_data = PackedByteArray("AAAHAAQAAQABAAAAAAANAAMAAQABAAAAAAAIAAcAAQAFAAEAAAAAAAEAAQADAAEAAAAAAAIAAQAEAAEAAAAAAAMAAQADAAEAAAABAAEAAQAEAAEAAAABAAMAAQAEAAEAAAACAAEAAQADAAEAAAACAAIAAQAEAAEAAAACAAMAAQADAAEAAAAGAAIAAQABAAAAAAAFAAgAAQADAAEAAAAGAAgAAQAEAAEAAAALAAcAAQABAAAAAAAMAAcAAQABAAAAAAAOAAYAAQABAAAAAAAEAAcAAQABAAAAAAABAAIAAgAAAAAAAAA=")
 tile_set = ExtResource("2_xeygf")
-
-[node name="Cogito" parent="ScalingParent" unique_id=1160621226 node_paths=PackedStringArray("winMenu", "pauseMenu", "loseMenu", "gameManager") instance=ExtResource("2_i36j2")]
-position = Vector2(48, 80)
-winMenu = NodePath("../../WinMenu")
-pauseMenu = NodePath("../../PauseMenu")
-loseMenu = NodePath("../../LoseMenu")
-gameManager = NodePath("../../GameManager")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2111655432]
 position = Vector2(960, 540)
