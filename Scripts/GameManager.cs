@@ -237,6 +237,7 @@ public partial class GameManager : Node2D
 	/** <summary>When cogito moves, trigger snakes to move</summary> */
 	public void CogitoMoved()
 	{
+		GD.Print("Cogito moved to initiate smovement!");
 		foreach (Character character in characters)
 		{
 			if (character is Snake snake && snake.currentCharacterState != character.deadState)

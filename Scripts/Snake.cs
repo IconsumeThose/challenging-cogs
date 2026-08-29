@@ -90,9 +90,10 @@ public partial class Snake : Character
 		blockingGround.AddRange(voidGround);
 	}
 
-	protected override void ResetTriedOtherDirection()
+	protected override void ResetMovementVariables()
 	{
 		triedOtherDirection = false;
+		queueMove = false;
 	}
 
 	protected override bool AttemptMove(Vector2 newPosition, bool teleport = false, bool dryRun = false)

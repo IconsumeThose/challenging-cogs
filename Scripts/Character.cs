@@ -170,8 +170,8 @@ public partial class Character : CharacterBody2D
 				Character.SetSpriteAnimation("Idle");
 			}
 
-			// once a snake finished its move, it can reset the triedOtherDirection variable
-			Character.ResetTriedOtherDirection();
+			// reset certain variables, primarily for snake
+			Character.ResetMovementVariables();
 
 			// check if all characters are dead or idle to increment current move
 			Character.gameManager.CheckToIncrementCurrentMove();
@@ -737,7 +737,7 @@ public partial class Character : CharacterBody2D
 	}
 
 	/** <summary>Reset tried other direction variable for snakes</summary> */
-	protected virtual void ResetTriedOtherDirection() { }
+	protected virtual void ResetMovementVariables() { }
 
 	/** <summary>Run when a move attempt was successful, even if its a dry run</summary> */
 	protected virtual void OnSuccessfulAttemptMove() { }
@@ -895,6 +895,7 @@ public partial class Character : CharacterBody2D
 			// if cogito is rechecking the tile its on, recheck the tile all other characters are on
 			if (this is not Cogito && gameManager.previousMoves.Count > 0)
 			{
+				GD.Print("Not doing a full smove- only rechecking current sniles!");
 				// PreviousMove previousMove = gameManager.previousMoves.Pop();
 				MoveRecord previousMove = gameManager.previousMoves.Pop();
 
@@ -919,6 +920,7 @@ public partial class Character : CharacterBody2D
 		teleported = false;
 		animatedSprite.Modulate = new("FFFFFF");
 		SetSpriteAnimation("Idle");
+		gameManager.CheckToIncrementCurrentMove();
 	}
 
 	/** <summary>This override allows for the character to continue processing if all characters are not idle</summary> */
