@@ -54,7 +54,7 @@ text = "Settings
 layout_mode = 2
 text = "Close"
 
-[node name="Label" type="Label" parent="." unique_id=908340671]
+[node name="VersionNumber" type="Label" parent="." unique_id=908340671]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -65,7 +65,7 @@ offset_left = -68.0
 offset_top = -23.0
 grow_horizontal = 0
 grow_vertical = 0
-text = "v0.5.8.15"
+text = "v0.5.8.16"
 
 [connection signal="pressed" from="MainMenuVBox/PlayButton" to="." method="OnPlayPressed"]
 [connection signal="pressed" from="MainMenuVBox/LevelSelectButton" to="." method="OnLevelSelectPressed"]

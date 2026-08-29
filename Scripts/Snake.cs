@@ -90,6 +90,11 @@ public partial class Snake : Character
 		blockingGround.AddRange(voidGround);
 	}
 
+	protected override void ResetTriedOtherDirection()
+	{
+		triedOtherDirection = false;
+	}
+
 	protected override bool AttemptMove(Vector2 newPosition, bool teleport = false, bool dryRun = false)
 	{
 		// only attempt to move if triggered by Cogito's movement or if the snake is already moving/animating
@@ -102,13 +107,14 @@ public partial class Snake : Character
 			);
 
 			// turn the other direction if the new tile has a snake already on it; only checked if not teleporting
-			if (!teleport && gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] is Snake otherSnake
+			if (!teleport && (!(newTilePosition.X >= 0 && newTilePosition.Y >= 0 && newTilePosition.X < screenTileDimensions.X && newTilePosition.Y < screenTileDimensions.Y)
+				|| (gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] is Snake otherSnake
 				&& otherSnake.currentCharacterState != deadState
 				&& gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] != null
-				&& gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] != this)
+				&& gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] != this)))
 			{
 				if (!triedOtherDirection)
-					return TryOtherDirection();
+					return TryOtherDirection(newTilePosition - currentTileData.groundTile.position);
 			
 				queueMove = false;
 
@@ -139,14 +145,13 @@ public partial class Snake : Character
 			return;
 		}
 
-
 		otherSnake.MoveBack();
 	}
 
 	/** <summary>Try to move 1 tile in the direction the conveyor is facing and adjust the snake direction accordingly</summary> */
 	protected override void ConveyorInteraction()
 	{
-		// change the snakes direction if the conveyor's direction is on the snake's access
+		// change the snakes direction if the conveyor's direction is on the snake's axis
 		if (currentTileData.groundTile.direction.Abs() == direction.Abs())
 			direction = currentTileData.groundTile.direction;
 
@@ -158,10 +163,11 @@ public partial class Snake : Character
 		triedOtherDirection = false;
 	}
 
-	protected override bool TryOtherDirection()
+	protected override bool TryOtherDirection(Vector2 movementDirection)
 	{
 		// don't try other direction on conveyor as it is forced in one direction
-		if (currentTileData.groundTile.customType == "Conveyor")
+		if ((currentTileData.groundTile.customType == "Conveyor" || currentTileData.groundTile.customType == "EvilConveyor") 
+			&& movementDirection != direction.Abs())
 		{
 			triedOtherDirection = true;
 			return false;

@@ -170,6 +170,9 @@ public partial class Character : CharacterBody2D
 				Character.SetSpriteAnimation("Idle");
 			}
 
+			// once a snake finished its move, it can reset the triedOtherDirection variable
+			Character.ResetTriedOtherDirection();
+
 			// check if all characters are dead or idle to increment current move
 			Character.gameManager.CheckToIncrementCurrentMove();
 		}
@@ -725,11 +728,14 @@ public partial class Character : CharacterBody2D
 		else if (!teleport)
 		{
 			// run try other direction if the character has logic for attempting to move the other way
-			return TryOtherDirection();
+			return TryOtherDirection(movementDirection);
 		}
 
 		return false;
 	}
+
+	/** <summary>Reset tried other direction variable for snakes</summary> */
+	protected virtual void ResetTriedOtherDirection() { }
 
 	/** <summary>Run when a move attempt was successful, even if its a dry run</summary> */
 	protected virtual void OnSuccessfulAttemptMove() { }
@@ -752,7 +758,7 @@ public partial class Character : CharacterBody2D
 	}
 
 	/** <summary>Try moving the other direction, returns true if this was successful</summary> */
-	protected virtual bool TryOtherDirection()
+	protected virtual bool TryOtherDirection(Vector2 movementDirection)
 	{
 		return false;
 	}
