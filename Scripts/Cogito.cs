@@ -410,7 +410,7 @@ public partial class Cogito : Character
 			
 			MoveRecord currentMove = new(gameManager.currentMove, new LayeredCustomTileData[20, 12], new LayeredCustomTileData[20, 12],
 				0, 
-				candiesEaten,	balloonIsActive, usedParadigmShift: true, 
+				0,	balloonIsActive, usedParadigmShift: true, 
 				movementDirections:  new() { 
 				{ this, new(Vector2I.Zero) } }
 			);
