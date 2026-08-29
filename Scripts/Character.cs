@@ -877,7 +877,7 @@ public partial class Character : CharacterBody2D
 		if (!gameManager.AllCharactersIdle)
 			SetBufferedInput();
 
-		if (!UpdateMove() || (!gameManager.AllCharactersIdle && !OverrideAllCharactersIdleCheck()) || animationPlayer.IsPlaying())
+		if (!UpdateMove() || (!gameManager.AllCharactersIdle && !OverrideAllCharactersIdleCheck()) || teleported)
 			return;
 
 		// check if paused again or if an undo/redo occurred so no more inputs are read after winning or losing or loading move on same frame
@@ -895,7 +895,6 @@ public partial class Character : CharacterBody2D
 			// if cogito is rechecking the tile its on, recheck the tile all other characters are on
 			if (this is not Cogito && gameManager.previousMoves.Count > 0)
 			{
-				GD.Print("Not doing a full smove- only rechecking current sniles!");
 				// PreviousMove previousMove = gameManager.previousMoves.Pop();
 				MoveRecord previousMove = gameManager.previousMoves.Pop();
 

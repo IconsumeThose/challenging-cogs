@@ -214,7 +214,7 @@ public partial class GameManager : Node2D
 			{
 				// character is considered idle if it is idle, dead, or for snakes, has the queueMove flag to indicate it will attempt to move 
 				if (!(character?.currentCharacterState == character.idleState || character?.currentCharacterState == character.deadState)
-					|| character is Snake snake && snake.queueMove || character.animationPlayer.IsPlaying())
+					|| character is Snake snake && snake.queueMove || character.teleported)
 				{
 					return false;
 				}
@@ -237,7 +237,6 @@ public partial class GameManager : Node2D
 	/** <summary>When cogito moves, trigger snakes to move</summary> */
 	public void CogitoMoved()
 	{
-		GD.Print("Cogito moved to initiate smovement!");
 		foreach (Character character in characters)
 		{
 			if (character is Snake snake && snake.currentCharacterState != character.deadState)

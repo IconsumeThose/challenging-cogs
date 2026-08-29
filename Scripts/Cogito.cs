@@ -71,7 +71,6 @@ public partial class Cogito : Character
 	/** <summary> >tell the game manager that cogito started a new move</summary> */
 	public void AttemptCogitoMovedCall()
 	{
-		GD.Print($"Attempting cogito moved call! undoOrRedoHappened: {undoOrRedoHappened}, targetCharacterState: {targetCharacterState}");
 		if (!(undoOrRedoHappened && targetCharacterState != animatingState))
 				gameManager.CogitoMoved();
 	}

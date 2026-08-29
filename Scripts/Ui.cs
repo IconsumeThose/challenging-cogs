@@ -9,7 +9,20 @@ public partial class Ui : Control
 		levelInfoLabel,
 		moveCountLabel;
 
-	[Export] public Vector2I staminaSegmentSize = new(471, 471);
+	public Godot.Collections.Array<Color> liquidColors = [
+		new("131363"),
+		new("131363"),
+		new("131363"),
+		new("131363"),
+		new("fd9c96"),
+		new("9e3a8a"),
+		new("131363"),
+		new("131363"),
+		new("131363"),
+		new("131363")
+	];
+
+	[Export] public Vector2I staminaSegmentSize = new(28, 32);
 	[Export] public Sprite2D staminaBar;
 
 	[Export] public GameManager gameManager;
@@ -23,6 +36,10 @@ public partial class Ui : Control
 			return;
 		}
 
+		var atlas = GD.Load<Texture2D>("res://Assets/Sprites/uisheet.png");
+		var tile = ImageTexture.CreateFromImage(atlas.GetImage().GetRegion(new Rect2I(2, 64, 28, 32)));
+		staminaBar.Texture = tile;
+		staminaBar.Modulate = new(liquidColors[DataManager.currentWorld]);
 		UpdateCogCountLabel(0);
 		UpdateParadigmShiftCountLabel(gameManager.maxParadigmShifts);
 		UpdateStaminaBar(gameManager.maxStamina);
@@ -49,6 +66,6 @@ public partial class Ui : Control
 
 	public void UpdateStaminaBar(int newCount)
 	{
-		staminaBar.RegionRect = new Rect2(0, 0, staminaSegmentSize.Y * newCount, staminaSegmentSize.Y);
+		staminaBar.RegionRect = new Rect2(0, 0, staminaSegmentSize.X * newCount, staminaSegmentSize.Y);
 	}
 }
