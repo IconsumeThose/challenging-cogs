@@ -214,7 +214,7 @@ public partial class GameManager : Node2D
 			{
 				// character is considered idle if it is idle, dead, or for snakes, has the queueMove flag to indicate it will attempt to move 
 				if (!(character?.currentCharacterState == character.idleState || character?.currentCharacterState == character.deadState)
-					|| character is Snake snake && snake.queueMove)
+					|| character is Snake snake && snake.queueMove || character.animationPlayer.IsPlaying())
 				{
 					return false;
 				}

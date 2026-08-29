@@ -330,8 +330,9 @@ public partial class Character : CharacterBody2D
 							Character.gameManager.groundLayer, Character.gameManager.obstacleLayer);
 				
 					candiesEatenChange -= cogito.candiesEaten;
-
-					previousMove.candiesEatenChange = candiesEatenChange;
+					
+					if (previousMove != null)
+						previousMove.candiesEatenChange = candiesEatenChange;
 				}
 			}
 
@@ -360,8 +361,9 @@ public partial class Character : CharacterBody2D
 				}
 			}
 
-			// check goal interaction only if its activated
-			if (Character.currentTileData.groundTile.customType == "GoalOn")
+			// check goal interaction only if its activated or goal is off but cog goal is met (cells take a frame to update)
+			if (Character.currentTileData.groundTile.customType == "GoalOn" 
+				|| (Character.currentTileData.groundTile.customType == "GoalOff" && Character.gameManager.cogsChallenged == Character.gameManager.TotalNumberOfCogs))
 			{
 				Character.GoalInteraction();
 			}
@@ -871,6 +873,9 @@ public partial class Character : CharacterBody2D
 		// don't allow controlling character while dying but allow resetting
 		if (currentCharacterState == animatingState || currentCharacterState == deadState)
 			return;
+
+		if (!gameManager.AllCharactersIdle)
+			SetBufferedInput();
 
 		if (!UpdateMove() || (!gameManager.AllCharactersIdle && !OverrideAllCharactersIdleCheck()) || animationPlayer.IsPlaying())
 			return;
