@@ -330,6 +330,7 @@ public partial class GameManager : Node2D
 
 			GetParent().FindChild("ScalingParent").AddChild(cogito);
 			this.cogito = cogito;
+			cogito.Owner = GetParent().FindChild("ScalingParent");
 
 			obstacleLayer.SetCell(cogitoCoordinates[0]);
 
@@ -369,7 +370,8 @@ public partial class GameManager : Node2D
 		snake.Position = snake.TargetPosition;
 
 		GetParent().FindChild("ScalingParent").AddChild(snake);
-
+		snake.Owner = GetParent().FindChild("ScalingParent");
+		
 		characters.Add(snake);
 
 		obstacleLayer.SetCell(snakeCoordinates);
