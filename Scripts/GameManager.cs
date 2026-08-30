@@ -71,7 +71,7 @@ public partial class GameManager : Node2D
 	/** <summary>
 		Class <c>PreviousMove</c> keeps track of all relevant information for a move so that it can be undone
 		</summary> */
-	public class MoveRecord(int moveNumber, LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd, int staminaChange, int candiesEatenChange, bool balloonIsActive = false, 
+	public class MoveRecord(int moveNumber, LayeredCustomTileData[,] changedTilesStart, LayeredCustomTileData[,] changedTilesEnd, int staminaChange, bool balloonIsActive = false, 
 		Dictionary<Character, CharacterMovement> movementDirections = null, bool usedParadigmShift = false, bool leversToggled = false, bool balloonPopped = false)
 	{
 		public int moveNumber = moveNumber;
@@ -82,7 +82,6 @@ public partial class GameManager : Node2D
 		public bool usedParadigmShift = usedParadigmShift;
 		public bool leversToggled = leversToggled;
 		public int staminaChange = staminaChange;
-		public int candiesEatenChange = candiesEatenChange;
 		public bool balloonIsActive = balloonIsActive;
 		public bool balloonPopped = balloonPopped;
 	}

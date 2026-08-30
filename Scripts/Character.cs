@@ -310,8 +310,6 @@ public partial class Character : CharacterBody2D
 						changedTilesStart[obstaclePosition.X, obstaclePosition.Y] = Character.currentTileData;
 					}
 
-					int candiesEatenChange = cogito.candiesEaten;
-
 					switch (obstacleTile.customType)
 					{
 						case "Cog":
@@ -328,11 +326,6 @@ public partial class Character : CharacterBody2D
 					changedTilesEnd[obstaclePosition.X, obstaclePosition.Y] = GetTileCustomType(
 							obstaclePosition, 
 							Character.gameManager.groundLayer, Character.gameManager.obstacleLayer);
-				
-					candiesEatenChange -= cogito.candiesEaten;
-					
-					if (previousMove != null)
-						previousMove.candiesEatenChange = candiesEatenChange;
 				}
 			}
 
@@ -561,8 +554,7 @@ public partial class Character : CharacterBody2D
 		}
 
 		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd, 
-			previousMove.staminaChange,
-			previousMove.candiesEatenChange, previousMove.balloonIsActive, balloonPopped: previousMove.balloonPopped,
+			previousMove.staminaChange, previousMove.balloonIsActive, balloonPopped: previousMove.balloonPopped,
 			movementDirections: previousMove.movementDirections, usedParadigmShift: previousMove.usedParadigmShift, leversToggled: previousMove.leversToggled);
 		gameManager.previousMoves.Push(currentMove);
 	}
