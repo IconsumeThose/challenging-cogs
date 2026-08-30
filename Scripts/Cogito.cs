@@ -215,6 +215,7 @@ public partial class Cogito : Character
 		candiesEaten++;
 		UpdateCandyAura();
 		gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
+		gameManager.candyEatenSFX.Play();
 	}
 
 	/** <summary>Equip the balloon!</summary> */
@@ -777,7 +778,13 @@ public partial class Cogito : Character
 			{
 				if (changedTileStartData.obstacleTile.customType == "Balloon")
 				{
+					// set balloon to true if the move changed a balloon tile to empty
 					balloonIsActive = true;
+				}
+				else if (changedTileStartData.obstacleTile.customType == "Candy")
+				{
+					// play candy eaten sfx when redo eats a candy
+					gameManager.candyEatenSFX.Play();
 				}
 			}
 

@@ -129,7 +129,8 @@ public partial class GameManager : Node2D
 	[Export] public AudioStreamPlayer challengedCogSFX,
 
 	/** <summary>Sound effect for challenging the last cog</summary> */
-		challengedLastCogSFX;
+		challengedLastCogSFX,
+		candyEatenSFX;
 
 	/** <summary>Reference to the Ui node displayed over each level</summary> */
 	[Export] public Ui ui;
@@ -371,7 +372,7 @@ public partial class GameManager : Node2D
 
 		GetParent().FindChild("ScalingParent").AddChild(snake);
 		snake.Owner = GetParent().FindChild("ScalingParent");
-		
+
 		characters.Add(snake);
 
 		obstacleLayer.SetCell(snakeCoordinates);
