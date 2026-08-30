@@ -221,7 +221,7 @@ public partial class Cogito : Character
 	private void PlayCandyEatenSFX()
 	{
 		gameManager.candyEatenSFX.Play();
-		gameManager.candyEatenSFX.PitchScale = 1f + ((candiesEaten - 1) / 10f);
+		gameManager.candyEatenSFX.PitchScale = 1f + ((candiesEaten - 1) / 8f);
 	}
 
 	/** <summary>Equip the balloon!</summary> */
