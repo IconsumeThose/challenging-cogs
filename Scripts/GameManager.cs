@@ -256,6 +256,8 @@ public partial class GameManager : Node2D
 			return;
 		}
 		
+		Engine.TimeScale = 1;
+
 		// cogito = GetParent().FindChild("Cogito") as Cogito;
 
 		CalculateCurrentWorldAndLevel();

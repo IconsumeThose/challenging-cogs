@@ -758,7 +758,7 @@ public partial class Cogito : Character
 
 		int candiesEatenChangeFromRedoing = 0;
 		bool rocksBroken = false;
-		GD.Print("COUNTS: " + loadedMove.changedTilesStart.Length + " " + loadedMove.changedTilesEnd.Length);
+
 		for (int x = 0; x < screenTileDimensions.X; x++)
 		{
 			for (int y = 0; y < screenTileDimensions.Y; y++)
