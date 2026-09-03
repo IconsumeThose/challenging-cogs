@@ -374,7 +374,7 @@ public partial class Menu : Control
 	/** <summary>Restart the level</summary> */
 	public void OnRestartPressed()
 	{
-		Engine.TimeScale = 1;
+		Engine.TimeScale = 0;
 		GetTree().ChangeSceneToFile($"res://Scenes/Levels/world{DataManager.currentWorld}/level{DataManager.currentLevel}.tscn");
 		SongMixer.PlaySong((SongMixer.Song)DataManager.currentWorld);
 	}

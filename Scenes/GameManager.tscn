@@ -5,13 +5,15 @@
 [ext_resource type="PackedScene" uid="uid://cbsuywq6rqgry" path="res://Scenes/Snake.tscn" id="2_b7dir"]
 [ext_resource type="PackedScene" uid="uid://2jx57nk5tsbj" path="res://Scenes/Cogito.tscn" id="2_mmuqr"]
 [ext_resource type="AudioStream" uid="uid://bju7mdmlhyfi8" path="res://Assets/Sounds/challengedlastcog.ogg" id="3_b7dir"]
+[ext_resource type="AudioStream" uid="uid://crkmsjr0uqdpp" path="res://Assets/Sounds/atecandy.ogg" id="6_xqbpr"]
 
-[node name="GameManager" type="Node2D" unique_id=1529311522 node_paths=PackedStringArray("challengedCogSFX", "challengedLastCogSFX")]
+[node name="GameManager" type="Node2D" unique_id=1529311522 node_paths=PackedStringArray("challengedCogSFX", "challengedLastCogSFX", "candyEatenSFX")]
 script = ExtResource("1_m2tc1")
 packedCogitoScene = ExtResource("2_mmuqr")
 packedSnakeScene = ExtResource("2_b7dir")
 challengedCogSFX = NodePath("Challengedcog")
 challengedLastCogSFX = NodePath("Challengedlastcog")
+candyEatenSFX = NodePath("Atecandy")
 
 [node name="Challengedcog" type="AudioStreamPlayer" parent="." unique_id=2147168073]
 stream = ExtResource("2_7cxpe")
@@ -19,4 +21,8 @@ bus = &"SFX"
 
 [node name="Challengedlastcog" type="AudioStreamPlayer" parent="." unique_id=354684916]
 stream = ExtResource("3_b7dir")
+bus = &"SFX"
+
+[node name="Atecandy" type="AudioStreamPlayer" parent="." unique_id=1187279770]
+stream = ExtResource("6_xqbpr")
 bus = &"SFX"

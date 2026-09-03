@@ -161,6 +161,7 @@ public partial class Cogito : Character
 	/** <summary> Specifically handle colliding with a snake to die</summary> */
 	protected override void OnCharacterCollision(Node2D body)
 	{
+		GD.Print("collision detected");
 		// ensure the collision was a snake that is alive
 		if (body is not Snake snake || snake.currentCharacterState == deadState || undoOrRedoHappened || teleported || snake.teleported)
 			return;
@@ -180,7 +181,7 @@ public partial class Cogito : Character
 		gameManager.SavedMove = gameManager.currentMove;
 
 		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd, 0, 
-			0,	balloonIsActive
+			balloonIsActive
 		);
 
 		AddNewMovementDirection(currentMove);
@@ -215,6 +216,13 @@ public partial class Cogito : Character
 		candiesEaten++;
 		UpdateCandyAura();
 		gameManager.obstacleLayer.SetCell(currentTileData.groundTile.position);
+		PlayCandyEatenSFX();
+	}
+
+	private void PlayCandyEatenSFX()
+	{
+		gameManager.candyEatenSFX.Play();
+		gameManager.candyEatenSFX.PitchScale = 1f + ((candiesEaten - 1) / 8f);
 	}
 
 	/** <summary>Equip the balloon!</summary> */
@@ -409,8 +417,7 @@ public partial class Cogito : Character
 			gameManager.SavedMove = gameManager.currentMove;
 			
 			MoveRecord currentMove = new(gameManager.currentMove, new LayeredCustomTileData[20, 12], new LayeredCustomTileData[20, 12],
-				0, 
-				0,	balloonIsActive, usedParadigmShift: true, 
+				0, balloonIsActive, usedParadigmShift: true, 
 				movementDirections:  new() { 
 				{ this, new(Vector2I.Zero) } }
 			);
@@ -533,12 +540,10 @@ public partial class Cogito : Character
 				gameManager.groundLayer, gameManager.obstacleLayer);
 		}
 
-		int candiesEatenChange = 0;
 		// remove all adjacent rocks if candy has been eaten
 		if (candiesEaten > 0 && demolishedRocks.Count > 0)
 		{
-			candiesEatenChange = 1;
-			candiesEaten -= candiesEatenChange;
+			candiesEaten--;
 
 			UpdateCandyAura();
 
@@ -559,8 +564,7 @@ public partial class Cogito : Character
 
 		// save paradigm shift data to be undone
 		MoveRecord currentMove = new(gameManager.currentMove, changedTilesStart, changedTilesEnd,
-			0, candiesEatenChange, 
-			balloonIsActive, usedParadigmShift: true, leversToggled: leversJustToggled, movementDirections: previousMove.movementDirections);
+			0, balloonIsActive, usedParadigmShift: true, leversToggled: leversJustToggled, movementDirections: previousMove.movementDirections);
 		gameManager.previousMoves.Push(currentMove);
 
 		// check if any un-shifted crystals remain and when out of shifts but any crystals remain, show fail menu
@@ -753,42 +757,70 @@ public partial class Cogito : Character
 		// load balloon state, where if redoing and ballon was popped, balloon is set to inactive
 		balloonIsActive = loadedMove.balloonIsActive && !(loadedMove.balloonPopped && loadMove == LoadMove.redo);
 
-		foreach (LayeredCustomTileData tileData in changedTiles)
+		int candiesEatenChangeFromRedoing = 0;
+		bool rocksBroken = false;
+
+		for (int x = 0; x < screenTileDimensions.X; x++)
 		{
-			if (tileData == null)
-				continue;
-
-			LayeredCustomTileData changedTileStartData = loadedMove.changedTilesStart[tileData.groundTile.position.X, tileData.groundTile.position.Y],
-				changedTileEndData = loadedMove.changedTilesEnd[tileData.groundTile.position.X, tileData.groundTile.position.Y];
-
-			if (changedTileEndData.obstacleTile.customType == null && (changedTileStartData.obstacleTile.customType == "Cog" || changedTileStartData.obstacleTile.customType == "CogCrystal" 
-				|| changedTileStartData.obstacleTile.customType == "ReinforcedCogCrystal" || changedTileStartData.obstacleTile.customType == "DeinforcedCogCrystal"))
+			for (int y = 0; y < screenTileDimensions.Y; y++)
 			{
-				// turn the goal back off if it was on		
-				if (loadMove == LoadMove.undo && gameManager.cogsChallenged == gameManager.TotalNumberOfCogs)
+				LayeredCustomTileData changedTileStartData = loadedMove.changedTilesStart[x, y],
+					changedTileEndData = loadedMove.changedTilesEnd[x, y],
+					changedTileTargetData = changedTiles[x, y];
+
+				if (changedTileStartData == null && changedTileEndData == null)
+					continue;
+
+				if (changedTileEndData.obstacleTile.customType == null && (changedTileStartData.obstacleTile.customType == "Cog" || changedTileStartData.obstacleTile.customType == "CogCrystal" 
+					|| changedTileStartData.obstacleTile.customType == "ReinforcedCogCrystal" || changedTileStartData.obstacleTile.customType == "DeinforcedCogCrystal"))
 				{
-					gameManager.groundLayer.SetCell(gameManager.goalCoordinates, 1, new(1, 1));
+					// turn the goal back off if it was on		
+					if (loadMove == LoadMove.undo && gameManager.cogsChallenged == gameManager.TotalNumberOfCogs)
+					{
+						gameManager.groundLayer.SetCell(gameManager.goalCoordinates, 1, new(1, 1));
+					}
+
+					// adjust counter
+					gameManager.CogChallenged(-1 * loadedMoveMultiplier);
+				}
+				else if (changedTileEndData.obstacleTile.customType == null)
+				{
+					if (loadMove == LoadMove.redo)
+					{
+						if (changedTileStartData.obstacleTile.customType == "Balloon")
+						{
+							// set balloon to true if the move changed a balloon tile to empty
+							balloonIsActive = true;
+						}
+
+					}
+					
+					if (changedTileStartData.obstacleTile.customType == "Candy")
+					{					
+						candiesEatenChangeFromRedoing++;
+					}
+					else if (changedTileStartData.obstacleTile.customType == "Rock")
+					{
+						rocksBroken = true;
+					}
 				}
 
-				// adjust counter
-				gameManager.CogChallenged(-1 * loadedMoveMultiplier);
-			}
-			else if (loadMove == LoadMove.redo && changedTileEndData.obstacleTile.customType == null)
-			{
-				if (changedTileStartData.obstacleTile.customType == "Balloon")
-				{
-					balloonIsActive = true;
-				}
-			}
+				gameManager.groundLayer.SetCell(changedTileTargetData.groundTile.position, 1,
+						changedTileTargetData.groundTile.atlasPosition, changedTileTargetData.groundTile.alternative);
 
-			gameManager.groundLayer.SetCell(tileData.groundTile.position, 1,
-					tileData.groundTile.atlasPosition, tileData.groundTile.alternative);
-
-			gameManager.obstacleLayer.SetCell(tileData.obstacleTile.position, 1,
-					tileData.obstacleTile.atlasPosition, tileData.obstacleTile.alternative);
+				gameManager.obstacleLayer.SetCell(changedTileTargetData.obstacleTile.position, 1,
+						changedTileTargetData.obstacleTile.atlasPosition, changedTileTargetData.obstacleTile.alternative);
+			}
 		}
 
-		candiesEaten += loadedMove.candiesEatenChange * loadedMoveMultiplier;
+		if (rocksBroken)
+			candiesEaten += loadedMoveMultiplier;
+
+		candiesEaten -= candiesEatenChangeFromRedoing * loadedMoveMultiplier;
+
+		// play candy eaten sfx when redo eats a candy
+		if (loadMove == LoadMove.redo && candiesEatenChangeFromRedoing != 0)
+			PlayCandyEatenSFX();
 
 		UpdateCandyAura();
 

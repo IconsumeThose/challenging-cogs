@@ -109,10 +109,10 @@ public partial class Snake : Character
 
 			// turn the other direction if the new tile has a snake already on it; only checked if not teleporting
 			if (!teleport && (!(newTilePosition.X >= 0 && newTilePosition.Y >= 0 && newTilePosition.X < screenTileDimensions.X && newTilePosition.Y < screenTileDimensions.Y)
-				|| (gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] is Snake otherSnake
+				|| (gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y].FirstCharacter != null
+				&& gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y].FirstCharacter is Snake otherSnake
 				&& otherSnake.currentCharacterState != deadState
-				&& gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] != null
-				&& gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y] != this)))
+				&& !gameManager.characterMatrix[newTilePosition.X, newTilePosition.Y].Has(this))))
 			{
 				if (!triedOtherDirection)
 					return TryOtherDirection(newTilePosition - currentTileData.groundTile.position);
