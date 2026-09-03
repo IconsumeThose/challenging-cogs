@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 #pragma warning disable CA1050
 public partial class GameManager : Node2D
 {
@@ -25,9 +26,52 @@ public partial class GameManager : Node2D
 			obstacleTile = obstacleTile;
 		public Vector2I tilePosition = tilePosition;
 	}
+	/** <summary>Contains the set of characters at a point in the character matrix with helper methods to detect collisions</summary> */	
+	public class CharacterMatrixPoint
+	{
+		public HashSet<Character> characters = [];
+
+		public bool Has(Character character)
+		{
+			return characters.Contains(character);
+		}
+
+		public void Add(Character character)
+		{
+			characters.Add(character);
+		}
+
+		public void Remove(Character character)
+		{
+			characters.Remove(character);
+		}
+
+		public Character FirstCharacter	{ get {	return characters.FirstOrDefault();	} }
+
+		public bool CollisionDetected {	get	{ return characters.Count > 1; } }
+
+		/** <summary>Provided the list of all characters colliding with the base character</summary> */	
+		public HashSet<Character> CharacterCollision(Character baseCharacter)
+		{
+			if (!Has(baseCharacter) || !CollisionDetected)
+				return null;
+
+			HashSet<Character> collisionSet = [];
+
+			foreach (Character character in characters)
+			{
+				if (character == baseCharacter)
+					continue;
+				
+				collisionSet.Add(character);
+			}
+
+			return collisionSet;
+		}
+	}
 
 	/** <summary>Stores what character is at each tile position</summary> */
-	public Character[,] characterMatrix = new Character[20, 12];
+	public CharacterMatrixPoint[,] characterMatrix = new CharacterMatrixPoint[20, 12];
 
 	/** <summary>Get the direction the tile is facing (from alternate tiles)</summary> */
 	public static Vector2 GetTileDirection(TileData tileData)
@@ -315,6 +359,15 @@ public partial class GameManager : Node2D
 			if (teleporters.Count == 1 || teleporters.Count > 2)
 			{
 				GD.PushError("For each teleporter type, please put exactly 2 tiles or none!");
+			}
+		}
+
+		// initialize the character matrix
+		for (int x = 0; x < 20; x++)
+		{
+			for (int y = 0; y < 12; y++)
+			{
+				characterMatrix[x, y] = new();
 			}
 		}
 

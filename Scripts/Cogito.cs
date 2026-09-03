@@ -161,6 +161,7 @@ public partial class Cogito : Character
 	/** <summary> Specifically handle colliding with a snake to die</summary> */
 	protected override void OnCharacterCollision(Node2D body)
 	{
+		GD.Print("collision detected");
 		// ensure the collision was a snake that is alive
 		if (body is not Snake snake || snake.currentCharacterState == deadState || undoOrRedoHappened || teleported || snake.teleported)
 			return;

@@ -65,7 +65,7 @@ offset_left = -68.0
 offset_top = -23.0
 grow_horizontal = 0
 grow_vertical = 0
-text = "v0.5.14.10"
+text = "v0.5.14.11"
 
 [connection signal="pressed" from="MainMenuVBox/PlayButton" to="." method="OnPlayPressed"]
 [connection signal="pressed" from="MainMenuVBox/LevelSelectButton" to="." method="OnLevelSelectPressed"]

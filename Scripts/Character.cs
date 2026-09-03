@@ -570,7 +570,7 @@ public partial class Character : CharacterBody2D
 
 			if (currentTileData is not null)
 			{
-				gameManager.characterMatrix[currentTileData.tilePosition.X, currentTileData.tilePosition.Y] = null;
+				gameManager.characterMatrix[currentTileData.tilePosition.X, currentTileData.tilePosition.Y].Remove(this);
 			}
 		}
 		else
@@ -802,12 +802,12 @@ public partial class Character : CharacterBody2D
 	}
 
 	/** <summary>Update the tile data the character is on</summary> */
-	public void UpdateCurrentTileData()
+	public void UpdateCurrentTileData(bool collisionCheck = false)
 	{
 		// remove the old character position in the character matrix
-		if (currentTileData is not null && gameManager.characterMatrix[currentTileData.tilePosition.X, currentTileData.tilePosition.Y] == this)
+		if (currentTileData is not null && gameManager.characterMatrix[currentTileData.tilePosition.X, currentTileData.tilePosition.Y].Has(this))
 		{
-			gameManager.characterMatrix[currentTileData.tilePosition.X, currentTileData.tilePosition.Y] = null;
+			gameManager.characterMatrix[currentTileData.tilePosition.X, currentTileData.tilePosition.Y].Remove(this);
 		}
 
 		// convert position to tile positions
@@ -817,7 +817,21 @@ public partial class Character : CharacterBody2D
 		currentTileData = GetTileCustomType(currentTilePosition, gameManager.groundLayer,
 				gameManager.obstacleLayer);
 
-		gameManager.characterMatrix[currentTilePosition.X, currentTilePosition.Y] = this;
+		gameManager.characterMatrix[currentTilePosition.X, currentTilePosition.Y].Add(this);
+	}
+
+	/** <summary>double checks if a collision occurred if 2 characters are on the same tile and calls the proper collision handling</summary> */
+	public void CheckCharacterMatrixCollision()
+	{
+		HashSet<Character> collisions = gameManager.characterMatrix[currentTileData.tilePosition.X, currentTileData.tilePosition.Y].CharacterCollision(this);
+
+		if (collisions == null)
+			return;
+
+		foreach (Character collisionCharacter in collisions)
+		{
+			OnCharacterCollision(collisionCharacter);
+		}
 	}
 
 	/** <summary>Run every frame to update movement and check what happens when the character stops</summary> */
@@ -912,6 +926,7 @@ public partial class Character : CharacterBody2D
 		animatedSprite.Modulate = new("FFFFFF");
 		SetSpriteAnimation("Idle");
 		gameManager.CheckToIncrementCurrentMove();
+		CheckCharacterMatrixCollision();
 	}
 
 	/** <summary>This override allows for the character to continue processing if all characters are not idle</summary> */
