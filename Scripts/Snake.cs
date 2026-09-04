@@ -48,21 +48,36 @@ public partial class Snake : Character
 
 			snakeFrames.Clear("Idle");
 			snakeFrames.Clear("Move");
+			snakeFrames.Clear("Drown");
 
 			// instantiate new atlas textures to create snertical sprites
 			AtlasTexture snerticalIdle0 = new(),
 				snerticalIdle1 = new(),
 				snerticalMove0 = new(),
-				snerticalMove1 = new();
+				snerticalMove1 = new(),
+				snerticalDrown0 = new(),
+				snerticalDrown1 = new(),
+				snerticalDrown2 = new(),
+				snerticalDrown3 = new(),
+				snerticalDrown4 = new(),
+				snerticalDrown5 = new(),
+				snerticalDrown6 = new();
 
 			// set atlas texture for all animation frames to sprite sheet
-			snerticalIdle0.Atlas = snerticalIdle1.Atlas = snerticalMove0.Atlas = snerticalMove1.Atlas = enemySpriteSheet;
+			snerticalIdle0.Atlas = snerticalIdle1.Atlas = snerticalMove0.Atlas = snerticalMove1.Atlas = snerticalDrown0.Atlas
+				= snerticalDrown1.Atlas = snerticalDrown2.Atlas = snerticalDrown3.Atlas= snerticalDrown4.Atlas= snerticalDrown5.Atlas = enemySpriteSheet;
 
 			// set texture regions to where the associated tiles are
 			snerticalIdle0.Region = new(tileSize * new Vector2(0, 1), tileSize * new Vector2(1, 1));
 			snerticalIdle1.Region = new(tileSize * new Vector2(1, 1), tileSize * new Vector2(1, 1));
 			snerticalMove0.Region = new(tileSize * new Vector2(2, 1), tileSize * new Vector2(1, 1));
 			snerticalMove1.Region = new(tileSize * new Vector2(3, 1), tileSize * new Vector2(1, 1));
+			snerticalDrown0.Region = new(tileSize * new Vector2(0, 2), tileSize * new Vector2(1, 1));
+			snerticalDrown1.Region = new(tileSize * new Vector2(1, 2), tileSize * new Vector2(1, 1));
+			snerticalDrown2.Region = new(tileSize * new Vector2(2, 2), tileSize * new Vector2(1, 1));
+			snerticalDrown3.Region = new(tileSize * new Vector2(3, 2), tileSize * new Vector2(1, 1));
+			snerticalDrown4.Region = new(tileSize * new Vector2(4, 2), tileSize * new Vector2(1, 1));
+			snerticalDrown5.Region = new(tileSize * new Vector2(5, 2), tileSize * new Vector2(1, 1));
 
 			// add all the frames to the associated animations
 			snakeFrames.AddFrame("Idle", snerticalIdle0);
@@ -70,6 +85,14 @@ public partial class Snake : Character
 
 			snakeFrames.AddFrame("Move", snerticalMove0);
 			snakeFrames.AddFrame("Move", snerticalMove1);
+
+			snakeFrames.AddFrame("Drown", snerticalDrown0);
+			snakeFrames.AddFrame("Drown", snerticalDrown1);
+			snakeFrames.AddFrame("Drown", snerticalDrown2);
+			snakeFrames.AddFrame("Drown", snerticalDrown3);
+			snakeFrames.AddFrame("Drown", snerticalDrown4);
+			snakeFrames.AddFrame("Drown", snerticalDrown5);
+			snakeFrames.AddFrame("Drown", snerticalDrown6);
 
 			animatedSprite.Play("Idle");
 		}

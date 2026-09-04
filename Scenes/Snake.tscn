@@ -1,32 +1,36 @@
 [gd_scene format=3 uid="uid://cbsuywq6rqgry"]
 
 [ext_resource type="Script" uid="uid://gsosdetchpix" path="res://Scripts/Snake.cs" id="1_744d6"]
-[ext_resource type="Texture2D" uid="uid://dok1fu6yin71i" path="res://Assets/Sprites/cogitosheet.png" id="3_squsf"]
 [ext_resource type="Texture2D" uid="uid://c6tb0lmy4jsyr" path="res://Assets/Sprites/fungusenemysheet.png" id="4_gq165"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_7hp1u"]
-atlas = ExtResource("3_squsf")
-region = Rect2(0, 64, 32, 32)
+[sub_resource type="AtlasTexture" id="AtlasTexture_r40u6"]
+atlas = ExtResource("4_gq165")
+region = Rect2(128, 32, 32, 32)
 filter_clip = true
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_kpgjw"]
-atlas = ExtResource("3_squsf")
-region = Rect2(32, 64, 32, 32)
+[sub_resource type="AtlasTexture" id="AtlasTexture_ehafn"]
+atlas = ExtResource("4_gq165")
+region = Rect2(160, 32, 32, 32)
 filter_clip = true
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yo5o3"]
-atlas = ExtResource("3_squsf")
-region = Rect2(64, 64, 32, 32)
+[sub_resource type="AtlasTexture" id="AtlasTexture_2mk1o"]
+atlas = ExtResource("4_gq165")
+region = Rect2(192, 32, 32, 32)
 filter_clip = true
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_aes1x"]
-atlas = ExtResource("3_squsf")
-region = Rect2(96, 64, 32, 32)
+[sub_resource type="AtlasTexture" id="AtlasTexture_e6cyb"]
+atlas = ExtResource("4_gq165")
+region = Rect2(224, 32, 32, 32)
 filter_clip = true
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_2llrw"]
-atlas = ExtResource("3_squsf")
-region = Rect2(224, 224, 32, 32)
+[sub_resource type="AtlasTexture" id="AtlasTexture_o72b1"]
+atlas = ExtResource("4_gq165")
+region = Rect2(192, 64, 32, 32)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rdsqi"]
+atlas = ExtResource("4_gq165")
+region = Rect2(224, 64, 32, 32)
 filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_744d6"]
@@ -73,23 +77,29 @@ filter_clip = true
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_7hp1u")
+"texture": SubResource("AtlasTexture_r40u6")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_kpgjw")
+"texture": SubResource("AtlasTexture_ehafn")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_yo5o3")
+"texture": SubResource("AtlasTexture_2mk1o")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_aes1x")
+"texture": SubResource("AtlasTexture_e6cyb")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_2llrw")
+"texture": SubResource("AtlasTexture_o72b1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rdsqi")
+}, {
+"duration": 1.0,
+"texture": null
 }],
 "loop": 0,
 "name": &"Drown",
-"speed": 3.0
+"speed": 4.2
 }, {
 "frames": [{
 "duration": 1.0,
@@ -431,8 +441,10 @@ animationPlayer = NodePath("AnimationPlayer")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1841223617]
 sprite_frames = SubResource("SpriteFrames_e0kin")
-animation = &"Teleport"
+animation = &"Drown"
 autoplay = "Idle"
+frame = 6
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1509439521]
 shape = SubResource("CircleShape2D_kihqq")
